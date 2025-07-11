@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35506.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StellarDB", "StellarDB\StellarDB.csproj", "{2FE416A8-B579-4540-87CE-9558CB399671}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "StellarDBFront", "StellarDBFront\StellarDBFront.esproj", "{B9BF0D7A-39C5-4A77-9617-8F6ADD6EF33E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2FE416A8-B579-4540-87CE-9558CB399671}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FE416A8-B579-4540-87CE-9558CB399671}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FE416A8-B579-4540-87CE-9558CB399671}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FE416A8-B579-4540-87CE-9558CB399671}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9BF0D7A-39C5-4A77-9617-8F6ADD6EF33E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9BF0D7A-39C5-4A77-9617-8F6ADD6EF33E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9BF0D7A-39C5-4A77-9617-8F6ADD6EF33E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{B9BF0D7A-39C5-4A77-9617-8F6ADD6EF33E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9BF0D7A-39C5-4A77-9617-8F6ADD6EF33E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9BF0D7A-39C5-4A77-9617-8F6ADD6EF33E}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
