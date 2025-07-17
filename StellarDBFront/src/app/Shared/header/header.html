@@ -1,13 +1,14 @@
-<mat-toolbar class="container" color="primary">
+<mat-toolbar class="" color="primary">
   <span routerLink="/">StellarDB</span>
   <span class="spacer"></span>
-  <div class="row">
+  <div>
     <button mat-button routerLink="/">Home</button>
     <button matButton [matMenuTriggerFor]="menu">Explore<mat-icon>more_vert</mat-icon></button>
     <mat-menu #menu="matMenu">
       <button mat-menu-item routerLink="/stars">Stars</button>
       <button mat-menu-item routerLink="/constellations">Constellations</button>
       <button mat-menu-item routerLink="/exoplanets">Exoplanets</button>
+      <button mat-menu-item routerLink="/StellarObjectsTypes">Stellar Objects</button>
     </mat-menu>
   </div>
 </mat-toolbar>

@@ -1,0 +1,28 @@
+<span *ngIf="data != null" mat-dialog-title>Modify Stellar Body</span>
+<span *ngIf="data == null" mat-dialog-title>Add Stellar Body</span>
+
+<mat-dialog-content>
+  <!-- Form -->
+  <form [formGroup]="stellarBodyForm" (ngSubmit)="onSubmit()">
+    <!-- Name -->
+    <div class="p-[4px]">
+      <mat-form-field appearance="outline" class="w-[100%]">
+        <mat-label>Stellar Object Type</mat-label>
+        <input matInput formControlName="name">
+      </mat-form-field>
+    </div>
+
+    <!-- Description -->
+    <div>
+      <mat-form-field>
+        <mat-label>Description</mat-label>
+        <input matInput formControlName="description">
+      </mat-form-field>
+    </div>
+
+    <!-- Submit Button -->
+    <div>
+      <button color="primary" mat-button type="submit">Save</button>
+    </div>
+  </form>
+</mat-dialog-content>

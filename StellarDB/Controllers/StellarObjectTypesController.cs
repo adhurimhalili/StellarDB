@@ -49,9 +49,8 @@ namespace StellarDB.Controllers
             //    .Set(x => x.Description, stellarObjectType.Description);
             //await _stellarObjectTypes.UpdateOneAsync(filter, update);
 
-
             await _stellarObjectTypes.ReplaceOneAsync(filter, stellarObjectType);
-            return Ok();
+            return Ok(stellarObjectType);
         }
 
         [HttpDelete("{id}")]

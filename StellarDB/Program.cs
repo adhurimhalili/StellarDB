@@ -14,6 +14,18 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddSingleton<MongoDbService>();
 
+
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -29,6 +41,9 @@ if (app.Environment.IsDevelopment())
         options.DocumentTitle = "StellarDB API";
     });
 }
+
+// Enable CORS middleware
+app.UseCors("AllowAllOrigins");
 
 app.UseHttpsRedirection();
 
