@@ -14,3 +14,7 @@ html {
     density: 0,
   ));
 }
+
+.mdc-notched-outline__notch {
+  border-right: none;
+}

@@ -5,23 +5,19 @@
   <!-- Form -->
   <form [formGroup]="stellarBodyForm" (ngSubmit)="onSubmit()">
     <!-- Name -->
-    <div class="p-[4px]">
-      <mat-form-field appearance="outline" class="w-[100%]">
-        <mat-label>Stellar Object Type</mat-label>
-        <input matInput formControlName="name">
-      </mat-form-field>
-    </div>
+    <mat-form-field appearance="outline" class="w-full p-[4px]">
+      <mat-label>Stellar Object Type</mat-label>
+      <input matInput formControlName="name">
+    </mat-form-field>
 
     <!-- Description -->
-    <div>
-      <mat-form-field>
-        <mat-label>Description</mat-label>
-        <input matInput formControlName="description">
-      </mat-form-field>
-    </div>
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Description</mat-label>
+      <input matInput formControlName="description">
+    </mat-form-field>
 
     <!-- Submit Button -->
-    <div>
+    <div class="flex justify-center">
       <button color="primary" mat-button type="submit">Save</button>
     </div>
   </form>

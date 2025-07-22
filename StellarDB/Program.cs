@@ -1,6 +1,7 @@
 using MongoDB.Driver;
 using StellarDB.Data;
 using AspNetCore.Swagger.Themes;
+using StellarDB.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,8 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddSingleton<MongoDbService>();
 
+// Register StellarDB services
+builder.Services.AddScoped<CsvServices>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>

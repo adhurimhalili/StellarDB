@@ -30,19 +30,19 @@ export class StellarObjectTypesForm implements AfterViewInit {
     @Inject(MAT_DIALOG_DATA) public data: { stellarObjectId: string }
   ) {
     this.stellarBodyForm = this.formBuilder.group({
-      id: [data.stellarObjectId],
+      id: data,
       name: ['', Validators.required],
       description: ['', Validators.required]
     })
   }
   ngAfterViewInit(): void {
-    if (this.data != null) {
+    if (this.data != null || this.data != undefined) {
       this.loadFromData();
     }
   }
 
   loadFromData() {
-    fetch(`https://localhost:7271/api/StellarObjectTypes/${this.data.stellarObjectId}`, { method: 'GET' })
+    fetch(`https://localhost:7271/api/StellarObjectTypes/${this.data}`, { method: 'GET' })
       .then(response => response.json())
       .then(formData => {
         this.stellarBodyForm?.patchValue(formData);
@@ -53,7 +53,7 @@ export class StellarObjectTypesForm implements AfterViewInit {
   }
 
   onSubmit() {
-    var httpMethod = this.data?.stellarObjectId ? "PUT" : "POST";
+    var httpMethod = this?.data ? "PUT" : "POST";
     if (this.stellarBodyForm?.valid) {
       fetch('https://localhost:7271/api/StellarObjectTypes', {
         method: httpMethod,

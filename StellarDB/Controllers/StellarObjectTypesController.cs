@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using StellarDB.Data;
 using StellarDB.Models.StellarObjectTypes;
+using StellarDB.Services;
 
 namespace StellarDB.Controllers
 {
@@ -11,9 +13,12 @@ namespace StellarDB.Controllers
     public class StellarObjectTypesController : ControllerBase
     {
         private readonly IMongoCollection<StellarObjectTypesModel>? _stellarObjectTypes;
-        public StellarObjectTypesController(MongoDbService mongoDbService)
+        private readonly CsvServices _csvServices;
+        public StellarObjectTypesController(MongoDbService mongoDbService,
+                                            CsvServices csvServices)
         {
             _stellarObjectTypes = mongoDbService.Database.GetCollection<StellarObjectTypesModel>("StellarObjectTypes");
+            _csvServices = csvServices;
         }
 
         [HttpGet]
@@ -60,6 +65,51 @@ namespace StellarDB.Controllers
 
             await _stellarObjectTypes.DeleteOneAsync(filter);
             return Ok();
+        }
+
+        [HttpPost("import")]
+        public async Task<IActionResult> ImportFile(IFormFile file)
+        {
+            if (file is null || file.Length == 0) return BadRequest("No file uploaded.");
+
+            var extension = Path.GetExtension(file.FileName).ToLower();
+
+            using var stream = new StreamReader(file.OpenReadStream());
+            var fileContent = await stream.ReadToEndAsync();
+
+            List<StellarObjectTypesModel>? items = null;
+            switch (extension)
+            {
+                case ".csv":
+                    items = await _csvServices.ParseCsvAsync<StellarObjectTypesModel>(file.OpenReadStream());
+                    break;
+                case ".json":
+                    items = JsonSerializer.Deserialize<List<StellarObjectTypesModel>>(fileContent);
+                    break;
+                default:
+                    return BadRequest(new { error = "Unsupported file format." });
+            }
+
+            if (items == null || items.Any(x => string.IsNullOrWhiteSpace(x.Name)))
+                return BadRequest(new { error = "One or more entries are missing a 'Name' value." });
+
+            var existingNames = (await _stellarObjectTypes
+                .Find(_ => true)  // This fetches all documents
+                .ToListAsync())
+                .Select(x => x.Name)
+                .ToHashSet();
+
+            // Filter only new items
+            var newItems = items.Where(x => !existingNames.Contains(x.Name)).ToList();
+
+            if (newItems.Count > 0)
+                await _stellarObjectTypes.InsertManyAsync(newItems);
+
+            return Ok(new
+            {
+                inserted = newItems.Count,
+                skipped = items.Count - newItems.Count
+            });
         }
     }
 }
