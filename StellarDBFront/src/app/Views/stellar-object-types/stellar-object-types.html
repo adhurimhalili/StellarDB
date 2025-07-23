@@ -14,12 +14,18 @@
       <button matButton>
         <label>
           Import
-          <input type="file" hidden (change)="onFileSelected($event)"/>
+          <input type="file" hidden (change)="onFileSelected($event)" />
         </label>
       </button>
 
       <!-- Export Data Button -->
-      <button matButton >Export</button>
+      <button matButton [matMenuTriggerFor]="export">Export</button>
+      <mat-menu #export="matMenu">
+        <button mat-menu-item>JSON</button>
+        <button mat-menu-item>CSV</button>
+        <button mat-menu-item>XML</button>
+        <button mat-menu-item>Excel</button>
+      </mat-menu>
     </mat-card-actions>
     <mat-card-content>
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">

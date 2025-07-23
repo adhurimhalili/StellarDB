@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Xml.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
@@ -14,11 +15,14 @@ namespace StellarDB.Controllers
     {
         private readonly IMongoCollection<StellarObjectTypesModel>? _stellarObjectTypes;
         private readonly CsvServices _csvServices;
+        private readonly ExcelServices _excelServices;
         public StellarObjectTypesController(MongoDbService mongoDbService,
-                                            CsvServices csvServices)
+                                            CsvServices csvServices,
+                                            ExcelServices excelServices)
         {
             _stellarObjectTypes = mongoDbService.Database.GetCollection<StellarObjectTypesModel>("StellarObjectTypes");
             _csvServices = csvServices;
+            _excelServices = excelServices;
         }
 
         [HttpGet]
@@ -86,6 +90,23 @@ namespace StellarDB.Controllers
                 case ".json":
                     items = JsonSerializer.Deserialize<List<StellarObjectTypesModel>>(fileContent);
                     break;
+                case ".xml":
+                    var serializer = new XmlSerializer(typeof(StellarObjectTypesXmlWrapper));
+                    var xmlItems = (StellarObjectTypesXmlWrapper?)serializer.Deserialize(new StringReader(fileContent));
+
+                    items = xmlItems?.Items.Select(x => new StellarObjectTypesModel
+                    {
+                        Name = x.Name,
+                        Description = x.Description
+                    }).ToList();
+                    break;
+
+                case ".xls":
+                case ".xlsx":
+                case "xlsm":
+                case ".xlsb":
+                    items = ExcelServices.ParseExcel<StellarObjectTypesModel>(file.OpenReadStream());
+                    break;
                 default:
                     return BadRequest(new { error = "Unsupported file format." });
             }
@@ -99,7 +120,6 @@ namespace StellarDB.Controllers
                 .Select(x => x.Name)
                 .ToHashSet();
 
-            // Filter only new items
             var newItems = items.Where(x => !existingNames.Contains(x.Name)).ToList();
 
             if (newItems.Count > 0)
@@ -110,6 +130,12 @@ namespace StellarDB.Controllers
                 inserted = newItems.Count,
                 skipped = items.Count - newItems.Count
             });
+        }
+
+        [HttpGet("export/{fileType}")]
+        public async Task<IActionResult> ExportFile (string fileType)
+        {
+            return BadRequest(new { error = "Export functionality is not implemented yet." });
         }
     }
 }

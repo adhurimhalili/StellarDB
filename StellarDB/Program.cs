@@ -30,6 +30,7 @@ builder.Services.AddSingleton<MongoDbService>();
 
 // Register StellarDB services
 builder.Services.AddScoped<CsvServices>();
+builder.Services.AddScoped<ExcelServices>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>

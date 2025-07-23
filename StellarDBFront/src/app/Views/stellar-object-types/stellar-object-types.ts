@@ -6,6 +6,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import Swal from 'sweetalert2';
@@ -23,7 +24,7 @@ export interface StellarObjectTypes {
   standalone: true,
   templateUrl: './stellar-object-types.html',
   styleUrl: './stellar-object-types.css',
-  imports: [CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatPaginatorModule, StellarObjectTypesForm, MatProgressSpinnerModule],
+  imports: [CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatPaginatorModule, StellarObjectTypesForm, MatProgressSpinnerModule, MatMenuModule],
 })
 export class StellarObjectTypesService implements AfterViewInit {
   displayedColumns: string[] = ['position', 'name', 'description', 'actions'];

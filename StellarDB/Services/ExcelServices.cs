@@ -1,0 +1,80 @@
+﻿using ClosedXML.Excel;
+using System.Reflection;
+
+namespace StellarDB.Services
+{
+    public class ExcelServices
+    {
+        public static List<T> ParseExcel<T>(Stream fileStream) where T : new()
+        {
+            using var workbook = new XLWorkbook(fileStream);
+            var worksheet = workbook.Worksheets.First();
+            var rows = worksheet.RowsUsed().ToList();
+
+            if (rows.Count < 2)
+                return new List<T>(); // No data rows
+
+            var columnHeaders = rows[0].Cells().Select(c => c.GetString().Trim()).ToList();
+            var props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            string Normalize(string s) => s.Replace(" ", "").Replace("_", "").ToLower();
+            var propMap = props.ToDictionary(p => Normalize(p.Name), p => p);
+            var results = new List<T>();
+
+            foreach (var row in rows.Skip(1))
+            {
+                var item = new T();
+                for (int i = 0; i < columnHeaders.Count; i++)
+                {
+                    var header = columnHeaders[i];
+
+                    propMap.TryGetValue(header.ToLower(), out var prop);
+
+                    if (prop == null || !prop.CanWrite) continue;
+
+                    var cell = row.Cell(i + 1); // Excel cells are 1-based
+                    object? value = null;
+
+                    try
+                    {
+                        string getPropertyType = prop.PropertyType.ToString();
+
+                        switch (getPropertyType)
+                        {
+                            case "System.String":
+                                value = cell.GetString().Trim();
+                                break;
+                            case "System.Int32":
+                                value = cell.GetValue<int>();
+                                break;
+                            case "System.Double":
+                                value = cell.GetValue<double>();
+                                break;
+                            case "System.DateTime":
+                                value = cell.GetDateTime();
+                                break;
+                            case "System.Boolean":
+                                value = cell.GetBoolean();
+                                break;
+                            default:
+                                value = Convert.ChangeType(cell.Value, prop.PropertyType);
+                                break;
+                        }
+                    }
+                    catch
+                    {
+                        // Skip or log failed conversion
+                        Console.WriteLine($"Failed to convert cell value '{cell.Value}' to type '{prop.PropertyType.Name}' for property '{prop.Name}'.");
+                        Console.WriteLine($"Row {row.RowNumber()}, Column {i + 1}: Failed to convert...");
+                        continue;
+                    }
+
+                    prop.SetValue(item, value);
+                }
+
+                results.Add(item);
+            }
+
+            return results;
+        }
+    }
+}
