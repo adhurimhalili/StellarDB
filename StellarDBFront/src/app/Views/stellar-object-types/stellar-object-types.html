@@ -11,11 +11,9 @@
       <button matButton (click)="form(undefined)">Add</button>
 
       <!-- Import Data Button -->
-      <button matButton>
-        <label>
-          Import
-          <input type="file" hidden (change)="onFileSelected($event)" />
-        </label>
+      <button matButton type="button" (click)="fileInput.click()">
+        Import
+        <input #fileInput type="file" hidden (change)="onFileSelected($event)" />
       </button>
 
       <!-- Export Data Button -->
