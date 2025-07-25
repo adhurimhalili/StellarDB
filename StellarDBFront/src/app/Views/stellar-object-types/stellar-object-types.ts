@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import Swal from 'sweetalert2';
 import { GlobalConfig } from '../../global-config';
+import { CustomTable } from '../../Shared/custom-table/custom-table';
 
 export interface StellarObjectTypes {
   id: string
@@ -24,14 +25,21 @@ export interface StellarObjectTypes {
   standalone: true,
   templateUrl: './stellar-object-types.html',
   styleUrl: './stellar-object-types.css',
-  imports: [CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatPaginatorModule, StellarObjectTypesForm, MatProgressSpinnerModule, MatMenuModule],
+  imports: [CustomTable, CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatPaginatorModule, StellarObjectTypesForm, MatProgressSpinnerModule, MatMenuModule],
 })
 export class StellarObjectTypesService implements AfterViewInit {
   displayedColumns: string[] = ['position', 'name', 'description', 'actions'];
   dataSource = new MatTableDataSource<StellarObjectTypes>();
+  objects: StellarObjectTypes[] = [];
   isLoading = true;
   readonly formDialog = inject(MatDialog);
   selectedFile: File | null = null;
+
+  tableColumns = [
+    { columnDef: 'position', header: 'No.', cell: (item: any) => `${item.no}` },
+    { columnDef: 'name', header: 'Name' },
+    { columnDef: 'description', header: 'Description' }
+  ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -44,7 +52,7 @@ export class StellarObjectTypesService implements AfterViewInit {
     fetch(`${GlobalConfig.apiUrl}/StellarObjectTypes`)
       .then(response => response.json())
       .then(result => {
-        this.dataSource.data = result.map((item: StellarObjectTypes, itemPosition: number) => ({
+        this.objects = result.map((item: StellarObjectTypes, itemPosition: number) => ({
           no: itemPosition + 1,
           id: item.id,
           name: item.name,
@@ -57,11 +65,11 @@ export class StellarObjectTypesService implements AfterViewInit {
       });
   }
 
-  form(stellarObjectId?: string) {
+  onOpenForm(stellarObjectId?: string) {
     const dialogRef = this.formDialog.open(StellarObjectTypesForm, {
       width: '40%',
       maxWidth: '600px',
-      data: stellarObjectId 
+      data: stellarObjectId
     })
 
     dialogRef.afterClosed().subscribe(result => {
@@ -102,11 +110,11 @@ export class StellarObjectTypesService implements AfterViewInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.selectedFile = input.files[0];
-      this.import();
+      this.onImport();
     }
   }
 
-  import() {
+  onImport() {
     if (!this.selectedFile) return console.error("File not found.");
 
     const fileFormData = new FormData();
@@ -129,7 +137,7 @@ export class StellarObjectTypesService implements AfterViewInit {
           title: "Imported!",
           html:
             `<p>Inserted: <span class="font-medium text-blue-500">${result.inserted}</span></p>
-            <p>Skipped: <span class="font-medium text-blue-500">${result.skipped}</span></p>`,
+             <p>Skipped: <span class="font-medium text-blue-500">${result.skipped}</span></p>`,
           icon: "success",
           position: 'top',
           timer: 2000,
@@ -144,11 +152,10 @@ export class StellarObjectTypesService implements AfterViewInit {
           text: error.message,
           icon: "error"
         });
-        //console.error("Error uploading file:", error)
       })
   }
 
-  exportAs(format: string) {
+  onExport(format: string) {
     window.open(`${GlobalConfig.apiUrl}/StellarObjectTypes/export?format=${format}`, '_blank');
   }
 }

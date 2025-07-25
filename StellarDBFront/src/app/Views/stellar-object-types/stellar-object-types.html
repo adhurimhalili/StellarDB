@@ -6,87 +6,17 @@
       <!--<mat-card-subtitle class="">List</mat-card-subtitle>-->
       <span class="spacer"></span>
     </mat-card-header>
-    <mat-card-actions>
-      <!-- Add Data Button -->
-      <button matButton (click)="form(undefined)">Add</button>
 
-      <!-- Import Data Button -->
-      <button matButton type="button" (click)="importFileInput.click()">
-        Import
-        <input #importFileInput type="file" hidden (change)="onFileSelected($event)" />
-      </button>
-
-      <!-- Export Data Button -->
-      <button matButton [matMenuTriggerFor]="export">Export</button>
-      <mat-menu #export="matMenu">
-        <button mat-menu-item (click)="exportAs('csv')">CSV</button>
-        <button mat-menu-item (click)="exportAs('json')">JSON</button>
-        <button mat-menu-item (click)="exportAs('xml')">XML</button>
-        <button mat-menu-item (click)="exportAs('xlsx')">Excel</button>
-      </mat-menu>
-    </mat-card-actions>
-    <mat-card-content>
-      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-        <!--- Note that these columns can be defined in any order.
-        The actual rendered columns are set as a property on the row definition" -->
-        <!-- Position Column -->
-        <ng-container matColumnDef="position">
-          <th mat-header-cell *matHeaderCellDef> No. </th>
-          <td mat-cell *matCellDef="let element"> {{element.no}} </td>
-        </ng-container>
-
-        <!-- Name Column -->
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef> Name </th>
-          <td mat-cell *matCellDef="let element"> <span class="font-medium"> {{element.name}} </span></td>
-        </ng-container>
-
-        <!-- Description Column -->
-        <ng-container matColumnDef="description">
-          <th mat-header-cell *matHeaderCellDef> Description </th>
-          <td mat-cell *matCellDef="let element"> {{element.description}} </td>
-        </ng-container>
-
-        <!-- Actions Column -->
-        <ng-container class="actionsCol flex justify-end" matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let element">
-
-            <!-- Edit -->
-            <button matIconButton (click)="form(element.id)">
-              <mat-icon>edit</mat-icon>
-            </button>
-
-            <!-- Delete -->
-            <button class="px-2" matIconButton (click)="onDelete(element)">
-              <span class="text-red-500"><mat-icon class="text-red-500">delete</mat-icon></span>
-            </button>
-          </td>
-        </ng-container>
-
-        <!-- Row shown when there is no matching data and table is not loading. -->
-        <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell" [attr.colspan]="displayedColumns.length" style="text-align: center;">
-            <!--<span *ngIf="input.value != ''; else noDataFromApi">No data matching the filter "{{input.value}}"</span>-->
-            <div *ngIf="!isLoading" class="py-4"><span class="text-xl">No data available.</span></div>
-          </td>
-        </tr>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
-      <!-- Loading Spinner -->
-      <div *ngIf="isLoading" class="w-full px-4 py-6">
-        <div class="flex justify-center mb-4">
-          <mat-spinner></mat-spinner>
-        </div>
-        <div class="flex justify-center text-gray-700 text-sm">
-          Loading data, please wait...
-        </div>
-      </div>
-
-      <!-- Paginator -->
-      <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 30, 50]" showFirstLastButtons></mat-paginator>
-    </mat-card-content>
+    <!-- Table Component -->
+    <app-custom-table [columns]="tableColumns"
+                      [objects]="objects"
+                      [displayedColumns]="displayedColumns"
+                      [isLoading]="isLoading"
+                      (edit)="onOpenForm($event)"
+                      (delete)="onDelete($event)"
+                      (export)="onExport($event)"
+                      (fileSelected)="onFileSelected($event)"
+                      >
+    </app-custom-table>
   </mat-card>
 </div>
