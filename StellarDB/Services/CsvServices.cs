@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Collections.Generic;
 using CsvHelper.Configuration;
+using System.Text;
 
 namespace StellarDB.Services
 {
@@ -25,6 +26,33 @@ namespace StellarDB.Services
             }
 
             return records;
+        }
+
+        public string ConvertToCsv<T>(List<T> data)
+        {
+            if (data == null || !data.Any())
+            {
+                return string.Empty;
+            }
+
+            var stringBuilder = new StringBuilder();
+            var properties = typeof(T).GetProperties();
+
+            // Write header
+            stringBuilder.AppendLine(string.Join(",", properties.Select(p => p.Name)));
+
+            // Rows
+            foreach (var item in data)
+            {
+                var values = properties.Select(p =>
+                {
+                    var value = p.GetValue(item, null);
+                    var stringValue = value?.ToString().Replace("\"", "\"\"") ?? ""; // Escape quotes
+                    return $"\"{stringValue}\"";
+                });
+                stringBuilder.AppendLine(string.Join(",", values));
+            }
+            return stringBuilder.ToString();
         }
     }
 }

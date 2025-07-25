@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Xml.Serialization;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
@@ -132,10 +133,54 @@ namespace StellarDB.Controllers
             });
         }
 
-        [HttpGet("export/{fileType}")]
-        public async Task<IActionResult> ExportFile (string fileType)
+        [HttpGet("export")]
+        public async Task<IActionResult> ExportFile(string format)
         {
-            return BadRequest(new { error = "Export functionality is not implemented yet." });
+            var items = await _stellarObjectTypes.Find(FilterDefinition<StellarObjectTypesModel>.Empty)
+                .ToListAsync();
+
+            if (items == null || !items.Any()) return NotFound("No data available for export.");
+
+            format = format.ToLowerInvariant();
+            string fileBytes = null;
+            switch (format)
+            {
+                case "json":
+                    fileBytes = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });
+                    break;
+                case "csv":
+                    fileBytes = _csvServices.ConvertToCsv(items);
+                    break;
+                case "xml":
+                    fileBytes = xmlBytes(items);
+                    break;
+                case "xlsx":
+                    {
+                        var excelBytes = ExcelServices.ConvertToExcel(items);
+                        return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "stellar-objects.xlsx");
+                    }
+                default:
+                    return BadRequest(new { error = "Unsupported export format. Supported formats: json, csv, xml, xlsx." });
+            }
+
+            return File(System.Text.Encoding.UTF8.GetBytes(fileBytes), $"application/{format}", $"StellarObjectTypes.{format}"); 
+        }
+
+        private string xmlBytes(List<StellarObjectTypesModel> stellarItems)
+        {
+            var xmlWrapper = new StellarObjectTypesXmlWrapper
+            {
+                Items = stellarItems.Select(x => new StellarObjectTypesXmlModel
+                {
+                    Name = x.Name,
+                    Description = x.Description
+                }).ToList()
+            };
+            using var stringWriter = new StringWriter();
+            var serializer = new XmlSerializer(typeof(StellarObjectTypesXmlWrapper));
+            serializer.Serialize(stringWriter, xmlWrapper);
+
+            return stringWriter.ToString();
         }
     }
 }

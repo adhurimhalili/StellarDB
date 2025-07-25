@@ -147,4 +147,8 @@ export class StellarObjectTypesService implements AfterViewInit {
         //console.error("Error uploading file:", error)
       })
   }
+
+  exportAs(format: string) {
+    window.open(`${GlobalConfig.apiUrl}/StellarObjectTypes/export?format=${format}`, '_blank');
+  }
 }

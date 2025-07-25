@@ -11,24 +11,24 @@
       <button matButton (click)="form(undefined)">Add</button>
 
       <!-- Import Data Button -->
-      <button matButton type="button" (click)="fileInput.click()">
+      <button matButton type="button" (click)="importFileInput.click()">
         Import
-        <input #fileInput type="file" hidden (change)="onFileSelected($event)" />
+        <input #importFileInput type="file" hidden (change)="onFileSelected($event)" />
       </button>
 
       <!-- Export Data Button -->
       <button matButton [matMenuTriggerFor]="export">Export</button>
       <mat-menu #export="matMenu">
-        <button mat-menu-item>JSON</button>
-        <button mat-menu-item>CSV</button>
-        <button mat-menu-item>XML</button>
-        <button mat-menu-item>Excel</button>
+        <button mat-menu-item (click)="exportAs('csv')">CSV</button>
+        <button mat-menu-item (click)="exportAs('json')">JSON</button>
+        <button mat-menu-item (click)="exportAs('xml')">XML</button>
+        <button mat-menu-item (click)="exportAs('xlsx')">Excel</button>
       </mat-menu>
     </mat-card-actions>
     <mat-card-content>
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <!--- Note that these columns can be defined in any order.
-  The actual rendered columns are set as a property on the row definition" -->
+        The actual rendered columns are set as a property on the row definition" -->
         <!-- Position Column -->
         <ng-container matColumnDef="position">
           <th mat-header-cell *matHeaderCellDef> No. </th>
@@ -68,7 +68,7 @@
         <tr class="mat-row" *matNoDataRow>
           <td class="mat-cell" [attr.colspan]="displayedColumns.length" style="text-align: center;">
             <!--<span *ngIf="input.value != ''; else noDataFromApi">No data matching the filter "{{input.value}}"</span>-->
-            <div class="py-4"><span class="text-xl">No data available.</span></div>
+            <div *ngIf="!isLoading" class="py-4"><span class="text-xl">No data available.</span></div>
           </td>
         </tr>
 

@@ -1,5 +1,7 @@
 ﻿using ClosedXML.Excel;
 using System.Reflection;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 
 namespace StellarDB.Services
 {
@@ -75,6 +77,34 @@ namespace StellarDB.Services
             }
 
             return results;
+        }
+        public static byte[] ConvertToExcel<T>(List<T> data)
+        {
+            // Set the license context using the new EPPlusLicense API  
+            ExcelPackage.License.SetNonCommercialPersonal("StellarDB");
+
+            using var package = new ExcelPackage();
+            var worksheet = package.Workbook.Worksheets.Add("Export");
+
+            // Add headers  
+            var properties = typeof(T).GetProperties();
+            for (int col = 0; col < properties.Length; col++)
+            {
+                worksheet.Cells[1, col + 1].Value = properties[col].Name;
+                worksheet.Cells[1, col + 1].Style.Font.Bold = true;
+            }
+
+            // Add data  
+            for (int row = 0; row < data.Count; row++)
+            {
+                for (int col = 0; col < properties.Length; col++)
+                {
+                    worksheet.Cells[row + 2, col + 1].Value = properties[col].GetValue(data[row]);
+                }
+            }
+            worksheet.Cells.AutoFitColumns();
+
+            return package.GetAsByteArray();
         }
     }
 }
