@@ -1,4 +1,4 @@
-import { AfterViewInit, Input, Output, EventEmitter, Component, ViewChild, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Input, Output, EventEmitter, Component, ViewChild, AfterViewInit, OnDestroy, OnChanges, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -6,31 +6,28 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, Sort, MatSortModule } from '@angular/material/sort';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
-
 
 @Component({
   selector: 'app-custom-table',
   standalone: true,
   templateUrl: './custom-table.html',
   styleUrl: './custom-table.css',
-  imports: [CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatPaginatorModule, MatProgressSpinnerModule, MatMenuModule],
+  imports: [CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatPaginatorModule, MatProgressSpinnerModule, MatMenuModule, MatSortModule],
 })
 
-export class CustomTable implements OnInit, OnDestroy {
+export class CustomTable implements OnDestroy, OnChanges, AfterViewInit {
   // Inputs
-  @Input() columns: { columnDef: string; header: string; cell?: (element: any) => string }[] = [];
+  @Input() columns: { columnDef: string; header: string; cell?: (element: any) => string; cssClass?: string; }[] = [];
   @Input() objects: any[] = [];
   @Input() displayedColumns: string[] = [];
   @Input() dataSource = new MatTableDataSource<any>();
   @Input() isLoading = true;
 
   // Outputs
-  @Output() edit = new EventEmitter<any>();
+  @Output() openForm = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
-  @Output() import = new EventEmitter<any>();
   @Output() fileSelected = new EventEmitter<any>();
   @Output() export = new EventEmitter<any>();
 
@@ -41,15 +38,16 @@ export class CustomTable implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  ngOnInit() {
-    this.dataSource = new MatTableDataSource(this.objects);
-  }
-
   ngAfterViewInit() {
+    this.dataSource = new MatTableDataSource(this.objects);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+  }
 
-    this.cdRef.detectChanges();
+  ngOnChanges() {
+    this.dataSource = new MatTableDataSource(this.objects);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   onDelete(row: any) {
@@ -57,12 +55,8 @@ export class CustomTable implements OnInit, OnDestroy {
   }
 
   onOpenForm(id?: string) {
-    this.edit.emit(id);
+    this.openForm.emit(id);
   }
-
-  //onImport() {
-  //  this.import.emit();
-  //}
 
   onExport(format: string) {
     this.export.emit(format);

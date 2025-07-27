@@ -18,20 +18,23 @@
         <button mat-menu-item (click)="onExport('xml')">XML</button>
         <button mat-menu-item (click)="onExport('xlsx')">Excel</button>
       </mat-menu>
+
     </mat-card-actions>
     <mat-card-content>
-      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <table matSort mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
         <!-- Dynamic Columns -->
         <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.header }} </th>
-          <td mat-cell *matCellDef="let element">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="{{column.cssClass}}"> {{ column.header }} </th>
+          <td mat-cell *matCellDef="let element" class="{{column.cssClass}}">
             {{ column.cell ? column.cell(element) : element[column.columnDef] }}
           </td>
         </ng-container>
+
         <!-- Actions Column -->
-        <ng-container class="actionsCol flex justify-end" matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let element">
+        <ng-container class="actionsCol flex justify-items-end" matColumnDef="actions">
+          <th class="max-w-[60px]" mat-header-cell *matHeaderCellDef></th>
+          <td class="max-w-[60px]" mat-cell *matCellDef="let element">
 
             <!-- Edit -->
             <button matIconButton (click)="onOpenForm(element.id)">
@@ -39,7 +42,7 @@
             </button>
 
             <!-- Delete -->
-            <button class="px-2" matIconButton (click)="onDelete(element)">
+            <button matIconButton (click)="onDelete(element)">
               <span class="text-red-500"><mat-icon class="text-red-500">delete</mat-icon></span>
             </button>
           </td>
@@ -67,7 +70,7 @@
       </div>
 
       <!-- Paginator -->
-      <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 30, 50]" showFirstLastButtons></mat-paginator>
+      <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons></mat-paginator>
     </mat-card-content>
 
   </ng-container>

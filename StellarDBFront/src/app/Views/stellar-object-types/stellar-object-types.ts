@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StellarObjectTypesForm } from './stellar-object-types-form/stellar-object-types-form';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,7 +24,7 @@ export interface StellarObjectTypes {
   standalone: true,
   templateUrl: './stellar-object-types.html',
   styleUrl: './stellar-object-types.css',
-  imports: [CustomTable, CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatPaginatorModule, StellarObjectTypesForm, MatProgressSpinnerModule, MatMenuModule],
+  imports: [CustomTable, CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, StellarObjectTypesForm, MatProgressSpinnerModule, MatMenuModule],
 })
 export class StellarObjectTypesService implements AfterViewInit {
   displayedColumns: string[] = ['position', 'name', 'description', 'actions'];
@@ -36,16 +35,16 @@ export class StellarObjectTypesService implements AfterViewInit {
   selectedFile: File | null = null;
 
   tableColumns = [
-    { columnDef: 'position', header: 'No.', cell: (item: any) => `${item.no}` },
+    { columnDef: 'position', header: 'No.', cell: (item: any) => `${item.no}`, cssClass: 'max-w-1/8' },
     { columnDef: 'name', header: 'Name' },
-    { columnDef: 'description', header: 'Description' }
+    { columnDef: 'description', header: 'Description'}
   ];
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-
-  ngAfterViewInit() {
+  constructor() {
     this.fetchData();
-    this.dataSource.paginator = this.paginator;
+  }
+  ngAfterViewInit() {
+    
   }
 
   fetchData() {
