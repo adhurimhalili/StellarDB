@@ -36,7 +36,8 @@
             ],
             "styles": [
               "src/custom-theme.scss",
-              "src/styles.css"
+              "src/styles.css",
+              "src/app/Styles/tokens.scss" // src\app\Styles\tokens.scss
             ]
           },
           "configurations": {
