@@ -2,22 +2,28 @@
   <ng-container>
     <mat-card-actions>
       <!-- Add Data Button -->
+      <ng-container *ngIf="availableActions.includes('create')">
       <button matButton (click)="onOpenForm(undefined)">Add</button>
+      </ng-container>
 
       <!-- Import Data Button -->
-      <button matButton type="button" (click)="importFileInput.click()">
-        Import
-        <input #importFileInput type="file" hidden (change)="onFileSelected($event)" />
-      </button>
+      <ng-container *ngIf="availableActions.includes('import')">
+        <button matButton type="button" (click)="importFileInput.click()">
+          Import
+          <input #importFileInput type="file" hidden (change)="onFileSelected($event)" />
+        </button>
+      </ng-container>
 
       <!-- Export Data Button -->
-      <button matButton [matMenuTriggerFor]="export">Export</button>
-      <mat-menu #export="matMenu">
-        <button mat-menu-item (click)="onExport('csv')">CSV</button>
-        <button mat-menu-item (click)="onExport('json')">JSON</button>
-        <button mat-menu-item (click)="onExport('xml')">XML</button>
-        <button mat-menu-item (click)="onExport('xlsx')">Excel</button>
-      </mat-menu>
+      <ng-container *ngIf="availableActions.includes('export')">
+        <button matButton [matMenuTriggerFor]="export">Export</button>
+        <mat-menu #export="matMenu">
+          <button mat-menu-item (click)="onExport('csv')">CSV</button>
+          <button mat-menu-item (click)="onExport('json')">JSON</button>
+          <button mat-menu-item (click)="onExport('xml')">XML</button>
+          <button mat-menu-item (click)="onExport('xlsx')">Excel</button>
+        </mat-menu>
+      </ng-container>
 
     </mat-card-actions>
     <mat-card-content>
@@ -37,14 +43,18 @@
           <td class="max-w-[60px]" mat-cell *matCellDef="let element">
 
             <!-- Edit -->
-            <button matIconButton (click)="onOpenForm(element.id)">
-              <mat-icon>edit</mat-icon>
-            </button>
+            <ng-container *ngIf="availableActions.includes('edit')">
+              <button matIconButton (click)="onOpenForm(element.id)">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </ng-container>
 
             <!-- Delete -->
-            <button matIconButton (click)="onDelete(element)">
-              <span class="text-red-500"><mat-icon class="text-red-500">delete</mat-icon></span>
-            </button>
+            <ng-container *ngIf="availableActions.includes('delete')">
+              <button matIconButton (click)="onDelete(element)">
+                <span class="text-red-500"><mat-icon class="text-red-500">delete</mat-icon></span>
+              </button>
+            </ng-container>
           </td>
         </ng-container>
 

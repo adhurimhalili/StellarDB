@@ -21,15 +21,22 @@ export class CustomTable implements OnDestroy, OnChanges, AfterViewInit {
   // Inputs
   @Input() columns: { columnDef: string; header: string; cell?: (element: any) => string; cssClass?: string; }[] = [];
   @Input() objects: any[] = [];
-  @Input() displayedColumns: string[] = [];
   @Input() dataSource = new MatTableDataSource<any>();
   @Input() isLoading = true;
+  @Input() availableActions: string[] = [];
 
   // Outputs
   @Output() openForm = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
   @Output() fileSelected = new EventEmitter<any>();
   @Output() export = new EventEmitter<any>();
+
+  get displayedColumns(): string[] {
+    const baseColumns = this.columns.map(col => col.columnDef);
+    return this.availableActions.includes('edit') || this.availableActions.includes('delete')
+      ? [...baseColumns, 'actions']
+      : baseColumns;
+  }
 
   constructor(private cdRef: ChangeDetectorRef) { }
 
