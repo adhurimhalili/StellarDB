@@ -24,6 +24,7 @@ export class CustomTable implements OnDestroy, OnChanges, AfterViewInit {
   @Input() displayedColumns: string[] = [];
   @Input() dataSource = new MatTableDataSource<any>();
   @Input() isLoading = true;
+  @Input() availableActions: string[] = [];
 
   // Outputs
   @Output() openForm = new EventEmitter<any>();

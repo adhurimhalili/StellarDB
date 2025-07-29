@@ -28,17 +28,18 @@ export interface StellarObjectTypes {
 })
 export class StellarObjectTypesService implements AfterViewInit {
   displayedColumns: string[] = ['position', 'name', 'description', 'actions'];
+  availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
+  tableColumns = [
+    { columnDef: 'position', header: 'No.', cell: (item: any) => `${item.no}`, cssClass: 'w-1/32' },
+    { columnDef: 'name', header: 'Name' },
+    { columnDef: 'description', header: 'Description' }
+  ];
+
   dataSource = new MatTableDataSource<StellarObjectTypes>();
   objects: StellarObjectTypes[] = [];
   isLoading = true;
   readonly formDialog = inject(MatDialog);
   selectedFile: File | null = null;
-
-  tableColumns = [
-    { columnDef: 'position', header: 'No.', cell: (item: any) => `${item.no}`, cssClass: 'max-w-1/8' },
-    { columnDef: 'name', header: 'Name' },
-    { columnDef: 'description', header: 'Description'}
-  ];
 
   constructor() {
     this.fetchData();
