@@ -143,6 +143,7 @@ namespace StellarDB.Controllers
 
             format = format.ToLowerInvariant();
             string fileBytes = null;
+            string fullFileName = $"stellar-objects-classes-{DateTime.Now}.{format}";
             switch (format)
             {
                 case "json":
@@ -157,13 +158,13 @@ namespace StellarDB.Controllers
                 case "xlsx":
                     {
                         var excelBytes = ExcelServices.ConvertToExcel(items);
-                        return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "stellar-objects.xlsx");
+                        return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{fullFileName}");
                     }
                 default:
                     return BadRequest(new { error = "Unsupported export format. Supported formats: json, csv, xml, xlsx." });
             }
 
-            return File(System.Text.Encoding.UTF8.GetBytes(fileBytes), $"application/{format}", $"StellarObjectTypes.{format}"); 
+            return File(System.Text.Encoding.UTF8.GetBytes(fileBytes), $"application/{format}", $"{fullFileName}"); 
         }
 
         private string xmlBytes(List<StellarObjectTypesModel> stellarItems)

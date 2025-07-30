@@ -1,6 +1,5 @@
-import { AfterViewInit, Component, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StellarObjectTypesForm } from './stellar-object-types-form/stellar-object-types-form';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,31 +10,36 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import Swal from 'sweetalert2';
 import { GlobalConfig } from '../../global-config';
 import { CustomTable } from '../../Shared/custom-table/custom-table';
+import { StarSpectralClassesForm } from './star-spectral-classes-form/star-spectral-classes-form';
 
-export interface StellarObjectTypes {
-  id: string
-  position: number;
-  name: string;
-  description: string
+export interface StarSpectralClasses {
+  id: string;
+  code: string;
+  temperatureRange: string;
+  color: string;
+  description: string;
 }
 
 @Component({
-  selector: 'app-stellar-object-types',
+  selector: 'app-star-spectral-classes',
   standalone: true,
-  templateUrl: './stellar-object-types.html',
-  styleUrl: './stellar-object-types.css',
-  imports: [CustomTable, CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, StellarObjectTypesForm, MatProgressSpinnerModule, MatMenuModule],
+  imports: [CustomTable, CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule, MatMenuModule],
+  templateUrl: './star-spectral-classes.html',
+  styleUrl: './star-spectral-classes.css'
 })
-export class StellarObjectTypesService implements AfterViewInit {
+export class StarSpectralClassesComponent {
+  title = 'Star Spectral Classes';
   availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
   tableColumns = [
     { columnDef: 'position', header: 'No.', cell: (item: any) => `${item.no}`, cssClass: 'w-1/32' },
-    { columnDef: 'name', header: 'Name' },
+    { columnDef: 'code', header: 'Code', cssClass: 'w-1/24' },
+    { columnDef: 'temperatureRange', header: 'Temperature Range' },
+    { columnDef: 'color', header: 'Color', cssClass: 'w-1/16' },
     { columnDef: 'description', header: 'Description' }
   ];
 
-  dataSource = new MatTableDataSource<StellarObjectTypes>();
-  objects: StellarObjectTypes[] = [];
+  dataSource = new MatTableDataSource<StarSpectralClasses>();
+  objects: StarSpectralClasses[] = []
   isLoading = true;
   readonly formDialog = inject(MatDialog);
   selectedFile: File | null = null;
@@ -43,20 +47,20 @@ export class StellarObjectTypesService implements AfterViewInit {
   constructor() {
     this.fetchData();
   }
-  ngAfterViewInit() {
-    
-  }
 
   fetchData() {
-    fetch(`${GlobalConfig.apiUrl}/StellarObjectTypes`)
+    fetch(`${GlobalConfig.apiUrl}/StarSpectralClasses`)
       .then(response => response.json())
       .then(result => {
-        this.objects = result.map((item: StellarObjectTypes, itemPosition: number) => ({
+        this.objects = result.map((item: StarSpectralClasses, itemPosition: number) => ({
           no: itemPosition + 1,
           id: item.id,
-          name: item.name,
+          code: `${item.code}-Type`,
+          temperatureRange: item.temperatureRange,
+          color: item.color,
           description: item.description
         }));
+        this.dataSource.data = this.objects;
         this.isLoading = false;
       })
       .catch(error => {
@@ -64,18 +68,17 @@ export class StellarObjectTypesService implements AfterViewInit {
       });
   }
 
-  onOpenForm(stellarObjectId?: string) {
-    const dialogRef = this.formDialog.open(StellarObjectTypesForm, {
+  onOpenForm(starSpectralClassId?: string) {
+    const dialogRef = this.formDialog.open(StarSpectralClassesForm, {
       width: '40%',
       maxWidth: '600px',
-      data: stellarObjectId
-    })
-
+      data: starSpectralClassId
+    });
     dialogRef.afterClosed().subscribe(result => {
       this.fetchData();
       if (result) {
         Swal.fire({
-          title: stellarObjectId ? "Updated!" : "Created!",
+          title: starSpectralClassId ? "Updated!" : "Created!",
           icon: "success",
           position: 'top',
           timer: 2000,
@@ -87,10 +90,10 @@ export class StellarObjectTypesService implements AfterViewInit {
     });
   }
 
-  onDelete(stellarObject: StellarObjectTypes) {
+  onDelete(starSpectralClass: StarSpectralClasses) {
     Swal.fire({
       title: "Are you sure?",
-      html: `You are deleting <span class="text-blue-600 font-medium">${stellarObject.name}<span>.`,
+      html: `You are deleting <span class="text-blue-600 font-medium">${starSpectralClass.code}<span>.`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -98,7 +101,7 @@ export class StellarObjectTypesService implements AfterViewInit {
       confirmButtonText: "Yes, delete it!"
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`${GlobalConfig.apiUrl}/StellarObjectTypes/${stellarObject.id}`, { method: 'DELETE' })
+        fetch(`${GlobalConfig.apiUrl}/StarSpectralClasses/${starSpectralClass.id}`, { method: 'DELETE' })
           .then(response => {
             this.fetchData();
             Swal.fire({
@@ -125,12 +128,23 @@ export class StellarObjectTypesService implements AfterViewInit {
   }
 
   onImport() {
-    if (!this.selectedFile) return console.error("File not found.");
+    if (!this.selectedFile) {
+      Swal.fire({
+        title: "File not found.",
+        icon: "error",
+        position: 'top',
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        backdrop: false
+      });
+      return;
+    }
 
     const fileFormData = new FormData();
     fileFormData.append('file', this.selectedFile);
 
-    fetch(`${GlobalConfig.apiUrl}/StellarObjectTypes/import`, {
+    fetch(`${GlobalConfig.apiUrl}/StarSpectralClasses/import`, {
       method: 'POST',
       body: fileFormData
     })
@@ -166,6 +180,6 @@ export class StellarObjectTypesService implements AfterViewInit {
   }
 
   onExport(format: string) {
-    window.open(`${GlobalConfig.apiUrl}/StellarObjectTypes/export?format=${format}`, '_blank');
+    window.open(`${GlobalConfig.apiUrl}/StarSpectralClasses/export?format=${format}`, '_blank');
   }
 }

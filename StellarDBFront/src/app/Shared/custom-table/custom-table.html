@@ -38,9 +38,9 @@
         </ng-container>
 
         <!-- Actions Column -->
-        <ng-container class="actionsCol flex justify-items-end" matColumnDef="actions">
-          <th class="max-w-[60px]" mat-header-cell *matHeaderCellDef></th>
-          <td class="max-w-[60px]" mat-cell *matCellDef="let element">
+        <ng-container class="actionsCol" matColumnDef="actions">
+          <th class="w-[115px]" mat-header-cell *matHeaderCellDef></th>
+          <td class="w-[115px]" mat-cell *matCellDef="let element">
 
             <!-- Edit -->
             <ng-container *ngIf="availableActions.includes('edit')">

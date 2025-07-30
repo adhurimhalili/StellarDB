@@ -1,0 +1,35 @@
+<span *ngIf="data != null" mat-dialog-title>Modify</span>
+<span *ngIf="data == null" mat-dialog-title>Add</span>
+
+<mat-dialog-content>
+  <!-- Form -->
+  <form [formGroup]="starSpectralClassForm" (ngSubmit)="onSubmit()">
+    <!-- Code -->
+    <mat-form-field appearance="outline" class="w-full p-[4px]">
+      <mat-label>Code</mat-label>
+      <input matInput formControlName="code" maxlength="2">
+    </mat-form-field>
+
+    <!-- Temperature Range -->
+    <mat-form-field appearance="outline" class="w-full p-[4px]">
+      <mat-label>Temperature Range</mat-label>
+      <input matInput formControlName="temperatureRange">
+    </mat-form-field>
+
+    <!-- Color -->
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Color</mat-label>
+      <input matInput formControlName="color">
+    </mat-form-field>
+
+    <!-- Description -->
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Description</mat-label>
+      <input matInput formControlName="description">
+    </mat-form-field>
+
+    <!-- Submit Button -->
+    <div class="flex justify-center">
+      <button color="primary" mat-button type="submit">Save</button>
+    </div>
+  </form>
