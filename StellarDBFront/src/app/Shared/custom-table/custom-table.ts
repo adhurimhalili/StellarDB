@@ -16,7 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   styleUrl: './custom-table.css',
   imports: [CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatPaginatorModule, MatProgressSpinnerModule, MatMenuModule, MatSortModule],
 })
-//test
+
 export class CustomTable implements OnDestroy, OnChanges, AfterViewInit {
   // Inputs
   @Input() columns: { columnDef: string; header: string; cell?: (element: any) => string; cssClass?: string; }[] = [];
