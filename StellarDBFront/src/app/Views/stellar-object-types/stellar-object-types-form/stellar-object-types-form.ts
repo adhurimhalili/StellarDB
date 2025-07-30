@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
+import { GlobalConfig } from '../../../global-config'; 
 
 @Component({
   selector: 'app-stellar-object-types-form',
@@ -42,7 +43,7 @@ export class StellarObjectTypesForm implements AfterViewInit {
   }
 
   loadFromData() {
-    fetch(`https://localhost:7271/api/StellarObjectTypes/${this.data}`, { method: 'GET' })
+    fetch(`${GlobalConfig.apiUrl}/StellarObjectTypes/${this.data}`, { method: 'GET' })
       .then(response => response.json())
       .then(formData => {
         this.stellarBodyForm?.patchValue(formData);
@@ -55,7 +56,7 @@ export class StellarObjectTypesForm implements AfterViewInit {
   onSubmit() {
     var httpMethod = this?.data ? "PUT" : "POST";
     if (this.stellarBodyForm?.valid) {
-      fetch('https://localhost:7271/api/StellarObjectTypes', {
+      fetch(`${GlobalConfig.apiUrl}api/StellarObjectTypes`, {
         method: httpMethod,
         headers: {
           'Content-Type': 'application/json',
