@@ -69,7 +69,7 @@ namespace StellarDB.Controllers
             var filter = Builders<StellarObjectTypesModel>.Filter.Eq(stBody => stBody.Id, id);
 
             await _stellarObjectTypes.DeleteOneAsync(filter);
-            return Ok();
+            return NoContent();
         }
 
         [HttpPost("import")]
@@ -156,15 +156,13 @@ namespace StellarDB.Controllers
                     fileBytes = xmlBytes(items);
                     break;
                 case "xlsx":
-                    {
-                        var excelBytes = ExcelServices.ConvertToExcel(items);
-                        return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{fullFileName}");
-                    }
+                    var excelBytes = ExcelServices.ConvertToExcel(items);
+                    return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{fullFileName}");
                 default:
                     return BadRequest(new { error = "Unsupported export format. Supported formats: json, csv, xml, xlsx." });
             }
 
-            return File(System.Text.Encoding.UTF8.GetBytes(fileBytes), $"application/{format}", $"{fullFileName}"); 
+            return File(System.Text.Encoding.UTF8.GetBytes(fileBytes), $"application/{format}", $"{fullFileName}");
         }
 
         private string xmlBytes(List<StellarObjectTypesModel> stellarItems)
