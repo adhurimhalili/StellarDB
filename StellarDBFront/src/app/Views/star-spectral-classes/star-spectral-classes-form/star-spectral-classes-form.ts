@@ -10,18 +10,12 @@ import { GlobalConfig } from '../../../global-config';
 
 @Component({
   selector: 'app-star-spectral-classes-form',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatButtonModule,
-    MatDialogModule
-  ],
+  imports: [ CommonModule, ReactiveFormsModule, MatInputModule, MatFormFieldModule, MatButtonModule, MatDialogModule ],
   templateUrl: './star-spectral-classes-form.html',
   styleUrl: './star-spectral-classes-form.css'
 })
 export class StarSpectralClassesForm implements AfterViewInit {
+  apiAction = `${GlobalConfig.apiUrl}/StarSpectralClasses`;
   starSpectralClassForm: FormGroup;
   constructor(
     private formBuilder: FormBuilder,
@@ -36,18 +30,18 @@ export class StarSpectralClassesForm implements AfterViewInit {
       description: ['', Validators.required]
     });
   }
-  ngAfterViewInit(): void {
+
+  ngAfterViewInit() {
     if (this.data != null || this.data != undefined) {
       this.loadFromData();
     }
   }
 
   loadFromData() {
-    fetch(`${GlobalConfig.apiUrl}/StarSpectralClasses/${this.data}`, { method: 'GET' })
+    fetch(`${this.apiAction}/${this.data}`, { method: 'GET' })
       .then(response => response.json())
       .then(formData => {
         this.starSpectralClassForm?.patchValue(formData);
-        console.log(formData);
       })
       .catch(error => {
         console.error('Error fetching data:', error);
@@ -56,7 +50,7 @@ export class StarSpectralClassesForm implements AfterViewInit {
 
   onSubmit() {
     const httpMethod = this.data ? "PUT" : "POST";
-    fetch(`${GlobalConfig.apiUrl}/StarSpectralClasses`, {
+    fetch(`${this.apiAction}`, {
       method: httpMethod,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(this.starSpectralClassForm.value)

@@ -27,6 +27,8 @@ export interface StellarObjectTypes {
   imports: [CustomTable, CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, StellarObjectTypesForm, MatProgressSpinnerModule, MatMenuModule],
 })
 export class StellarObjectTypesService implements AfterViewInit {
+  title = 'Stellar Object Types';
+  apiAction = `${GlobalConfig.apiUrl}/StellarObjectTypes`;
   availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
   tableColumns = [
     { columnDef: 'position', header: 'No.', cell: (item: any) => `${item.no}`, cssClass: 'w-1/32' },
@@ -40,15 +42,12 @@ export class StellarObjectTypesService implements AfterViewInit {
   readonly formDialog = inject(MatDialog);
   selectedFile: File | null = null;
 
-  constructor() {
-    this.fetchData();
-  }
   ngAfterViewInit() {
-    
+    this.fetchData();
   }
 
   fetchData() {
-    fetch(`${GlobalConfig.apiUrl}/StellarObjectTypes`)
+    fetch(`${this.apiAction}`)
       .then(response => response.json())
       .then(result => {
         this.objects = result.map((item: StellarObjectTypes, itemPosition: number) => ({
@@ -60,6 +59,8 @@ export class StellarObjectTypesService implements AfterViewInit {
         this.isLoading = false;
       })
       .catch(error => {
+        console.error('Error fetching data:', error);
+        Swal.fire('Error', 'Failed to load data', 'error');
         this.isLoading = false;
       });
   }
@@ -98,7 +99,7 @@ export class StellarObjectTypesService implements AfterViewInit {
       confirmButtonText: "Yes, delete it!"
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`${GlobalConfig.apiUrl}/StellarObjectTypes/${stellarObject.id}`, { method: 'DELETE' })
+        fetch(`${this.apiAction}/${stellarObject.id}`, { method: 'DELETE' })
           .then(response => {
             this.fetchData();
             Swal.fire({
@@ -130,7 +131,7 @@ export class StellarObjectTypesService implements AfterViewInit {
     const fileFormData = new FormData();
     fileFormData.append('file', this.selectedFile);
 
-    fetch(`${GlobalConfig.apiUrl}/StellarObjectTypes/import`, {
+    fetch(`${this.apiAction}/import`, {
       method: 'POST',
       body: fileFormData
     })
@@ -166,6 +167,6 @@ export class StellarObjectTypesService implements AfterViewInit {
   }
 
   onExport(format: string) {
-    window.open(`${GlobalConfig.apiUrl}/StellarObjectTypes/export?format=${format}`, '_blank');
+    window.open(`${this.apiAction}/export?format=${format}`, '_blank');
   }
 }

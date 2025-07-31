@@ -27,8 +27,9 @@ export interface StarSpectralClasses {
   templateUrl: './star-spectral-classes.html',
   styleUrl: './star-spectral-classes.css'
 })
-export class StarSpectralClassesComponent {
+export class StarSpectralClassesComponent implements AfterViewInit {
   title = 'Star Spectral Classes';
+  apiAction = `${GlobalConfig.apiUrl}/StarSpectralClasses`;
   availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
   tableColumns = [
     { columnDef: 'position', header: 'No.', cell: (item: any) => `${item.no}`, cssClass: 'w-1/32' },
@@ -44,12 +45,12 @@ export class StarSpectralClassesComponent {
   readonly formDialog = inject(MatDialog);
   selectedFile: File | null = null;
 
-  constructor() {
+  ngAfterViewInit() {
     this.fetchData();
   }
 
   fetchData() {
-    fetch(`${GlobalConfig.apiUrl}/StarSpectralClasses`)
+    fetch(`${this.apiAction}`)
       .then(response => response.json())
       .then(result => {
         this.objects = result.map((item: StarSpectralClasses, itemPosition: number) => ({
@@ -64,6 +65,8 @@ export class StarSpectralClassesComponent {
         this.isLoading = false;
       })
       .catch(error => {
+        console.error('Error fetching data:', error);
+        Swal.fire('Error', 'Failed to load data', 'error');
         this.isLoading = false;
       });
   }
@@ -101,7 +104,7 @@ export class StarSpectralClassesComponent {
       confirmButtonText: "Yes, delete it!"
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`${GlobalConfig.apiUrl}/StarSpectralClasses/${starSpectralClass.id}`, { method: 'DELETE' })
+        fetch(`${this.apiAction}/${starSpectralClass.id}`, { method: 'DELETE' })
           .then(response => {
             this.fetchData();
             Swal.fire({
@@ -144,7 +147,7 @@ export class StarSpectralClassesComponent {
     const fileFormData = new FormData();
     fileFormData.append('file', this.selectedFile);
 
-    fetch(`${GlobalConfig.apiUrl}/StarSpectralClasses/import`, {
+    fetch(`${this.apiAction}/import`, {
       method: 'POST',
       body: fileFormData
     })
@@ -180,6 +183,6 @@ export class StarSpectralClassesComponent {
   }
 
   onExport(format: string) {
-    window.open(`${GlobalConfig.apiUrl}/StarSpectralClasses/export?format=${format}`, '_blank');
+    window.open(`${this.apiAction}/export?format=${format}`, '_blank');
   }
 }

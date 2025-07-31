@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Xml.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -9,6 +10,7 @@ namespace StellarDB.Models.StarSpectralClasses
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
+        [MaxLength(2)]
         public string Code { get; set; }
         public string TemperatureRange { get; set; }
         public string Color { get; set; }

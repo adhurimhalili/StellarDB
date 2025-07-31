@@ -24,7 +24,7 @@ import { GlobalConfig } from '../../../global-config';
 })
 export class StellarObjectTypesForm implements AfterViewInit {
   stellarBodyForm: FormGroup;
-
+  apiAction = `${GlobalConfig.apiUrl}/StellarObjectTypes`;
   constructor(
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<StellarObjectTypesForm>,
@@ -43,7 +43,7 @@ export class StellarObjectTypesForm implements AfterViewInit {
   }
 
   loadFromData() {
-    fetch(`${GlobalConfig.apiUrl}/StellarObjectTypes/${this.data}`, { method: 'GET' })
+    fetch(`${this.apiAction}/${this.data}`, { method: 'GET' })
       .then(response => response.json())
       .then(formData => {
         this.stellarBodyForm?.patchValue(formData);
@@ -56,7 +56,7 @@ export class StellarObjectTypesForm implements AfterViewInit {
   onSubmit() {
     var httpMethod = this?.data ? "PUT" : "POST";
     if (this.stellarBodyForm?.valid) {
-      fetch(`${GlobalConfig.apiUrl}api/StellarObjectTypes`, {
+      fetch(`${this.apiAction}`, {
         method: httpMethod,
         headers: {
           'Content-Type': 'application/json',
