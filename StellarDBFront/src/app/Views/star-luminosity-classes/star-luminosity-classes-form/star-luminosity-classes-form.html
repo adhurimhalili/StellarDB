@@ -1,0 +1,31 @@
+<div class="">
+  <span *ngIf="data != null" mat-dialog-title>Modify Star Luminosity Class</span>
+  <span *ngIf="data == null" mat-dialog-title>Add Star Luminosity Class</span>
+</div>
+<mat-dialog-content>
+  <!-- Form -->
+  <form [formGroup]="starLuminosityClassForm" (ngSubmit)="onSubmit()">
+    <!-- Code -->
+    <div class="grid grid-cols-2 gap-2">
+      <mat-form-field appearance="outline">
+        <mat-label>Code</mat-label>
+        <input matInput formControlName="code" maxlength="4">
+      </mat-form-field>
+
+      <!-- Name -->
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name">
+      </mat-form-field>
+    </div>
+    <!-- Description -->
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Description</mat-label>
+      <input matInput formControlName="description">
+    </mat-form-field>
+
+    <!-- Submit Button -->
+    <div class="flex justify-center">
+      <button color="primary" mat-button type="submit">Save</button>
+    </div>
+  </form>
