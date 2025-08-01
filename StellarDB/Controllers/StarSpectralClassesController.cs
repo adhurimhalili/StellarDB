@@ -58,7 +58,7 @@ namespace StellarDB.Controllers
             var result = await _starSpectralClasses.ReplaceOneAsync(filter, starSpectralClass);
             if (result.ModifiedCount == 0) return NotFound("Failed to update Star Spectral Class.");
 
-            return Ok(starSpectralClass);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
@@ -114,9 +114,7 @@ namespace StellarDB.Controllers
             if (items == null || items.Any(x => string.IsNullOrWhiteSpace(x.Code)))
                 return BadRequest(new { error = "One or more entries are missing a 'Code' value." });
 
-            var existingNames = (await _starSpectralClasses
-                .Find(_ => true)  // This fetches all documents
-                .ToListAsync())
+            var existingNames = (await _starSpectralClasses.Find(_ => true).ToListAsync())
                 .Select(x => x.Code)
                 .ToHashSet();
 
