@@ -5,61 +5,70 @@
 
 <!-- Form -->
 <form [formGroup]="starForm" (ngSubmit)="onSubmit()">
-  <mat-dialog-content class="grid grid-cols-2 row-span-4 gap-4">
-    <!-- Name -->
-    <mat-form-field appearance="outline">
-      <mat-label>Name</mat-label>
-      <input matInput formControlName="name" maxlength="50">
-    </mat-form-field>
+  <mat-dialog-content class="">
+    <div class="grid grid-cols-2 gap-4">
+      <!-- Name -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" maxlength="50">
+      </mat-form-field>
 
-    <!-- Spectral Class -->
-    <mat-form-field appearance="outline">
-      <mat-label>Spectral Class</mat-label>
-      <mat-select formControlName="spectralClassId">
-        <mat-option *ngFor="let spectralClass of starSpectralClasses" [value]="spectralClass.id">
-          {{ spectralClass.code }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <!--
-    Luminosity Class
-      TO DO
-      -->
-    <!-- Magnitude -->
-    <mat-form-field appearance="outline">
-      <mat-label>Magnitude</mat-label>
-      <input matInput formControlName="magnitude" type="number" step="any">
-    </mat-form-field>
+      <!-- Spectral Class -->
+      <mat-form-field appearance="outline">
+        <mat-label>Spectral Class</mat-label>
+        <mat-select formControlName="spectralClassId">
+          <mat-option *ngFor="let spectralClass of starSpectralClasses" [value]="spectralClass.id">
+            {{ spectralClass.code }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    <!-- Diameter -->
-    <mat-form-field appearance="outline">
-      <mat-label>Diameter (km)</mat-label>
-      <input matInput formControlName="diameter" type="number" step="any">
-    </mat-form-field>
+      <!-- Luminosity Class -->
+      <mat-form-field appearance="outline">
+        <mat-label>Luminosity Class</mat-label>
+        <mat-select formControlName="spectralClassId">
+          <mat-option *ngFor="let luminosityClass of starLuminosityClasses" [value]="luminosityClass.id">
+            {{ luminosityClass.code }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    <!-- Distance -->
-    <mat-form-field appearance="outline">
-      <mat-label>Distance (ly)</mat-label>
-      <input matInput formControlName="distance" type="number" step="any">
-    </mat-form-field>
+      <!-- Magnitude -->
+      <mat-form-field appearance="outline">
+        <mat-label>Magnitude</mat-label>
+        <input matInput formControlName="magnitude" type="number" step="any">
+      </mat-form-field>
 
-    <!-- Mass -->
-    <mat-form-field appearance="outline">
-      <mat-label>Mass (kg)</mat-label>
-      <input matInput formControlName="mass" type="number" step="any">
-    </mat-form-field>
+      <!-- Diameter -->
+      <mat-form-field appearance="outline">
+        <mat-label>Diameter (km)</mat-label>
+        <input matInput formControlName="diameter" type="number" step="any">
+      </mat-form-field>
 
-    <!-- Temperature -->
-    <mat-form-field appearance="outline">
-      <mat-label>Temperature (K)</mat-label>
-      <input matInput formControlName="temperature" type="number" step="any">
-    </mat-form-field>
+      <!-- Distance -->
+      <mat-form-field appearance="outline">
+        <mat-label>Distance (ly)</mat-label>
+        <input matInput formControlName="distance" type="number" step="any">
+      </mat-form-field>
 
-    <!-- Discovery Date -->
-    <mat-form-field appearance="outline">
-      <mat-label>Discovery Date</mat-label>
-      <input matInput formControlName="discoveryDate" type="date">
-    </mat-form-field>
+      <!-- Mass -->
+      <mat-form-field appearance="outline">
+        <mat-label>Mass (kg)</mat-label>
+        <input matInput formControlName="mass" type="number" step="any">
+      </mat-form-field>
+
+      <!-- Temperature -->
+      <mat-form-field appearance="outline">
+        <mat-label>Temperature (K)</mat-label>
+        <input matInput formControlName="temperature" type="number" step="any">
+      </mat-form-field>
+
+      <!-- Discovery Date -->
+      <mat-form-field appearance="outline">
+        <mat-label>Discovery Date</mat-label>
+        <input matInput formControlName="discoveryDate" type="date">
+      </mat-form-field>
+    </div>
   </mat-dialog-content>
   <mat-dialog-actions align="center">
     <!-- Submit Button -->

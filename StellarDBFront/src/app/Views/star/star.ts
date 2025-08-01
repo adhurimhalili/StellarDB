@@ -11,11 +11,13 @@ import Swal from 'sweetalert2';
 import { GlobalConfig } from '../../global-config';
 import { CustomTable } from '../../Shared/custom-table/custom-table';
 import { StarForm } from './star-form/star-form';
+import { StarLuminosityClassesComponent } from '../star-luminosity-classes/star-luminosity-classes';
 
 export interface Star {
   id: string;
   name: string;
   spectralClassCode?: string;
+  luminosityClassCode?: string;
   magnitude: number;
   distance: number;
   diameter: number;
@@ -36,6 +38,7 @@ export class StarComponent implements AfterViewInit {
     { columnDef: 'position', header: 'No.', cell: (item: any) => `${item.no}`, cssClass: 'w-1/32' },
     { columnDef: 'name', header: 'Name', cssClass: 'w-1/24' },
     { columnDef: 'spectralClassCode', header: 'Spectral Class' },
+    { columnDef: 'luminosityClassCode', header: 'Luminosity Class' },
     { columnDef: 'magnitude', header: 'Magnitude', cssClass: 'w-1/16' },
     { columnDef: 'distance', header: 'Distance (ly)' },
     { columnDef: 'diameter', header: 'Diameter (km)' },
@@ -66,6 +69,7 @@ export class StarComponent implements AfterViewInit {
           id: item.id,
           name: item.name,
           spectralClassCode: item.spectralClassCode,
+          luminosityClassCode: item.luminosityClassCode,
           magnitude: item.magnitude,
           distance: item.distance,
           diameter: item.diameter,

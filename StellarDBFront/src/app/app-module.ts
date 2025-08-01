@@ -10,10 +10,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 // Components
 import { Header } from './Shared/header/header';
 import { Home } from './Views/home/home';
+import { ThemeToggleSwitchComponent } from './Shared/theme-toggle-switch/theme-toggle-switch';
 //import { StellarObjectTypes } from './Views/stellar-object-types/stellar-object-types';
 
 @NgModule({
@@ -21,6 +23,7 @@ import { Home } from './Views/home/home';
     App,
     Header,
     Home,
+    ThemeToggleSwitchComponent,
   ],
   imports: [
     BrowserModule,
@@ -29,7 +32,8 @@ import { Home } from './Views/home/home';
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
-    MatCardModule
+    MatCardModule,
+    MatTooltipModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners()

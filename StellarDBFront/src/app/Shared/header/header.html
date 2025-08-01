@@ -1,7 +1,8 @@
 <mat-toolbar class="" color="primary">
   <span routerLink="/">StellarDB</span>
   <span class="spacer"></span>
-  <div>
+  <div class="grid grid-cols-3 row-span-1">
+    <app-theme-toggle-switch />
     <button mat-button routerLink="/">Home</button>
     <button matButton [matMenuTriggerFor]="menu">Explore<mat-icon>more_vert</mat-icon></button>
     <mat-menu #menu="matMenu">

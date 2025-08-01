@@ -10,6 +10,7 @@ namespace StellarDB.Models.Star
         public string? Id { get; set; }
         public string Name { get; set; }
         public string? SpectralClassId { get; set; }
+        public string? LuminosityClassId { get; set; }
         public double Magnitude { get; set; }
         public double Distance { get; set; } // in light-years
         public double Diameter { get; set; } // in kilometers

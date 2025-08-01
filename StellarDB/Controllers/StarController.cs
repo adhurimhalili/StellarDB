@@ -1,12 +1,12 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Xml.Serialization;
-using DocumentFormat.OpenXml.Drawing.Charts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using StellarDB.Data;
 using StellarDB.Models.Star;
+using StellarDB.Models.StarLuminosityClasses;
 using StellarDB.Models.StarSpectralClasses;
 using StellarDB.Services;
 
@@ -18,12 +18,14 @@ namespace StellarDB.Controllers
     {
         private readonly IMongoCollection<StarModel>? _stars;
         private readonly IMongoCollection<StarSpectralClassesModel>? _spectralClasses;
+        private readonly IMongoCollection<StarLuminosityClassesModel>? _luminosityClasses;
         private readonly CsvServices _csvServices;
         public StarController(MongoDbService mongoDbService,
                                  CsvServices csvServices)
         {
             _stars = mongoDbService.Database.GetCollection<StarModel>("Stars");
             _spectralClasses = mongoDbService.Database.GetCollection<StarSpectralClassesModel>("StarSpectralClasses");
+            _luminosityClasses = mongoDbService.Database.GetCollection<StarLuminosityClassesModel>("StarLuminosityClasses");
             _csvServices = csvServices;
         }
 
@@ -32,13 +34,16 @@ namespace StellarDB.Controllers
         {
             var stars = await _stars.Find(FilterDefinition<StarModel>.Empty).ToListAsync();
             var spectralClasses = await _spectralClasses.Find(FilterDefinition<StarSpectralClassesModel>.Empty).ToListAsync();
-            var classDict = spectralClasses.ToDictionary(c => c.Id, c => c.Code);
+            var luminosityClasses = await _luminosityClasses.Find(FilterDefinition<StarLuminosityClassesModel>.Empty).ToListAsync();
+            var spectralClassDict = spectralClasses.ToDictionary(c => c.Id, c => c.Code);
+            var luminosityClassDict = luminosityClasses.ToDictionary(lc => lc.Id, lc => lc.Code);
 
             var result = stars.Select(star => new
             {
                 star.Id,
                 star.Name,
-                SpectralClassCode = classDict.ContainsKey(star.SpectralClassId) ? classDict[star.SpectralClassId] : "Unknown",
+                SpectralClassCode = spectralClassDict.ContainsKey(star.SpectralClassId) ? spectralClassDict[star.SpectralClassId] : "Unknown",
+                LuminosityClassCode = luminosityClassDict.ContainsKey(star.LuminosityClassId) ? luminosityClassDict[star.LuminosityClassId] : "Unknown",
                 star.Magnitude,
                 star.Distance,
                 star.Diameter,
@@ -60,11 +65,6 @@ namespace StellarDB.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(StarModel star)
-        {
-            await _stars.InsertOneAsync(star);
-            return CreatedAtAction(nameof(GetById), new { id = star.Id }, star);
-        }
 
         [HttpPut]
         public async Task<ActionResult> Update(StarModel star)
@@ -104,7 +104,8 @@ namespace StellarDB.Controllers
                     items = await _csvServices.ParseCsvAsync<StarModel>(file.OpenReadStream());
                     break;
                 case ".json":
-                    items = JsonSerializer.Deserialize<List<StarModel>>(fileContent);
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    items = JsonSerializer.Deserialize<List<StarModel>>(fileContent, options);
                     break;
                 case ".xml":
                     var serializer = new XmlSerializer(typeof(StarXmlWrapper));

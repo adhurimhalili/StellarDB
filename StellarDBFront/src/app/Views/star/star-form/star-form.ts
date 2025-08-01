@@ -7,8 +7,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { GlobalConfig } from '../../../global-config';
-import { StarSpectralClasses } from '../../star-spectral-classes/star-spectral-classes';
 import { MatSelectModule } from '@Angular/material/select'
+import { StarSpectralClasses } from '../../star-spectral-classes/star-spectral-classes';
+import { StarLuminosityClasses } from '../../star-luminosity-classes/star-luminosity-classes';
 
 
 @Component({
@@ -21,6 +22,7 @@ export class StarForm {
   private apiAction = `${GlobalConfig.apiUrl}/Star`;
   starForm: FormGroup;
   starSpectralClasses: StarSpectralClasses[] = [];
+  starLuminosityClasses: StarLuminosityClasses[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -31,6 +33,7 @@ export class StarForm {
       id: data,
       name: ['', [Validators.required, Validators.maxLength(50)]],
       spectralClassId: [null, Validators.required],
+      luminosityClassId: [null, Validators.required],
       magnitude: [null, Validators.required],
       distance: [null, Validators.required],
       diameter: [null, Validators.required],
@@ -46,11 +49,18 @@ export class StarForm {
       .then(data => this.starSpectralClasses = data);
   }
 
+  fetchLuminosityClasses() {
+    fetch(`${GlobalConfig.apiUrl}/StarLuminosityClasses`, { method: 'GET' })
+      .then(response => response.json())
+      .then(data => this.starLuminosityClasses = data);
+  }
+
   ngAfterViewInit() {
     if (this.data != null || this.data != undefined) {
       this.loadFromData();
     }
     this.fetchSpectralClasses();
+    this.fetchLuminosityClasses();
   }
 
   loadFromData() {

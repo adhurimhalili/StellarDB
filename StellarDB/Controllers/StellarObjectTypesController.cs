@@ -89,7 +89,8 @@ namespace StellarDB.Controllers
                     items = await _csvServices.ParseCsvAsync<StellarObjectTypesModel>(file.OpenReadStream());
                     break;
                 case ".json":
-                    items = JsonSerializer.Deserialize<List<StellarObjectTypesModel>>(fileContent);
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    items = JsonSerializer.Deserialize<List<StellarObjectTypesModel>>(fileContent, options);
                     break;
                 case ".xml":
                     var serializer = new XmlSerializer(typeof(StellarObjectTypesXmlWrapper));

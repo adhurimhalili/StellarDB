@@ -139,7 +139,7 @@ namespace StellarDB.Controllers
 
             format = format.ToLowerInvariant();
             string fileBytes = null;
-            string fullFileName = $"star-spectral-classes-{DateTime.Now}.{format}";
+            string fullFileName = $"star-luminosity-classes-{DateTime.Now}.{format}";
             switch (format)
             {
                 case "json":
