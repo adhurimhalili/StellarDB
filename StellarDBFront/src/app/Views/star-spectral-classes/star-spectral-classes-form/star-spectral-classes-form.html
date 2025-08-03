@@ -2,9 +2,9 @@
   <span *ngIf="data != null" mat-dialog-title>Modify Star Spectral Class</span>
   <span *ngIf="data == null" mat-dialog-title>Add Star Spectral Class</span>
 </div>
-<mat-dialog-content>
-  <!-- Form -->
-  <form [formGroup]="starSpectralClassForm" (ngSubmit)="onSubmit()">
+<!-- Form -->
+<form [formGroup]="starSpectralClassForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
     <!-- Code -->
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>Code</mat-label>
@@ -28,11 +28,11 @@
       <mat-label>Description</mat-label>
       <input matInput formControlName="description">
     </mat-form-field>
-  </form>
-</mat-dialog-content>
-<mat-dialog-actions>
-  <!-- Submit Button -->
-  <div class="flex justify-center">
-    <button color="primary" mat-button type="submit">Save</button>
-  </div>
-</mat-dialog-actions>
+  </mat-dialog-content>
+  <mat-dialog-actions align="center">
+    <!-- Submit Button -->
+    <div class="flex justify-center">
+      <button color="primary" mat-button type="submit">Save</button>
+    </div>
+  </mat-dialog-actions>
+</form>
