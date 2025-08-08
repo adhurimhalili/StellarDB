@@ -1,0 +1,112 @@
+<div mat-dialog-title>{{title}}</div>
+<!-- Form -->
+<form [formGroup]="planetForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <div class="grid grid-cols-2 gap-4">
+      <!-- Name -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" maxlength="50">
+      </mat-form-field>
+
+      <!-- Star -->
+      <mat-form-field appearance="outline">
+        <mat-label>Star</mat-label>
+        <mat-select formControlName="starId">
+          <mat-option *ngFor="let star of stars" [value]="star.id">{{star.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Type -->
+      <mat-form-field appearance="outline">
+        <mat-label>Type</mat-label>
+        <mat-select formControlName="planetTypeId">
+          <mat-option *ngFor="let planetType of planetTypes" [value]="planetType.id">{{planetType.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Mass -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Mass</mat-label>
+        <input matInput type="number" formControlName="mass" maxlength="50">
+        <mat-hint>in Earth masses (M⊕)</mat-hint>
+      </mat-form-field>
+
+      <!-- Diameter -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Diameter</mat-label>
+        <input matInput type="number" formControlName="diameter" maxlength="50">
+        <mat-hint>in kilometers (km)</mat-hint>
+      </mat-form-field>
+
+      <!-- Rotation Period -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Rotation Period</mat-label>
+        <input matInput type="number" formControlName="rotationPeriod" maxlength="50">
+        <mat-hint>in hours (hr)</mat-hint>
+      </mat-form-field>
+
+      <!-- Orbital Period -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Orbital Period</mat-label>
+        <input matInput formControlName="orbitalPeriod" maxlength="50">
+        <mat-hint>in Earth days</mat-hint>
+      </mat-form-field>
+
+      <!-- Orbital Eccentricity -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Orbital Eccentricity</mat-label>
+        <input matInput type="number" formControlName="orbitalEccentricity" max="1" min="0">
+        <mat-hint>dimensionless value (0 for circular, 1 for parabolic)</mat-hint>
+        <mat-error></mat-error>
+      </mat-form-field>
+
+      <!-- Orbital Inclination -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Orbital Inclination</mat-label>
+        <input matInput type="number" formControlName="orbitalInclination" maxlength="50">
+        <mat-hint>in degrees</mat-hint>
+      </mat-form-field>
+
+      <!-- Semi Major Axis -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Semi Major Axis</mat-label>
+        <input matInput type="number" formControlName="semiMajorAxis" maxlength="50">
+        <mat-hint>in astronomical units (AU)</mat-hint>
+      </mat-form-field>
+
+      <!-- Distance From Star -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Distance From Star</mat-label>
+        <input matInput type="number" formControlName="distanceFromStar" maxlength="50">
+        <mat-hint>in astronomical units (AU)</mat-hint>
+      </mat-form-field>
+
+      <!-- Surface Temperature -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Surface Temperature</mat-label>
+        <input matInput type="number" formControlName="surfaceTemperature" maxlength="50">
+        <mat-hint>in Kelvin (K)</mat-hint>
+      </mat-form-field>
+
+      <!-- Discovery Date -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Discovery Date</mat-label>
+        <input matInput type="date" formControlName="discoveryDate" maxlength="50">
+      </mat-form-field>
+
+      <!-- Description -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="3"></textarea>
+      </mat-form-field>
+
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="center">
+    <!-- Submit Button -->
+    <div class="flex justify-center">
+      <button color="primary" mat-button type="submit">Save</button>
+    </div>
+  </mat-dialog-actions>
+</form>

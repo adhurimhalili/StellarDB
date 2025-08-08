@@ -26,7 +26,7 @@
       <!-- Luminosity Class -->
       <mat-form-field appearance="outline">
         <mat-label>Luminosity Class</mat-label>
-        <mat-select formControlName="spectralClassId">
+        <mat-select formControlName="luminosityClassId">
           <mat-option *ngFor="let luminosityClass of starLuminosityClasses" [value]="luminosityClass.id">
             {{ luminosityClass.code }}
           </mat-option>
@@ -53,7 +53,7 @@
 
       <!-- Mass -->
       <mat-form-field appearance="outline">
-        <mat-label>Mass (kg)</mat-label>
+        <mat-label>Mass (M☉)</mat-label>
         <input matInput formControlName="mass" type="number" step="any">
       </mat-form-field>
 
