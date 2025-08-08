@@ -1,0 +1,21 @@
+<div class="p-[25px]">
+  <mat-card appearance="outlined">
+    <!-- Header -->
+    <mat-card-header>
+      <mat-card-title class="h3">{{title}}</mat-card-title>
+      <!--<mat-card-subtitle class="">List</mat-card-subtitle>-->
+      <span class="spacer"></span>
+    </mat-card-header>
+
+    <!-- Table Component -->
+    <app-custom-table [columns]="tableColumns"
+                      [availableActions]="availableActions"
+                      [objects]="objects"
+                      [isLoading]="isLoading"
+                      (openForm)="onOpenForm($event)"
+                      (delete)="onDelete($event)"
+                      (export)="onExport($event)"
+                      (fileSelected)="onImportFile($event)">
+    </app-custom-table>
+  </mat-card>
+</div>

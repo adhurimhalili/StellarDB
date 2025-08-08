@@ -1,0 +1,73 @@
+<div mat-dialog-title>{{title}}</div>
+
+<form [formGroup]="chemicalElementForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <div class="grid grid-cols-2 gap-4">
+      <!-- Atomic Number -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Atomic Number</mat-label>
+        <input matInput formControlName="atomicNumber" type="number" required>
+      </mat-form-field>
+
+      <!-- Atomic Weight -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Atomic Weight</mat-label>
+        <input matInput formControlName="atomicWeight" type="number" step="any" required>
+      </mat-form-field>
+
+      <!-- Symbol -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Symbol</mat-label>
+        <input matInput formControlName="symbol" maxlength="3" required>
+      </mat-form-field>
+
+      <!-- Name -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" maxlength="50" required>
+      </mat-form-field>
+
+      <!-- Melting Point -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Melting Point (K)</mat-label>
+        <input matInput formControlName="meltingPoint" type="number" step="any">
+      </mat-form-field>
+
+      <!-- Boiling Point -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Boiling Point (K)</mat-label>
+        <input matInput formControlName="boilingPoint" type="number" step="any">
+      </mat-form-field>
+
+      <!-- Period -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Period</mat-label>
+        <input matInput formControlName="period" type="number" required>
+      </mat-form-field>
+
+      <!-- Group -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Group</mat-label>
+        <input matInput formControlName="group" type="number" required>
+      </mat-form-field>
+
+      <!-- Discovery Year -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>Discovery Year</mat-label>
+        <input matInput formControlName="discoveryYear" type="text" maxlength="4">
+      </mat-form-field>
+
+      <!-- Description -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="3"></textarea>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="center">
+    <!-- Submit Button -->
+    <div class="flex justify-center">
+      <button color="primary" mat-button type="submit">Save</button>
+    </div>
+  </mat-dialog-actions>
+</form>

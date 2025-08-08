@@ -5,6 +5,8 @@ import { StellarObjectTypesService } from './Views/stellar-object-types/stellar-
 import { StarSpectralClassesComponent } from './Views/star-spectral-classes/star-spectral-classes';
 import { StarComponent } from './Views/star/star';
 import { StarLuminosityClassesComponent } from './Views/star-luminosity-classes/star-luminosity-classes';
+import { ChemicalElementsComponent } from './Views/chemical-elements/chemical-elements';
+import { AtmosphericGasesComponent } from './Views/atmospheric-gases/atmospheric-gases';
 
 const routes: Routes = [
   { path: '', redirectTo: '/Home', pathMatch: 'full' },
@@ -13,6 +15,8 @@ const routes: Routes = [
   { path: 'StellarObjectsTypes', component: StellarObjectTypesService },
   { path: 'StarSpectralClasses', component: StarSpectralClassesComponent },
   { path: 'StarLuminosityClasses', component: StarLuminosityClassesComponent },
+  { path: 'ChemicalElements', component: ChemicalElementsComponent },
+  { path: 'AtmosphericGases', component: AtmosphericGasesComponent }
 ];
 
 @NgModule({
