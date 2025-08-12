@@ -144,16 +144,20 @@ namespace StellarDB.Controllers
             format = format.ToLowerInvariant();
             string fileBytes = null;
             string fullFileName = $"star-spectral-classes-{DateTime.Now}.{format}";
+            string contentType;
             switch (format)
             {
-                case "json":
-                    fileBytes = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });
-                    break;
                 case "csv":
                     fileBytes = _csvServices.ConvertToCsv(items);
+                    contentType = "text/csv";
+                    break;
+                case "json":
+                    fileBytes = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });
+                    contentType = "application/json";
                     break;
                 case "xml":
                     fileBytes = XmlBytes(items);
+                    contentType = "application/xml";
                     break;
                 case "xlsx":
                     var excelBytes = ExcelServices.ConvertToExcel(items);
@@ -162,7 +166,7 @@ namespace StellarDB.Controllers
                     return BadRequest(new { error = "Unsupported export format. Supported formats: json, csv, xml, xlsx." });
             }
 
-            return File(System.Text.Encoding.UTF8.GetBytes(fileBytes), $"application/{format}", $"{fullFileName}");
+            return File(System.Text.Encoding.UTF8.GetBytes(fileBytes), contentType, $"{fullFileName}");
         }
         private static string XmlBytes(List<StarSpectralClassesModel> stellarItems)
         {

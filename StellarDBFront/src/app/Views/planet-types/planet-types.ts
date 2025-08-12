@@ -10,60 +10,49 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import Swal from 'sweetalert2';
 import { GlobalConfig } from '../../global-config';
 import { CustomTable } from '../../Shared/custom-table/custom-table';
-import { StarForm } from './star-form/star-form';
+import { PlanetTypesForm } from './planet-types-form/planet-types-form';
 
-export interface Star {
+export interface PlanetType {
   id: string;
   name: string;
-  spectralClassCode?: string;
-  luminosityClassCode?: string;
-  magnitude: number;
-  distance: number;
-  diameter: number;
-  mass: number;
-  temperature: number;
-  discoveryDate: string; // dateOnly in C# not supported in TypeScript
+  code: string;
+  description?: string;
 }
 
 @Component({
-  selector: 'app-star',
+  selector: 'app-planet-types',
   imports: [CustomTable, CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule, MatMenuModule],
-  templateUrl: './star.html',
-  styleUrl: './star.css'
+  templateUrl: './planet-types.html',
+  styleUrl: './planet-types.css'
 })
-export class StarComponent implements AfterViewInit {
+export class PlanetTypesComponent implements AfterViewInit {
   availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
   tableColumns = [
     { columnDef: 'position', header: 'No.', cell: (item: any) => `${item.no}`, cssClass: 'w-1/32' },
     { columnDef: 'name', header: 'Name', cssClass: 'w-1/24' },
-    { columnDef: 'spectralClassCode', header: 'Spectral Class' },
-    { columnDef: 'luminosityClassCode', header: 'Luminosity Class' },
-    { columnDef: 'magnitude', header: 'Magnitude', cssClass: 'w-1/16' },
-    { columnDef: 'distance', header: 'Distance (ly)' },
-    { columnDef: 'diameter', header: 'Diameter (km)' },
-    { columnDef: 'mass', header: 'Mass (M☉)' },
-    { columnDef: 'temperature', header: 'Temperature (K)' },
-    { columnDef: 'discoveryDate', header: 'Discovery Date' }
+    { columnDef: 'code', header: 'Code' },
+    { columnDef: 'description', header: 'Description' }
   ];
 
-  title = 'Stars';
-  dataSource = new MatTableDataSource<Star>();
-  objects: Star[] = [];
+  title = 'Planet Types';
+  dataSource = new MatTableDataSource<PlanetType>();
+  objects: PlanetType[] = [];
   isLoading = true;
 
   private readonly formDialog = inject(MatDialog);
   private selectedFile: File | null = null;
-  private apiAction = `${GlobalConfig.apiUrl}/Star`;
+  private apiAction = `${GlobalConfig.apiUrl}/PlanetTypes`;
 
   ngAfterViewInit() {
     this.fetchData();
   }
 
   fetchData() {
-    fetch(`${this.apiAction}`)
+    this.isLoading = true;
+    fetch(this.apiAction)
       .then(response => response.json())
       .then(result => {
-        this.objects = result.map((items: Star, itemPosition: number) => ({
+        this.objects = result.map((items: PlanetType, itemPosition: number) => ({
           no: itemPosition + 1,
           ...items
         }));
@@ -77,17 +66,16 @@ export class StarComponent implements AfterViewInit {
       });
   }
 
-  onOpenForm(starId?: string) {
-    const dialogRef = this.formDialog.open(StarForm, {
-      width: '40%',
-      maxWidth: '600px',
-      data: starId
+  onOpenForm(planetTypeId?: string) {
+    const dialogRef = this.formDialog.open(PlanetTypesForm, {
+      width: '600px',
+      data: planetTypeId
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.fetchData();
       if (result) {
+        this.fetchData();
         Swal.fire({
-          title: starId ? "Updated!" : "Created!",
+          title: planetTypeId ? "Updated!" : "Created!",
           icon: "success",
           position: 'top',
           timer: 2000,
@@ -99,10 +87,10 @@ export class StarComponent implements AfterViewInit {
     });
   }
 
-  onDelete(star: Star) {
+  onDelete(planetType: PlanetType) {
     Swal.fire({
       title: 'Are you sure?',
-      html: `You are deleting <span class="text-blue-600 font-medium">${star.name}<span>.`,
+      html: `You are deleting <span class="text-blue-600 font-medium">${planetType.name}<span>.`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -110,7 +98,7 @@ export class StarComponent implements AfterViewInit {
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`${this.apiAction}/${star.id}`, { method: 'DELETE' })
+        fetch(`${this.apiAction}/${planetType.id}`, { method: 'DELETE' })
           .then(response => {
             this.fetchData();
             Swal.fire({
@@ -149,7 +137,6 @@ export class StarComponent implements AfterViewInit {
       });
       return;
     }
-
     const fileFormData = new FormData();
     fileFormData.append('file', this.selectedFile);
 

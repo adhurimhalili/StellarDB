@@ -65,6 +65,11 @@ namespace StellarDB.Controllers
         }
 
         [HttpPost]
+        public async Task<ActionResult<StarModel>> Create(StarModel star)
+        {
+            await _stars.InsertOneAsync(star);
+            return CreatedAtAction(nameof(GetById), new { id = star.Id }, star);
+        }
 
         [HttpPut]
         public async Task<ActionResult> Update(StarModel star)
@@ -133,10 +138,7 @@ namespace StellarDB.Controllers
                     return BadRequest("Unsupported file format. Please upload a CSV, JSON, XML, or Excel file.");
             }
 
-            if (items is null || !items.Any())
-            {
-                return BadRequest("No valid data found in the uploaded file.");
-            }
+            if (items is null || !items.Any()) return BadRequest("No valid data found in the uploaded file.");
 
             var existingStars = (await _stars.Find(_stars => true).ToListAsync())
                 .Select(x => x.Name.ToLowerInvariant())
@@ -163,29 +165,34 @@ namespace StellarDB.Controllers
             if (items == null || !items.Any()) return NotFound("No data available for export.");
 
             format = format.ToLowerInvariant();
-            string fileBytes = null;
-            string fullFileName = $"star-spectral-classes-{DateTime.Now}.{format}";
+            string fileContent = string.Empty;
+            string fileContentType = string.Empty;
+            string fullFileName = $"stars-{DateTime.Now}.{format}";
             switch (format)
             {
-                case "json":
-                    fileBytes = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });
-                    break;
                 case "csv":
-                    fileBytes = _csvServices.ConvertToCsv(items);
+                    fileContent = _csvServices.ConvertToCsv(items);
+                    fileContentType = "text/csv";
+                    break;
+                case "json":
+                    fileContent = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });
+                    fileContentType = "application/json";
                     break;
                 case "xml":
-                    fileBytes = xmlBytes(items);
+                    fileContent = xmlBytes(items);
+                    fileContentType = "application/xml";
                     break;
                 case "xlsx":
                     {
                         var excelBytes = ExcelServices.ConvertToExcel(items);
-                        return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{fullFileName}");
+                        fileContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        return File(excelBytes, fileContentType, fullFileName);
                     }
                 default:
                     return BadRequest(new { error = "Unsupported export format. Supported formats: json, csv, xml, xlsx." });
             }
-
-            return File(System.Text.Encoding.UTF8.GetBytes(fileBytes), $"application/{format}", $"{fullFileName}");
+            byte[] fileBytes = System.Text.Encoding.UTF8.GetBytes(fileContent);
+            return File(fileBytes, fileContentType, fullFileName);
         }
 
         private string xmlBytes(List<StarModel> starItems)
