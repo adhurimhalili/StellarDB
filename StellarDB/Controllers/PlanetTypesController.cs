@@ -108,7 +108,7 @@ namespace StellarDB.Controllers
             }
 
             if (items == null || items.Any(x => string.IsNullOrWhiteSpace(x.Name)))
-                return BadRequest(new { error = "One or more entries are missing a 'Code' value." });
+                return BadRequest(new { error = "One or more entries are missing a 'Name' value." });
 
             var existingNames = (await _planetTypes.Find(_ => true).ToListAsync())
                 .Select(x => x.Name)

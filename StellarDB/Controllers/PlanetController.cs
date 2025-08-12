@@ -55,7 +55,7 @@ namespace StellarDB.Controllers
                 planet.DistanceFromStar,
                 planet.SurfaceTemperature,
                 DiscoveryDate = planet.DiscoveryDate.ToString("yyyy-MM-dd"),
-                StarName = starDict.ContainsKey(planet.StarId) ? starDict[planet.StarId] : "Unknown",
+                StarName = planet.StarId != null && starDict.ContainsKey(planet.StarId) ? starDict[planet.StarId] : "Unknown",
                 planet.Description
             });
             return result;

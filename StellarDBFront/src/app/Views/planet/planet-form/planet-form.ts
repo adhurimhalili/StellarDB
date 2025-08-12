@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatSelectModule } from '@Angular/material/select'
+import { MatSelectModule } from '@angular/material/select'
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { GlobalConfig } from '../../../global-config';
 import { PlanetType } from '../../planet-types/planet-types';
@@ -38,7 +38,7 @@ export class PlanetForm {
       diameter: [null, Validators.required],
       rotationPeriod: [null, Validators.required],
       orbitalPeriod: [null, Validators.required],
-      orbitalEccentricity: [null, Validators.required, Validators.min(0), Validators.max(1)],
+      orbitalEccentricity: [null, [Validators.required, Validators.min(0), Validators.max(1)]],
       orbitalInclination: [null, Validators.required],
       semiMajorAxis: [null, Validators.required],
       distanceFromStar: [null, Validators.required],

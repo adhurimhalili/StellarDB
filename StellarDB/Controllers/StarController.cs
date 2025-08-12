@@ -186,7 +186,7 @@ namespace StellarDB.Controllers
                     {
                         var excelBytes = ExcelServices.ConvertToExcel(items);
                         fileContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                        return File(excelBytes, fileContent, fullFileName);
+                        return File(excelBytes, fileContentType, fullFileName);
                     }
                 default:
                     return BadRequest(new { error = "Unsupported export format. Supported formats: json, csv, xml, xlsx." });
