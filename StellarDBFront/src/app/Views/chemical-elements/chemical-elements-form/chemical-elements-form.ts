@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { GlobalConfig } from '../../../global-config';
-import { MatSelectModule } from '@Angular/material/select'
+import { MatSelectModule } from '@angular/material/select'
 
 @Component({
   selector: 'app-chemical-elements-form',
