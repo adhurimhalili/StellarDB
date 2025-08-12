@@ -16,7 +16,7 @@ namespace StellarDB.Models.ChemicalElements
         public double? BoilingPoint { get; set; }
         public int Period { get; set; }
         public int Group { get; set; }
-        public string? DiscoveryYear { get; set; }
+        public int? DiscoveryYear { get; set; }
         public string? Description { get; set; }
     }
 
@@ -45,7 +45,7 @@ namespace StellarDB.Models.ChemicalElements
         [XmlElement("Group")]
         public int Group { get; set; }
         [XmlElement("DiscoveryDate")]
-        public string? DiscoveryYear { get; set; }
+        public int? DiscoveryYear { get; set; }
         [XmlElement("Description")]
         public string? Description { get; set; }
     }

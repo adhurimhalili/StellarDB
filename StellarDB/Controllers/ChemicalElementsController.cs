@@ -34,10 +34,7 @@ namespace StellarDB.Controllers
         public async Task<ActionResult<ChemicalElementsModel?>> GetById(string id)
         {
             var element = await _chemicalElements.Find(e => e.Id == id).FirstOrDefaultAsync();
-            if (element == null)
-            {
-                return NotFound();
-            }
+            if (element == null) return NotFound();
             return element;
         }
 
@@ -100,7 +97,7 @@ namespace StellarDB.Controllers
                         BoilingPoint = x.BoilingPoint,
                         Period = x.Period,
                         Group = x.Group,
-                        DiscoveryYear = !x.DiscoveryYear.IsNullOrEmpty() ? x.DiscoveryYear : "Unknown",
+                        DiscoveryYear = x.DiscoveryYear
                     }).ToList();
                     break;
                 case ".xls":
@@ -179,7 +176,7 @@ namespace StellarDB.Controllers
                     BoilingPoint = e.BoilingPoint,
                     Period = e.Period,
                     Group = e.Group,
-                    DiscoveryYear = !e.DiscoveryYear.IsNullOrEmpty() ? e.DiscoveryYear : "Unknown",
+                    DiscoveryYear = e.DiscoveryYear,
                     Description = e.Description
                 }).ToList()
             };

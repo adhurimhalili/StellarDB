@@ -22,7 +22,7 @@ export interface ChemicalElement {
   boilingPoint: number;
   period: number;
   group: number;
-  discoveryYear: string;
+  discoveryYear: number;
   description?: string;
 }
 
@@ -43,7 +43,7 @@ export class ChemicalElementsComponent implements AfterViewInit {
     { columnDef: 'boilingPointText', header: 'Boiling Point (K)' },
     { columnDef: 'period', header: 'Period' },
     { columnDef: 'group', header: 'Group' },
-    { columnDef: 'discoveryYear', header: 'Discovery Year' }
+    { columnDef: 'discoveryDateText', header: 'Discovery Year' }
   ];
   title = 'Chemical Elements';
   dataSource = [];
@@ -65,6 +65,7 @@ export class ChemicalElementsComponent implements AfterViewInit {
         this.objects = result.map((item: ChemicalElement, itemPosition: number) => ({
           meltingPointText: item.meltingPoint == null ? "N/A" : item.meltingPoint,
           boilingPointText: item.boilingPoint == null ? "N/A" : item.boilingPoint,
+          discoveryDateText: item.discoveryYear == null ? "Ancient" : item.discoveryYear,
           ...item
         }))
         this.isLoading = false;
