@@ -46,7 +46,7 @@ export class AtmosphericGasesForm {
   }
 
   loadFromData() {
-    fetch(`${this.apiAction}/${this.data.gasId}`, { method: 'GET' })
+    fetch(`${this.apiAction}/${this.data}`, { method: 'GET' })
       .then(response => response.json())
       .then(formData => {
         this.atmosphericGasForm.patchValue(formData);
