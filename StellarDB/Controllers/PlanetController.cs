@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using StellarDB.Data;
+using StellarDB.Models.AtmosphericGases;
+using StellarDB.Models.ChemicalElements;
 using StellarDB.Models.Planet;
 using StellarDB.Models.PlanetTypes;
 using StellarDB.Models.Star;
@@ -19,6 +21,8 @@ namespace StellarDB.Controllers
     {
         private readonly IMongoCollection<PlanetModel>? _planets;
         private readonly IMongoCollection<PlanetTypesModel>? _planetTypes;
+        private readonly IMongoCollection<ChemicalElementsModel>? _chemicalElements;
+        private readonly IMongoCollection<AtmosphericGasesModel>? _atmosphereElements;
         private readonly IMongoCollection<StarModel>? _stars;
         private readonly CsvServices _csvServices;
         public PlanetController(MongoDbService mongoDbService,
@@ -26,8 +30,8 @@ namespace StellarDB.Controllers
         {
             _planets = mongoDbService.Database.GetCollection<PlanetModel>("Planets");
             _planetTypes = mongoDbService.Database.GetCollection<PlanetTypesModel>("PlanetTypes");
-            // Compositions Elements
-            // Atmosphere Elements
+            _chemicalElements = mongoDbService.Database.GetCollection<ChemicalElementsModel>("ChemicalElements");
+            _atmosphereElements = mongoDbService.Database.GetCollection<AtmosphericGasesModel>("AtmosphericGases");
             _stars = mongoDbService.Database.GetCollection<StarModel>("Stars");
             _csvServices = csvServices;
         }

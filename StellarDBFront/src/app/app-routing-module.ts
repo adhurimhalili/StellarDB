@@ -18,7 +18,7 @@ const routes: Routes = [
   { path: 'StarSpectralClasses', component: StarSpectralClassesComponent },
   { path: 'StarLuminosityClasses', component: StarLuminosityClassesComponent },
   { path: 'Planet', component: PlanetComponent },
-  { path: 'PlanetTypes', component: PlanetTypesComponent }
+  { path: 'PlanetTypes', component: PlanetTypesComponent },
   { path: 'ChemicalElements', component: ChemicalElementsComponent },
   { path: 'AtmosphericGases', component: AtmosphericGasesComponent }
 ];

@@ -28,8 +28,6 @@ export interface Planet {
   surfaceTemperature: number;
   discoveryDate: string; // dateOnly in C# not supported in TypeScript
   description?: string;
-//  composition?: string;
-//  atmosphere?: string;
 }
 
 @Component({
@@ -89,8 +87,8 @@ export class PlanetComponent implements AfterViewInit {
 
   onOpenForm(planetId?: string) {
     const dialogRef = this.formDialog.open(PlanetForm, {
-      width: '40%',
-      maxWidth: '600px',
+      width: '60%',
+      maxWidth: '1000px',
       data: planetId
     });
     dialogRef.afterClosed().subscribe(result => {
