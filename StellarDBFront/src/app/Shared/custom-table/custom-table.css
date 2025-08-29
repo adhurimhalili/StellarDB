@@ -28,3 +28,20 @@ tr.detail-row {
 .detail-row td {
   border-bottom-width: 0;
 }
+
+/* Dark theme styles */
+.dark-theme .element-row:not(.expanded-row):hover {
+  background: #3f3f3f;
+}
+
+.dark-theme .expanded-row {
+  background: #2d2d2d;
+}
+
+.dark-theme tr.element-row {
+  background: #1e1e1e;
+}
+
+.dark-theme .detail-row td {
+  background: #1e1e1e;
+}

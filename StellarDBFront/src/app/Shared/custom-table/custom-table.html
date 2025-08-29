@@ -73,8 +73,9 @@
           <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
             <div class="element-detail"
                  [@detailExpand]="element === expandedElement ? 'expanded' : 'collapsed'">
-              <div>
-                <h3>CHECK</h3>
+              <div class="p-4">
+                <ng-container *ngTemplateOutlet="expandedContentTemplate; context: { $implicit: element }">
+                </ng-container>
               </div>
             </div>
           </td>

@@ -1,4 +1,4 @@
-import { Input, Output, EventEmitter, Component, ViewChild, AfterViewInit, OnDestroy, OnChanges, ChangeDetectorRef } from '@angular/core';
+import { Input, Output, EventEmitter, Component, ViewChild, AfterViewInit, OnDestroy, OnChanges, ChangeDetectorRef, ContentChild, TemplateRef } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -44,36 +44,11 @@ export class CustomTable implements OnDestroy, OnChanges, AfterViewInit {
   @Output() rowToggle = new EventEmitter<any>();
   @Output() toggleExpand = new EventEmitter<any>();
 
-  onToggleExpand(element: any, event: Event) {
-    event.stopPropagation();
-    this.expandedElement = this.expandedElement === element ? null : element;
-    this.toggleExpand.emit(this.expandedElement);
-    this.cdRef.detectChanges();
-  }
-
-  get displayedColumns(): string[] {
-    const baseColumns = this.expandableRows ? ['expand'] : [];
-    baseColumns.push(...this.columns.map(col => col.columnDef));
-    if (this.availableActions.includes('edit') || this.availableActions.includes('delete')) {
-      baseColumns.push('actions');
-    }
-    return baseColumns;
-  }
-
-  get expandedColumns(): string[] {
-    return ['expandedDetail'];
-  }
-
-  isExpandedRow = (index: number, row: any) => row.hasOwnProperty('expandedDetail');
-
-  isBaseRow = (index: number, row: any) => !row.hasOwnProperty('expandedDetail');
-
   constructor(private cdRef: ChangeDetectorRef) { }
-
-  // dataSource: MatTableDataSource<any> = new MatTableDataSource<any>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  @ContentChild('expandedContent') expandedContentTemplate!: TemplateRef<any>;
 
   ngAfterViewInit() {
     this.dataSource = new MatTableDataSource(this.objects);
@@ -107,4 +82,30 @@ export class CustomTable implements OnDestroy, OnChanges, AfterViewInit {
     // Unsubscribe to prevent memory leaks
     // this.navigationService.unsubscribe();
   }
+
+
+  // Expandable Rows
+  onToggleExpand(element: any, event: Event) {
+    this.expandedElement = this.expandedElement === element ? null : element;
+    this.toggleExpand.emit(element); // Emit just the element to match planet.ts expectation
+    this.cdRef.detectChanges();
+  }
+
+  get displayedColumns(): string[] {
+    const baseColumns = this.expandableRows ? ['expand'] : [];
+    baseColumns.push(...this.columns.map(col => col.columnDef));
+    if (this.availableActions.includes('edit') || this.availableActions.includes('delete')) {
+      baseColumns.push('actions');
+    }
+    return baseColumns;
+  }
+
+  get expandedColumns(): string[] {
+    return ['expandedDetail'];
+  }
+
+  isExpandedRow = (index: number, row: any) => row.hasOwnProperty('expandedDetail');
+
+  isBaseRow = (index: number, row: any) => !row.hasOwnProperty('expandedDetail');
+
 }

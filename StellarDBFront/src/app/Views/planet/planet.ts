@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject } from '@angular/core';
+import { AfterViewInit, OnDestroy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 import { GlobalConfig } from '../../global-config';
 import { CustomTable } from '../../Shared/custom-table/custom-table';
 import { PlanetForm } from './planet-form/planet-form';
+import { ApexOptions, ChartComponent, NgApexchartsModule } from 'ng-apexcharts';
 
 export interface Planet {
   id: string;
@@ -28,11 +29,13 @@ export interface Planet {
   surfaceTemperature: number;
   discoveryDate: string; // dateOnly in C# not supported in TypeScript
   description?: string;
+  composition?: { name: string; percentage: number; }[];
+  atmosphere?: { name: string; percentage: number; }[];
 }
 
 @Component({
   selector: 'app-planet',
-  imports: [CustomTable, CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule, MatMenuModule],
+  imports: [NgApexchartsModule, CustomTable, CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule, MatMenuModule],
   templateUrl: './planet.html',
   styleUrl: './planet.css'
 })
@@ -58,19 +61,10 @@ export class PlanetComponent implements AfterViewInit {
   dataSource = new MatTableDataSource<Planet>();
   objects: Planet[] = [];
   isLoading = true;
-  private readonly formDialog = inject(MatDialog);
-  private selectedFile: File | null = null;
-  private readonly apiAction = `${GlobalConfig.apiUrl}/Planet`;
   expandedElement: Planet | null = null;
-
-  isExpandedRow = (row: Planet) => this.expandedElement === row;
-
-  onToggleExpand(row: Planet, event?: Event) {
-    if (event) {
-      event.stopPropagation(); // prevents row click from bubbling
-    }
-    this.expandedElement = this.expandedElement === row ? null : row;
-  }
+  private selectedFile: File | null = null;
+  private readonly formDialog = inject(MatDialog);
+  private readonly apiAction = `${GlobalConfig.apiUrl}/Planet`;
 
   ngAfterViewInit() {
     this.fetchData();
@@ -211,5 +205,149 @@ export class PlanetComponent implements AfterViewInit {
 
   onExport(format: string) {
     window.open(`${this.apiAction}/export?format=${format}`, '_blank');
+  }
+
+  isExpandedRow = (row: Planet) => this.expandedElement === row;
+
+  onToggleExpand(row: Planet, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.expandedElement = this.expandedElement === row ? null : row;
+  }
+
+  atmosphereChart(planet: Planet): ApexOptions | null {
+    if (!planet.atmosphere?.length) return null;
+
+    return {
+      series: planet.atmosphere.map(a => a.percentage),
+      chart: {
+        height: 350,
+        type: 'radialBar',
+      },
+      title: {
+        text: `Atmospheric Composition`,
+        align: 'center',
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#263238'
+        }
+      },
+      plotOptions: {
+        radialBar: {
+          offsetY: 0,
+          startAngle: 0,
+          endAngle: 270,
+          hollow: {
+            margin: 5,
+            size: '30%',
+            background: 'transparent',
+            image: undefined,
+          },
+          dataLabels: {
+            name: {
+              show: true,
+            },
+            value: {
+              show: true,
+              formatter: (val) => `${val}%`
+            },
+          },
+          barLabels: {
+            enabled: true,
+            offsetX: -8,
+          },
+          track: {
+            show: true,
+            background: '#c1c1c1',
+          }
+        }
+      },
+      labels: planet.atmosphere.map(a => a.name),
+      legend: {
+        show: true,
+        floating: true,
+        position: 'right',
+        offsetX: 0,
+        offsetY: 0
+      },
+      colors: [
+        '#00B0F0', '#92D050', '#FFC000', '#FF6B6B', '#B895FF',
+        '#4CAF50', '#2196F3', '#FF9800', '#9C27B0', '#795548'
+      ]
+    };
+  }
+
+  compositionChart(planet: Planet): ApexOptions | null {
+    if (!planet.composition?.length) return null;
+
+    return {
+      series: planet.composition.map(c => c.percentage),
+      chart: {
+        height: 350,
+        type: 'radialBar',
+      },
+      title: {
+        text: `Geological Composition`,
+        align: 'center',
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#263238'
+        }
+      },
+      plotOptions: {
+        radialBar: {
+          offsetY: 0,
+          startAngle: 0,
+          endAngle: 270,
+          hollow: {
+            margin: 5,
+            size: '30%',
+            background: 'transparent',
+            image: undefined,
+          },
+          dataLabels: {
+            name: {
+              show: true,
+            },
+            value: {
+              show: true,
+              formatter: (val) => `${val}%`
+            },
+          },
+          barLabels: {
+            enabled: true,
+            offsetX: -8,
+          },
+          track: {
+            show: true,
+            background: '#c1c1c1',
+          }
+        }
+      },
+      labels: planet.composition.map(c => c.name),
+      legend: {
+        show: true,
+        floating: true,
+        position: 'right',
+        offsetX: 0,
+        offsetY: 0
+      },
+      colors: [
+        // Using different color scheme for composition to distinguish from atmosphere
+        '#FF6B6B', // Red
+        '#4CAF50', // Green
+        '#2196F3', // Blue
+        '#FFC000', // Yellow
+        '#9C27B0', // Purple
+        '#795548', // Brown
+        '#00BCD4', // Cyan
+        '#FF9800', // Orange
+        '#607D8B', // Blue Grey
+        '#E91E63'  // Pink
+      ]
+    };
   }
 }
