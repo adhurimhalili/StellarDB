@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatSelectModule } from '@Angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSliderModule } from '@angular/material/slider';
@@ -80,14 +80,14 @@ export class PlanetForm {
     fetch(`${GlobalConfig.apiUrl}/ChemicalElements`, { method: 'GET' })
       .then(response => response.json())
       .then(data => this.chemicalElements = data)
-      .catch(error => console.error('Error fetching planet types:', error));
+      .catch(error => console.error('Error fetching chemical elements:', error));
   }
 
   fetchAtmosphericGases() {
     fetch(`${GlobalConfig.apiUrl}/AtmosphericGases`, { method: 'GET' })
       .then(response => response.json())
       .then(data => this.atmosphericGases = data)
-      .catch(error => console.error('Error fetching planet types:', error));
+      .catch(error => console.error('Error fetching atmospheric gases:', error));
   }
 
   ngAfterViewInit() {
