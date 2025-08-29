@@ -3,7 +3,7 @@
     <mat-card-actions>
       <!-- Add Data Button -->
       <ng-container *ngIf="availableActions.includes('create')">
-      <button matButton (click)="onOpenForm(undefined)">Add</button>
+        <button matButton (click)="onOpenForm(undefined)">Add</button>
       </ng-container>
 
       <!-- Import Data Button -->
@@ -27,7 +27,7 @@
 
     </mat-card-actions>
     <mat-card-content>
-      <table matSort mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <table matSort mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
 
         <!-- Dynamic Columns -->
         <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
@@ -58,6 +58,28 @@
           </td>
         </ng-container>
 
+        <!-- Expansion Column -->
+        <ng-container matColumnDef="expand">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button (click)="onToggleExpand(element, $event)">
+              <mat-icon>{{expandedElement === element ? 'expand_less' : 'expand_more'}}</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <!-- Expanded Content Column -->
+        <ng-container matColumnDef="expandedDetail">
+          <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+            <div class="element-detail"
+                 [@detailExpand]="element === expandedElement ? 'expanded' : 'collapsed'">
+              <div>
+                <h3>CHECK</h3>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
         <!-- Row shown when there is no matching data and table is not loading. -->
         <tr class="mat-row" *matNoDataRow>
           <td class="mat-cell" [attr.colspan]="displayedColumns.length" style="text-align: center;">
@@ -66,8 +88,16 @@
           </td>
         </tr>
 
+        <!-- Table Rows -->
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr mat-row *matRowDef="let element; columns: displayedColumns;"
+            class="element-row"
+            [class.expanded-row]="expandedElement === element"
+            (click)="expandableRows && onToggleExpand(element, $event)">
+        </tr>
+        <tr mat-row *matRowDef="let element; columns: ['expandedDetail']"
+            class="detail-row">
+        </tr>
       </table>
       <!-- Loading Spinner -->
       <div *ngIf="isLoading" class="w-full px-4 py-6">

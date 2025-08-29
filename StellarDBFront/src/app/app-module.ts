@@ -1,5 +1,6 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
@@ -36,7 +37,8 @@ import { ThemeToggleSwitchComponent } from './Shared/theme-toggle-switch/theme-t
     MatTooltipModule
   ],
   providers: [
-    provideBrowserGlobalErrorListeners()
+    provideBrowserGlobalErrorListeners(),
+    provideAnimations() 
   ],
   bootstrap: [App]
 })

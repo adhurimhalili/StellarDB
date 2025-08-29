@@ -12,10 +12,13 @@
                       [availableActions]="availableActions"
                       [objects]="objects"
                       [isLoading]="isLoading"
+                      [expandableRows]="true"
+                      [expandedElement]="expandedElement"
                       (openForm)="onOpenForm($event)"
                       (delete)="onDelete($event)"
                       (export)="onExport($event)"
-                      (fileSelected)="onImportFile($event)">
+                      (fileSelected)="onImportFile($event)"
+                      (rowToggle)="onToggleExpand($event)">
     </app-custom-table>
   </mat-card>
 </div>

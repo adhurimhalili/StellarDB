@@ -60,7 +60,17 @@ export class PlanetComponent implements AfterViewInit {
   isLoading = true;
   private readonly formDialog = inject(MatDialog);
   private selectedFile: File | null = null;
-  private apiAction = `${GlobalConfig.apiUrl}/Planet`;
+  private readonly apiAction = `${GlobalConfig.apiUrl}/Planet`;
+  expandedElement: Planet | null = null;
+
+  isExpandedRow = (row: Planet) => this.expandedElement === row;
+
+  onToggleExpand(row: Planet, event?: Event) {
+    if (event) {
+      event.stopPropagation(); // prevents row click from bubbling
+    }
+    this.expandedElement = this.expandedElement === row ? null : row;
+  }
 
   ngAfterViewInit() {
     this.fetchData();
