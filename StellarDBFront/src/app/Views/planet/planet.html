@@ -12,10 +12,55 @@
                       [availableActions]="availableActions"
                       [objects]="objects"
                       [isLoading]="isLoading"
+                      [expandableRows]="true"
+                      [expandedElement]="expandedElement"
                       (openForm)="onOpenForm($event)"
                       (delete)="onDelete($event)"
                       (export)="onExport($event)"
-                      (fileSelected)="onImportFile($event)">
+                      (fileSelected)="onImportFile($event)"
+                      (toggleExpand)="onToggleExpand($event)">
+
+      <!-- Define the expanded content template -->
+      <ng-template #expandedContent let-element>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
+          <!-- Atmosphere Chart -->
+          <div *ngIf="element.atmosphere?.length" class="mb-6">
+            <apx-chart [series]="atmosphereChart(element)?.series!"
+                       [chart]="atmosphereChart(element)?.chart!"
+                       [labels]="atmosphereChart(element)?.labels!"
+                       [plotOptions]="atmosphereChart(element)?.plotOptions!"
+                       [legend]="atmosphereChart(element)?.legend!"
+                       [colors]="atmosphereChart(element)?.colors!"
+                       [title]="atmosphereChart(element)?.title!">
+            </apx-chart>
+          </div>
+
+          <!-- Composition Chart -->
+          <div *ngIf="element.composition?.length" class="mb-6">
+            <apx-chart [series]="compositionChart(element)?.series!"
+                       [chart]="compositionChart(element)?.chart!"
+                       [labels]="compositionChart(element)?.labels!"
+                       [plotOptions]="compositionChart(element)?.plotOptions!"
+                       [legend]="compositionChart(element)?.legend!"
+                       [colors]="compositionChart(element)?.colors!"
+                       [title]="compositionChart(element)?.title!">
+            </apx-chart>
+          </div>
+        </div>
+
+        <!-- Description Section -->
+        <div *ngIf="element.description" class="mt-4">
+          <h3 class="text-lg font-medium mb-2">Description</h3>
+          <p class="text-gray-700">{{element.description}}</p>
+        </div>
+
+        <!-- No Data Message -->
+        <div *ngIf="!element.atmosphere?.length && !element.composition?.length && !element.description"
+             class="text-gray-500 text-center py-4">
+          No additional information available for this planet.
+        </div>
+      </ng-template>
+
     </app-custom-table>
   </mat-card>
 </div>

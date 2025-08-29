@@ -101,6 +101,83 @@
         <textarea matInput formControlName="description" rows="3"></textarea>
       </mat-form-field>
 
+      <!-- Planet Composition Accordion -->
+      <mat-accordion class="col-span-2 mb-2">
+
+      <!-- Chemical Elements -->
+        <mat-expansion-panel hideToggle>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Planet Composition </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div formArrayName="composition">
+            <div class="grid grid-cols-[200px_1fr_auto] gap-4" *ngFor="let group of compositionArray.controls; let i = index" [formGroupName]="i">
+              <!-- Element Dropdown -->
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Element</mat-label>
+                  <mat-select formControlName="id">
+                    <mat-option *ngFor="let element of chemicalElements" [value]="element.id">
+                      {{element.name}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <!-- Percentage Slider -->
+              <div class="w-auto">
+                <mat-slider min="0" max="100" step="0.01">
+                  <input matSliderThumb formControlName="percentage" />
+                </mat-slider>
+                <span>{{ group.get('percentage')?.value }}%</span>
+              </div>
+              <!-- Delete Button -->
+              <div>
+                <button matIconButton type="button" (click)="removeComposition(i)">
+                  <span class="text-red-500"><mat-icon class="text-red-500">delete</mat-icon></span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <button mat-button type="button" (click)="addComposition()">Add Composition Element</button>
+        </mat-expansion-panel>
+
+      <!-- Atmospheric Gases -->
+        <mat-expansion-panel hideToggle>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Atmospheric Composition </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div formArrayName="atmosphere">
+            <div class="grid grid-cols-[200px_1fr_auto] gap-4" *ngFor="let group of atmosphereArray.controls; let i = index" [formGroupName]="i">
+              <!-- Element Dropdown -->
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Compound</mat-label>
+                  <mat-select formControlName="id">
+                    <mat-option *ngFor="let compound of atmosphericGases" [value]="compound.id">
+                      {{compound.name}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <!-- Percentage Slider -->
+              <div class="w-auto">
+                <mat-slider min="0" max="100" step="0.01">
+                  <input matSliderThumb formControlName="percentage" />
+                </mat-slider>
+                <span>{{ group.get('percentage')?.value }}%</span>
+              </div>
+              <!-- Delete Button -->
+              <div>
+                <button matIconButton type="button" (click)="removeGas(i)">
+                  <span class="text-red-500"><mat-icon class="text-red-500">delete</mat-icon></span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <button mat-button type="button" (click)="addGas()">Add Atmospheric Gas</button>
+        </mat-expansion-panel>
+
+
+      </mat-accordion>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions align="center">

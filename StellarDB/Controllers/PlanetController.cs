@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using StellarDB.Data;
+using StellarDB.Models.AtmosphericGases;
+using StellarDB.Models.ChemicalElements;
 using StellarDB.Models.Planet;
 using StellarDB.Models.PlanetTypes;
 using StellarDB.Models.Star;
@@ -19,6 +21,8 @@ namespace StellarDB.Controllers
     {
         private readonly IMongoCollection<PlanetModel>? _planets;
         private readonly IMongoCollection<PlanetTypesModel>? _planetTypes;
+        private readonly IMongoCollection<ChemicalElementsModel>? _chemicalElements;
+        private readonly IMongoCollection<AtmosphericGasesModel>? _atmosphereElements;
         private readonly IMongoCollection<StarModel>? _stars;
         private readonly CsvServices _csvServices;
         public PlanetController(MongoDbService mongoDbService,
@@ -26,8 +30,8 @@ namespace StellarDB.Controllers
         {
             _planets = mongoDbService.Database.GetCollection<PlanetModel>("Planets");
             _planetTypes = mongoDbService.Database.GetCollection<PlanetTypesModel>("PlanetTypes");
-            // Compositions Elements
-            // Atmosphere Elements
+            _chemicalElements = mongoDbService.Database.GetCollection<ChemicalElementsModel>("ChemicalElements");
+            _atmosphereElements = mongoDbService.Database.GetCollection<AtmosphericGasesModel>("AtmosphericGases");
             _stars = mongoDbService.Database.GetCollection<StarModel>("Stars");
             _csvServices = csvServices;
         }
@@ -40,6 +44,13 @@ namespace StellarDB.Controllers
             var planetTypeDict = planetTypes.ToDictionary(pt => pt.Id, pt => pt.Name);
             var stars = await _stars.Find(FilterDefinition<StarModel>.Empty).ToListAsync();
             var starDict = stars.ToDictionary(s => s.Id, s => s.Name);
+
+            // Get chemical elements and atmospheric gases
+            var chemicalElements = await _chemicalElements.Find(FilterDefinition<ChemicalElementsModel>.Empty).ToListAsync();
+            var chemicalDict = chemicalElements.ToDictionary(ce => ce.Id, ce => ce.Name);
+
+            var atmosphericGases = await _atmosphereElements.Find(FilterDefinition<AtmosphericGasesModel>.Empty).ToListAsync();
+            var atmosphereDict = atmosphericGases.ToDictionary(ag => ag.Id, ag => ag.Name);
             var result = planets.Select(planet => new
             {
                 planet.Id,
@@ -56,6 +67,16 @@ namespace StellarDB.Controllers
                 planet.SurfaceTemperature,
                 DiscoveryDate = planet.DiscoveryDate.ToString("yyyy-MM-dd"),
                 StarName = planet.StarId != null && starDict.ContainsKey(planet.StarId) ? starDict[planet.StarId] : "Unknown",
+                Composition = planet.Composition?.Select(c => new
+                {
+                    Name = chemicalDict.ContainsKey(c.Id) ? chemicalDict[c.Id] : "Unknown",
+                    c.Percentage
+                }),
+                Atmosphere = planet.Atmosphere?.Select(a => new
+                {
+                    Name = atmosphereDict.ContainsKey(a.Id) ? atmosphereDict[a.Id] : "Unknown",
+                    a.Percentage
+                }),
                 planet.Description
             });
             return result;

@@ -1,0 +1,25 @@
+:host {
+  display: block;
+}
+
+.apexcharts-legend {
+  padding: 0 !important;
+}
+
+#atmosphere-chart {
+  min-height: 350px;
+}
+
+/* Dark theme styles */
+.dark-theme :host {
+  background: #1e1e1e;
+  color: #ffffff;
+}
+
+.dark-theme .apexcharts-legend {
+  color: #ffffff;
+}
+
+.dark-theme #atmosphere-chart {
+  background: #1e1e1e;
+}
