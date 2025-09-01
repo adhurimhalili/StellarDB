@@ -2,6 +2,7 @@
 using System.Xml.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using StellarDB.Models.Composition;
+using StellarDB.Services;
 
 namespace StellarDB.Models.Planet
 {
@@ -93,28 +94,5 @@ namespace StellarDB.Models.Planet
         public string? StarId { get; set; } // Reference to the star this planet orbits
         [XmlElement("Description")]
         public string? Description { get; set; }
-    }
-
-    public class CompositionValidationAttribute : ValidationAttribute
-    {
-        private readonly string _compositionType;
-
-        public CompositionValidationAttribute(string compositionType)
-        {
-            _compositionType = compositionType;
-        }
-
-        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
-        {
-            if (value is List<CompositionModel> composition && composition.Any())
-            {
-                var sum = composition.Sum(c => c.Percentage);
-                if (sum > 100)
-                {
-                    return new ValidationResult($"Total {_compositionType} percentages cannot exceed 100%.");
-                }
-            }
-            return ValidationResult.Success;
-        }
     }
 }

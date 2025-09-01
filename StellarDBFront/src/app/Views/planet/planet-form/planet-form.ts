@@ -218,12 +218,13 @@ export class PlanetForm {
     })
       .then(async response => {
         if (!response.ok) {
-          return;
+          const errorData = await response.json();
+          const errorMessage = errorData.message || `Server returned ${response.status}`;
+          throw new Error(errorMessage);
         }
         return response.json();
       })
       .then(result => {
-
         this.dialogRef.close(result);
       })
       .catch(error => {

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using StellarDB.Data;
+using StellarDB.Models.ChemicalElements;
 using StellarDB.Models.Star;
 using StellarDB.Models.StarLuminosityClasses;
 using StellarDB.Models.StarSpectralClasses;
@@ -19,6 +20,7 @@ namespace StellarDB.Controllers
         private readonly IMongoCollection<StarModel>? _stars;
         private readonly IMongoCollection<StarSpectralClassesModel>? _spectralClasses;
         private readonly IMongoCollection<StarLuminosityClassesModel>? _luminosityClasses;
+        private readonly IMongoCollection<ChemicalElementsModel>? _chemicalElements;
         private readonly CsvServices _csvServices;
         public StarController(MongoDbService mongoDbService,
                                  CsvServices csvServices)
@@ -26,6 +28,7 @@ namespace StellarDB.Controllers
             _stars = mongoDbService.Database.GetCollection<StarModel>("Stars");
             _spectralClasses = mongoDbService.Database.GetCollection<StarSpectralClassesModel>("StarSpectralClasses");
             _luminosityClasses = mongoDbService.Database.GetCollection<StarLuminosityClassesModel>("StarLuminosityClasses");
+            _chemicalElements = mongoDbService.Database.GetCollection<ChemicalElementsModel>("ChemicalElements");
             _csvServices = csvServices;
         }
 
@@ -35,8 +38,10 @@ namespace StellarDB.Controllers
             var stars = await _stars.Find(FilterDefinition<StarModel>.Empty).ToListAsync();
             var spectralClasses = await _spectralClasses.Find(FilterDefinition<StarSpectralClassesModel>.Empty).ToListAsync();
             var luminosityClasses = await _luminosityClasses.Find(FilterDefinition<StarLuminosityClassesModel>.Empty).ToListAsync();
-            var spectralClassDict = spectralClasses.ToDictionary(c => c.Id, c => c.Code);
+            var chemicalElements = await _chemicalElements.Find(FilterDefinition<ChemicalElementsModel>.Empty).ToListAsync();
+            var spectralClassDict = spectralClasses.ToDictionary(sc => sc.Id, sc => sc.Code);
             var luminosityClassDict = luminosityClasses.ToDictionary(lc => lc.Id, lc => lc.Code);
+            var compositionDict = chemicalElements.ToDictionary(ch => ch.Id, ch => ch.Name);
 
             var result = stars.Select(star => new
             {
@@ -49,7 +54,13 @@ namespace StellarDB.Controllers
                 star.Diameter,
                 star.Mass,
                 star.Temperature,
-                star.DiscoveryDate
+                DiscoveryDate = star.DiscoveryDate.ToString("yyyy-MM-dd"),
+                Composition = star.Composition?.Select(c => new
+                {
+                    Name = compositionDict.ContainsKey(c.Id) ? compositionDict[c.Id] : "Unknown",
+                    c.Percentage
+                }),
+                star.Description
             });
 
             return result;

@@ -140,10 +140,10 @@
               <!-- Percentage Input -->
               <mat-form-field class="" appearance="outline">
                 <input matInput type="number" formControlName="percentage" step="0.01" min="0"
-                       [max]="getRemainingPercentage('atmosphere') + group.get('percentage')?.value"
+                       [max]="getRemainingPercentage('composition') + group.get('percentage')?.value"
                        value="{{ group.get('percentage')?.value }}">
                 <span matTextSuffix>%</span>
-                <mat-error *ngIf="atmosphereArray.hasError('totalExceeded')">
+                <mat-error *ngIf="compositionArray.hasError('totalExceeded')">
                   Total percentage cannot exceed 100%
                 </mat-error>
               </mat-form-field>

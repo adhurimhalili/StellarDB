@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 import { GlobalConfig } from '../../global-config';
 import { CustomTable } from '../../Shared/custom-table/custom-table';
 import { StarForm } from './star-form/star-form';
+import { ApexOptions, ChartComponent, NgApexchartsModule } from 'ng-apexcharts';
 
 export interface Star {
   id: string;
@@ -23,11 +24,13 @@ export interface Star {
   mass: number;
   temperature: number;
   discoveryDate: string; // dateOnly in C# not supported in TypeScript
+  composition?: { name: string; percentage: number; }[];
+  description?: string;
 }
 
 @Component({
   selector: 'app-star',
-  imports: [CustomTable, CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule, MatMenuModule],
+  imports: [CustomTable, CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule, MatMenuModule, NgApexchartsModule],
   templateUrl: './star.html',
   styleUrl: './star.css'
 })
@@ -50,10 +53,11 @@ export class StarComponent implements AfterViewInit {
   dataSource = new MatTableDataSource<Star>();
   objects: Star[] = [];
   isLoading = true;
+  expandedElement: Star | null = null;
 
   private readonly formDialog = inject(MatDialog);
+  private readonly apiAction = `${GlobalConfig.apiUrl}/Star`;
   private selectedFile: File | null = null;
-  private apiAction = `${GlobalConfig.apiUrl}/Star`;
 
   ngAfterViewInit() {
     this.fetchData();
@@ -80,7 +84,7 @@ export class StarComponent implements AfterViewInit {
   onOpenForm(starId?: string) {
     const dialogRef = this.formDialog.open(StarForm, {
       width: '40%',
-      maxWidth: '600px',
+      maxWidth: '1000px',
       data: starId
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -190,5 +194,86 @@ export class StarComponent implements AfterViewInit {
 
   onExport(format: string) {
     window.open(`${this.apiAction}/export?format=${format}`, '_blank');
+  }
+
+  compositionChart(star: Star): ApexOptions | null {
+    if (!star.composition?.length) return null;
+
+    return {
+      series: star.composition.map(c => c.percentage),
+      chart: {
+        height: 350,
+        type: 'radialBar',
+      },
+      title: {
+        text: `Composition`,
+        align: 'center',
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#263238'
+        }
+      },
+      plotOptions: {
+        radialBar: {
+          offsetY: 0,
+          startAngle: 0,
+          endAngle: 270,
+          hollow: {
+            margin: 5,
+            size: '30%',
+            background: 'transparent',
+            image: undefined,
+          },
+          dataLabels: {
+            name: {
+              show: true,
+            },
+            value: {
+              show: true,
+              formatter: (val) => `${val}%`
+            },
+          },
+          barLabels: {
+            enabled: true,
+            offsetX: -8,
+          },
+          track: {
+            show: true,
+            background: '#c1c1c1',
+          }
+        }
+      },
+      labels: star.composition.map(c => c.name),
+      legend: {
+        show: true,
+        floating: true,
+        position: 'right',
+        offsetX: 0,
+        offsetY: 0
+      },
+      colors: [
+        // Using different color scheme for composition to distinguish from atmosphere
+        '#FF6B6B', // Red
+        '#4CAF50', // Green
+        '#2196F3', // Blue
+        '#FFC000', // Yellow
+        '#9C27B0', // Purple
+        '#795548', // Brown
+        '#00BCD4', // Cyan
+        '#FF9800', // Orange
+        '#607D8B', // Blue Grey
+        '#E91E63'  // Pink
+      ]
+    };
+  }
+
+  isExpandedRow = (row: Star) => this.expandedElement === row;
+
+  onToggleExpand(row: Star, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.expandedElement = this.expandedElement === row ? null : row;
   }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Xml.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
+using StellarDB.Models.Composition;
+using StellarDB.Services;
 
 namespace StellarDB.Models.Star
 {
@@ -17,6 +19,9 @@ namespace StellarDB.Models.Star
         public double Mass { get; set; } // in solar masses
         public double Temperature { get; set; } // in Kelvin
         public DateOnly DiscoveryDate { get; set; }
+        [CompositionValidation]
+        public List<CompositionModel>? Composition { get; set; }
+        public string? Description { get; set; }
     }
     public class StarXmlWrapper
     {
