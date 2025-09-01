@@ -108,9 +108,16 @@
         <mat-expansion-panel hideToggle>
           <mat-expansion-panel-header>
             <mat-panel-title> Planet Composition </mat-panel-title>
+
+            <!-- Total Percentage -->
+            <mat-panel-description class="text-sm">
+              <span [ngClass]="{'text-red-500': getTotalPercentage('composition') > 100}">Total: {{getTotalPercentage('composition')}}%</span>
+            </mat-panel-description>
+
           </mat-expansion-panel-header>
           <div formArrayName="composition">
-            <div class="grid grid-cols-[200px_1fr_auto] gap-4" *ngFor="let group of compositionArray.controls; let i = index" [formGroupName]="i">
+            <div class="grid grid-cols-[200px_auto_12%_50px] gap-4" *ngFor="let group of compositionArray.controls; let i = index" [formGroupName]="i">
+
               <!-- Element Dropdown -->
               <div>
                 <mat-form-field appearance="outline">
@@ -122,13 +129,26 @@
                   </mat-select>
                 </mat-form-field>
               </div>
+
               <!-- Percentage Slider -->
               <div class="w-auto">
-                <mat-slider min="0" max="100" step="0.01">
-                  <input matSliderThumb formControlName="percentage" />
+                <mat-slider step="0.01" min="0"
+                            [max]="getRemainingPercentage('composition') + group.get('percentage')?.value">
+                  <input matSliderThumb formControlName="percentage" value="{{ group.get('percentage')?.value }}" />
                 </mat-slider>
-                <span>{{ group.get('percentage')?.value }}%</span>
               </div>
+
+              <!-- Percentage Input -->
+              <mat-form-field class="" appearance="outline">
+                <input matInput type="number" formControlName="percentage" step="0.01" min="0"
+                       [max]="getRemainingPercentage('atmosphere') + group.get('percentage')?.value"
+                       value="{{ group.get('percentage')?.value }}">
+                <span matTextSuffix>%</span>
+                <mat-error *ngIf="atmosphereArray.hasError('totalExceeded')">
+                  Total percentage cannot exceed 100%
+                </mat-error>
+              </mat-form-field>
+
               <!-- Delete Button -->
               <div>
                 <button matIconButton type="button" (click)="removeComposition(i)">
@@ -137,6 +157,27 @@
               </div>
             </div>
           </div>
+
+          <!-- Remaining percentage row (readonly) -->
+          <div class="grid grid-cols-[200px_auto_12%_50px] gap-4">
+            <div>
+              <mat-form-field appearance="outline" class="w-full">
+                <input matInput readonly value="Other">
+              </mat-form-field>
+            </div>
+            <div class="w-auto">
+              <mat-slider min="0" max="100" step="0.01" [disabled]="true">
+                <input matSliderThumb [value]="100 - getTotalPercentage('composition')" />
+              </mat-slider>
+            </div>
+            <mat-form-field class="" appearance="outline">
+              <input matInput type="number" readonly [value]="100 - getTotalPercentage('composition')">
+              <span matTextSuffix>%</span>
+            </mat-form-field>
+            <div></div>
+          </div>
+
+          <!-- Add -->
           <button mat-button type="button" (click)="addComposition()">Add Composition Element</button>
         </mat-expansion-panel>
 
@@ -144,9 +185,14 @@
         <mat-expansion-panel hideToggle>
           <mat-expansion-panel-header>
             <mat-panel-title> Atmospheric Composition </mat-panel-title>
+
+            <mat-panel-description class="text-sm">
+              <span [ngClass]="{'text-red-500': getTotalPercentage('atmosphere') > 100}">Total: {{getTotalPercentage('atmosphere')}}%</span>
+            </mat-panel-description>
           </mat-expansion-panel-header>
           <div formArrayName="atmosphere">
-            <div class="grid grid-cols-[200px_1fr_auto] gap-4" *ngFor="let group of atmosphereArray.controls; let i = index" [formGroupName]="i">
+            <div class="grid grid-cols-[200px_auto_12%_50px] gap-4" *ngFor="let group of atmosphereArray.controls; let i = index" [formGroupName]="i">
+
               <!-- Element Dropdown -->
               <div>
                 <mat-form-field appearance="outline">
@@ -158,13 +204,27 @@
                   </mat-select>
                 </mat-form-field>
               </div>
+
               <!-- Percentage Slider -->
               <div class="w-auto">
-                <mat-slider min="0" max="100" step="0.01">
+                <mat-slider step="0.01" min="0"
+                            [max]="getRemainingPercentage('atmosphere') + group.get('percentage')?.value" >
                   <input matSliderThumb formControlName="percentage" />
                 </mat-slider>
-                <span>{{ group.get('percentage')?.value }}%</span>
               </div>
+
+              <!-- Percentage Input -->
+              <mat-form-field class="" appearance="outline">
+                <input matInput type="number" formControlName="percentage" step="0.01" min="0"
+                       [max]="getRemainingPercentage('atmosphere') + group.get('percentage')?.value"
+                       value="{{ group.get('percentage')?.value }}">
+                <span matTextSuffix>%</span>
+                <mat-error *ngIf="atmosphereArray.hasError('totalExceeded')">
+                  Total percentage cannot exceed 100%
+                </mat-error>
+              </mat-form-field>
+
+
               <!-- Delete Button -->
               <div>
                 <button matIconButton type="button" (click)="removeGas(i)">
@@ -172,10 +232,30 @@
                 </button>
               </div>
             </div>
+
+            <!-- Remaining percentage row (readonly) -->
+            <div class="grid grid-cols-[200px_auto_12%_50px] gap-4">
+              <div>
+                <mat-form-field appearance="outline" class="w-full">
+                  <input matInput readonly value="Other">
+                </mat-form-field>
+              </div>
+              <div class="w-auto">
+                <mat-slider min="0" max="100" step="0.01" [disabled]="true">
+                  <input matSliderThumb [value]="100 - getTotalPercentage('atmosphere')" />
+                </mat-slider>
+              </div>
+              <mat-form-field class="" appearance="outline">
+                <input matInput type="number" readonly [value]="100 - getTotalPercentage('atmosphere')">
+                <span matTextSuffix>%</span>
+              </mat-form-field>
+              <div></div>
+            </div>
           </div>
+
+          <!-- Add -->
           <button mat-button type="button" (click)="addGas()">Add Atmospheric Gas</button>
         </mat-expansion-panel>
-
 
       </mat-accordion>
     </div>

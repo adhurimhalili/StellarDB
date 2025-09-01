@@ -1,6 +1,6 @@
 import { Component, Inject, ChangeDetectionStrategy, signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray, AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -123,21 +123,51 @@ export class PlanetForm {
   }
 
   addComposition(id?: string, percentage?: number): void {
-    this.compositionArray.push(
-      this.formBuilder.group({
-        id: id != null ? id : [''],
-        percentage: percentage != null ? percentage : [0]
-      })
-    );
+    const newGroup = this.formBuilder.group({
+      id: [id ?? ''],
+      percentage: [percentage ?? 0, [
+        Validators.min(0),
+        Validators.max(100),
+        Validators.required
+      ]]
+    });
+
+    // Get current total
+    const currentTotal = this.getTotalPercentage('composition');
+    const remainingAllowed = 100 - currentTotal;
+
+    // If adding would exceed 100%, cap at remaining allowed
+    if (percentage && percentage > remainingAllowed) {
+      newGroup.patchValue({ percentage: remainingAllowed });
+    }
+
+    this.compositionArray.push(newGroup);
+    //this.compositionArray.setValidators(this.validateTotalPercentage('composition'));
+    this.compositionArray.updateValueAndValidity();
   }
 
   addGas(id?: string, percentage?: number): void {
-    this.atmosphereArray.push(
-      this.formBuilder.group({
-        id: id != null ? id : [''],
-        percentage: percentage != null ? percentage : [0]
-      })
-    );
+    const newGroup = this.formBuilder.group({
+      id: [id ?? ''],
+      percentage: [percentage ?? 0, [
+        Validators.min(0),
+        Validators.max(100),
+        Validators.required
+      ]]
+    });
+
+    // Get current total
+    const currentTotal = this.getTotalPercentage('atmosphere');
+    const remainingAllowed = 100 - currentTotal;
+
+    // If adding would exceed 100%, cap at remaining allowed
+    if (percentage && percentage > remainingAllowed) {
+      newGroup.patchValue({ percentage: remainingAllowed });
+    }
+
+    this.atmosphereArray.push(newGroup);
+    //this.atmosphereArray.setValidators(this.validateTotalPercentage('atmosphere'));
+    this.atmosphereArray.updateValueAndValidity();
   }
 
   removeComposition(index: number) {
@@ -148,7 +178,45 @@ export class PlanetForm {
     this.atmosphereArray.removeAt(index);
   }
 
+  getTotalPercentage(arrayName: string): number {
+    const formArray = this.planetForm.get(arrayName) as FormArray;
+    if (!formArray) return 0;
+
+    return formArray.controls
+      .reduce((sum, control) => {
+        const percentage = control.get('percentage')?.value || 0;
+        return sum + Number(percentage);
+      }, 0);
+  }
+
+  getRemainingPercentage(arrayName: string): number {
+    return Math.max(0, 100 - this.getTotalPercentage(arrayName));
+  }
+
+  private validateTotalPercentage(arrayName: string): ValidatorFn {
+    return (formArray: AbstractControl): ValidationErrors | null => {
+      const array = formArray as FormArray;
+      const total = array.controls.reduce((sum, control) => {
+        return sum + (Number(control.get('percentage')?.value) || 0);
+      }, 0);
+
+      return total > 100 ? { totalExceeded: true } : null;
+    };
+  }
+
   onSubmit() {
+    Object.keys(this.planetForm.controls).forEach(key => {
+      const control = this.planetForm.get(key);
+      control?.markAsTouched();
+    });
+
+    this.validateTotalPercentage('composition');
+    this.validateTotalPercentage('atmosphere');
+
+    if (!this.planetForm.valid
+      || this.atmosphereArray.hasError('totalExceeded')
+      || this.compositionArray.hasError('totalExceeded')) return;
+
     const httpMethod = this.data ? "PUT" : "POST";
     fetch(`${this.apiAction}`, {
       method: httpMethod,
