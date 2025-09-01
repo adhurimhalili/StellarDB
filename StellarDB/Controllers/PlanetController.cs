@@ -94,6 +94,8 @@ namespace StellarDB.Controllers
         [HttpPost]
         public async Task<ActionResult<PlanetModel>> Create(PlanetModel planet)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             await _planets.InsertOneAsync(planet);
             return CreatedAtAction(nameof(GetById), new { id = planet.Id }, planet);
         }
@@ -101,6 +103,8 @@ namespace StellarDB.Controllers
         [HttpPut]
         public async Task<ActionResult<PlanetModel>> Update(PlanetModel planet)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var filter = Builders<PlanetModel>.Filter.Eq(p => p.Id, planet.Id);
             var result = await _planets.ReplaceOneAsync(filter, planet);
             if (result.ModifiedCount == 0) return NotFound("Failed to update Star.");

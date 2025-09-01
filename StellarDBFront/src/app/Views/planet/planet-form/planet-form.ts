@@ -210,21 +210,20 @@ export class PlanetForm {
       control?.markAsTouched();
     });
 
-    this.validateTotalPercentage('composition');
-    this.validateTotalPercentage('atmosphere');
-
-    if (!this.planetForm.valid
-      || this.atmosphereArray.hasError('totalExceeded')
-      || this.compositionArray.hasError('totalExceeded')) return;
-
     const httpMethod = this.data ? "PUT" : "POST";
     fetch(`${this.apiAction}`, {
       method: httpMethod,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(this.planetForm.value)
     })
-      .then(response => response.json())
+      .then(async response => {
+        if (!response.ok) {
+          return;
+        }
+        return response.json();
+      })
       .then(result => {
+
         this.dialogRef.close(result);
       })
       .catch(error => {

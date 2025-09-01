@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Xml.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using StellarDB.Models.Composition;
 
@@ -9,22 +10,51 @@ namespace StellarDB.Models.Planet
         [BsonId]
         [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
         public string? Id { get; set; }
+
+        [Required(ErrorMessage = "Planet name is required")]
         public string Name { get; set; }
+
+        [Required(ErrorMessage = "Planet type is required")]
         public string PlanetTypeId { get; set; }
-        public string? StarId { get; set; } // Reference to the star this planet orbits
-        public double Mass { get; set; } // in Earth masses (M⊕)
-        public double Diameter { get; set; } // in kilometers (km)
-        public double RotationPeriod { get; set; } // in hours (hr)
-        public double OrbitalPeriod { get; set; } // in Earth days
-        public double OrbitalEccentricity { get; set; }  // dimensionless value (0 for circular, 1 for parabolic)
-        public double OrbitalInclination { get; set; } // in degrees
-        public double SemiMajorAxis { get; set; } // in astronomical units (AU)
-        public double DistanceFromStar { get; set; } // in astronomical units (AU)
-        public double SurfaceTemperature { get; set; } // in Kelvin (K)
+
+        public string? StarId { get; set; }
+
+        [Range(0, double.MaxValue, ErrorMessage = "Mass must be a positive value")]
+        public double Mass { get; set; }
+
+        [Range(0, double.MaxValue, ErrorMessage = "Diameter must be a positive value")]
+        public double Diameter { get; set; }
+
+        [Range(0, double.MaxValue, ErrorMessage = "Rotation period must be a positive value")]
+        public double RotationPeriod { get; set; }
+
+        [Range(0, double.MaxValue, ErrorMessage = "Orbital period must be a positive value")]
+        public double OrbitalPeriod { get; set; }
+
+        [Range(0, 1, ErrorMessage = "Orbital eccentricity must be between 0 and 1")]
+        public double OrbitalEccentricity { get; set; }
+
+        [Range(0, 360, ErrorMessage = "Orbital inclination must be between 0 and 360 degrees")]
+        public double OrbitalInclination { get; set; }
+
+        [Range(0, double.MaxValue, ErrorMessage = "Semi-major axis must be a positive value")]
+        public double SemiMajorAxis { get; set; }
+
+        [Range(0, double.MaxValue, ErrorMessage = "Distance from star must be a positive value")]
+        public double DistanceFromStar { get; set; }
+
+        [Range(0, double.MaxValue, ErrorMessage = "Surface temperature must be a positive value")]
+        public double SurfaceTemperature { get; set; }
+
         public DateTime DiscoveryDate { get; set; }
+
         public string? Description { get; set; }
-        public List<CompositionModel>? Composition { get; set; } // Composition of the planet, e.g., "Hydrogen: 75%, Helium: 24%, Oxygen: 1%"
-        public List<CompositionModel>? Atmosphere { get; set; } // Atmospheric composition, e.g., "Nitrogen: 78%, Oxygen: 21%, Argon: 0.93%"
+
+        [CompositionValidation("composition")]
+        public List<CompositionModel>? Composition { get; set; }
+
+        [CompositionValidation("atmosphere")]
+        public List<CompositionModel>? Atmosphere { get; set; }
     }
 
     public class PlanetXmlWrapper
@@ -63,5 +93,28 @@ namespace StellarDB.Models.Planet
         public string? StarId { get; set; } // Reference to the star this planet orbits
         [XmlElement("Description")]
         public string? Description { get; set; }
+    }
+
+    public class CompositionValidationAttribute : ValidationAttribute
+    {
+        private readonly string _compositionType;
+
+        public CompositionValidationAttribute(string compositionType)
+        {
+            _compositionType = compositionType;
+        }
+
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+        {
+            if (value is List<CompositionModel> composition && composition.Any())
+            {
+                var sum = composition.Sum(c => c.Percentage);
+                if (sum > 100)
+                {
+                    return new ValidationResult($"Total {_compositionType} percentages cannot exceed 100%.");
+                }
+            }
+            return ValidationResult.Success;
+        }
     }
 }
