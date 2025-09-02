@@ -82,7 +82,9 @@ export class StarForm {
     fetch(`${this.apiAction}/${this.data}`, { method: 'GET' })
       .then(response => response.json())
       .then(formData => {
+        this.compositionArray.clear();
         this.starForm?.patchValue(formData);
+        formData.composition.forEach((c: { id: string; percentage: number }) => this.addComposition(c.id, c.percentage));
       })
       .catch(error => {
         console.error('Error fetching data:', error);
@@ -137,13 +139,25 @@ export class StarForm {
   }
 
   onSubmit() {
+    Object.keys(this.starForm.controls).forEach(key => {
+      const control = this.starForm.get(key);
+      control?.markAsTouched();
+    });
+
     const httpMethod = this.data ? "PUT" : "POST";
     fetch(`${this.apiAction}`, {
       method: httpMethod,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(this.starForm.value)
     })
-      .then(response => response.json())
+      .then(async response => {
+        if (!response.ok) {
+          const errorData = await response.json();
+          const errorMessage = errorData.message || `Server returned ${response.status}`;
+          throw new Error(errorMessage);
+        }
+        return response.json();
+      })
       .then(result => {
         this.dialogRef.close(result);
       })

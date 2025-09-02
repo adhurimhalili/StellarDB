@@ -193,17 +193,6 @@ export class PlanetForm {
     return Math.max(0, 100 - this.getTotalPercentage(arrayName));
   }
 
-  private validateTotalPercentage(arrayName: string): ValidatorFn {
-    return (formArray: AbstractControl): ValidationErrors | null => {
-      const array = formArray as FormArray;
-      const total = array.controls.reduce((sum, control) => {
-        return sum + (Number(control.get('percentage')?.value) || 0);
-      }, 0);
-
-      return total > 100 ? { totalExceeded: true } : null;
-    };
-  }
-
   onSubmit() {
     Object.keys(this.planetForm.controls).forEach(key => {
       const control = this.planetForm.get(key);
