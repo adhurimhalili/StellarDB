@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Xml.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using StellarDB.Models.Composition;
 using StellarDB.Services;
@@ -10,14 +11,32 @@ namespace StellarDB.Models.Star
         [BsonId]
         [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
         public string? Id { get; set; }
+        [Required]
+        [BsonRequired]
         public string Name { get; set; }
+        [Required]
+        [BsonRequired]
         public string? SpectralClassId { get; set; }
+        [Required]
+        [BsonRequired]
         public string? LuminosityClassId { get; set; }
+        [Required]
+        [BsonRequired]
         public double Magnitude { get; set; }
+        [Required]
+        [BsonRequired]
         public double Distance { get; set; } // in light-years
+        [Required]
+        [BsonRequired]
         public double Diameter { get; set; } // in kilometers
+        [Required]
+        [BsonRequired]
         public double Mass { get; set; } // in solar masses
+        [Required]
+        [BsonRequired]
         public double Temperature { get; set; } // in Kelvin
+        [Required]
+        [BsonRequired]
         public DateOnly DiscoveryDate { get; set; }
         [CompositionValidation]
         public List<CompositionModel>? Composition { get; set; }

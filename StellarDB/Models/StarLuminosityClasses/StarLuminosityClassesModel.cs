@@ -10,9 +10,16 @@ namespace StellarDB.Models.StarLuminosityClasses
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
+
+        [BsonRequired]
+        [Required(ErrorMessage = "Luminosity class code is required")]
         [MaxLength(4)]
         public string Code { get; set; }
+
+        [BsonRequired]
+        [Required(ErrorMessage = "Name is required")]
         public string Name { get; set; }
+
         public string Description { get; set; }
     }
     public class StarLuminosityClassesXmlWrapper

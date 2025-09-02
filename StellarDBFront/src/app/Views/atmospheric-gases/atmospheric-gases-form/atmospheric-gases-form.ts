@@ -17,9 +17,9 @@ import { MatSelectModule } from '@angular/material/select'
   styleUrl: './atmospheric-gases-form.css'
 })
 export class AtmosphericGasesForm {
-  private readonly apiAction = `${GlobalConfig.apiUrl}/AtmosphericGases`;
   readonly title: string;
   atmosphericGasForm: FormGroup;
+  private readonly apiAction = `${GlobalConfig.apiUrl}/AtmosphericGases`;
 
   constructor(private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<AtmosphericGasesForm>,
@@ -33,8 +33,12 @@ export class AtmosphericGasesForm {
       density: [null, [Validators.required, Validators.maxLength(10)]],
       meltingPoint: [null, Validators.maxLength(10)],
       boilingPoint: [null, Validators.maxLength(10)],
-      discoveryYear: null,
-      description: ['', [Validators.maxLength(500)]]
+      discoveryYear: [null, [
+        Validators.required,
+        Validators.max(new Date().getFullYear()), // Current year
+        Validators.pattern(/^\d{4}$/) // Must be exactly 4 digits
+      ]],
+      description: ['']
     });
     this.title = data ? 'Modify Atmospheric Gas' : 'Add Atmospheric Gas';
   };
@@ -57,13 +61,25 @@ export class AtmosphericGasesForm {
   }
 
   onSubmit() {
+    Object.keys(this.atmosphericGasForm.controls).forEach(key => {
+      const control = this.atmosphericGasForm.get(key);
+      control?.markAsTouched();
+    });
+
     const httpMethod = this.data ? "PUT" : "POST";
     fetch(`${this.apiAction}`, {
       method: httpMethod,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(this.atmosphericGasForm.value)
     })
-      .then(response => response.json())
+      .then(async response => {
+        if (!response.ok) {
+          const errorData = await response.json();
+          const errorMessage = errorData.message || `Server returned ${response.status}`;
+          throw new Error(errorMessage);
+        }
+        return response.json();
+      })
       .then(result => {
         this.dialogRef.close(result);
       })

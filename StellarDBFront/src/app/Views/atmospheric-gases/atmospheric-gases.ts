@@ -31,8 +31,8 @@ export interface AtmosphericGas {
   styleUrl: './atmospheric-gases.css'
 })
 export class AtmosphericGasesComponent implements AfterViewInit {
-  availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
-  tableColumns = [
+  readonly title = 'Atmospheric Gases';
+  readonly tableColumns = [
     { columnDef: 'index', header: 'No', cssClass: 'w-1/32' },
     { columnDef: 'molecularWeight', header: 'Molecular Weight (g/mol)' },
     { columnDef: 'formula', header: 'Formula' },
@@ -42,14 +42,14 @@ export class AtmosphericGasesComponent implements AfterViewInit {
     { columnDef: 'boilingPointText', header: 'Boiling Point (K)' },
     { columnDef: 'discoveryYearText', header: 'Discovery Year' }
   ];
-
-  readonly title = 'Atmospheric Gases';
+  availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
   dataSource = [];
   objects: AtmosphericGas[] = [];
   isLoading = true;
+
+  private readonly apiAction = `${GlobalConfig.apiUrl}/AtmosphericGases`;
   private readonly formDialog = inject(MatDialog);
   private selectedFile: File | null = null;
-  private apiAction = `${GlobalConfig.apiUrl}/AtmosphericGases`;
 
   ngAfterViewInit() {
     this.fetchData();

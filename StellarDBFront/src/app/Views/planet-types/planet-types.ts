@@ -26,22 +26,21 @@ export interface PlanetType {
   styleUrl: './planet-types.css'
 })
 export class PlanetTypesComponent implements AfterViewInit {
-  availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
-  tableColumns = [
+  readonly title = 'Planet Types';
+  readonly tableColumns = [
     { columnDef: 'position', header: 'No.', cell: (item: any) => `${item.no}`, cssClass: 'w-1/32' },
     { columnDef: 'name', header: 'Name', cssClass: 'w-1/24' },
     { columnDef: 'code', header: 'Code' },
     { columnDef: 'description', header: 'Description' }
   ];
-
-  title = 'Planet Types';
+  availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
   dataSource = new MatTableDataSource<PlanetType>();
   objects: PlanetType[] = [];
   isLoading = true;
 
+  private readonly apiAction = `${GlobalConfig.apiUrl}/PlanetTypes`;
   private readonly formDialog = inject(MatDialog);
   private selectedFile: File | null = null;
-  private apiAction = `${GlobalConfig.apiUrl}/PlanetTypes`;
 
   ngAfterViewInit() {
     this.fetchData();

@@ -10,12 +10,18 @@
       <mat-form-field appearance="outline">
         <mat-label>Name</mat-label>
         <input matInput formControlName="name" maxlength="50">
+        <mat-error *ngIf="planetTypesForm.get('name')?.errors?.['required']">
+          Name is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Code -->
       <mat-form-field appearance="outline">
         <mat-label>Code</mat-label>
         <input matInput formControlName="code" maxlength="50">
+        <mat-error *ngIf="planetTypesForm.get('code')?.errors?.['required']">
+          Code is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Description -->

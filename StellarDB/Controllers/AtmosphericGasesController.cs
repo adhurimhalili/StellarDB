@@ -39,7 +39,8 @@ namespace StellarDB.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(AtmosphericGasesModel gas)
         {
-            if (gas == null) return BadRequest("Gas cannot be null.");
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             await _atmosphericGases.InsertOneAsync(gas);
             return CreatedAtAction(nameof(GetById), new { id = gas.Id }, gas);
         }
@@ -47,6 +48,8 @@ namespace StellarDB.Controllers
         [HttpPut]
         public async Task<ActionResult> Update(string id, AtmosphericGasesModel gas)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var filter = Builders<AtmosphericGasesModel>.Filter.Eq(g => g.Id, id);
             var result = await _atmosphericGases.ReplaceOneAsync(filter, gas);
             if (result.ModifiedCount == 0) return NotFound("Failed to update Gas.");

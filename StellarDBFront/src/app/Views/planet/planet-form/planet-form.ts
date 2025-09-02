@@ -25,15 +25,16 @@ import { AtmosphericGas } from '../../atmospheric-gases/atmospheric-gases';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlanetForm {
-  private apiAction = `${GlobalConfig.apiUrl}/Planet`;
+  readonly title: string;
   planetForm: FormGroup;
-  title: string;
   planetTypes: PlanetType[] = [];
   chemicalElements: ChemicalElement[] = [];
   atmosphericGases: AtmosphericGas[] = [];
   atmosphere: { id: string; percentage: number }[] = [];
   composition: { id: string; percentage: number }[] = [];
   stars: Star[] = [];
+
+  private readonly apiAction = `${GlobalConfig.apiUrl}/Planet`;
   readonly compositionPanelState = signal(false);
 
   constructor(private formBuilder: FormBuilder,
@@ -45,15 +46,15 @@ export class PlanetForm {
       name: ['', [Validators.required, Validators.maxLength(50)]],
       starId: [null, Validators.required],
       planetTypeId: [null, Validators.required],
-      mass: [null, Validators.required],
-      diameter: [null, Validators.required],
-      rotationPeriod: [null, Validators.required],
-      orbitalPeriod: [null, Validators.required],
+      mass: [null, [Validators.required, Validators.min(0)]],
+      diameter: [null, [Validators.required, Validators.min(0)]],
+      rotationPeriod: [null, [Validators.required, Validators.min(0)]],
+      orbitalPeriod: [null, [Validators.required, Validators.min(0)]],
       orbitalEccentricity: [null, [Validators.required, Validators.min(0), Validators.max(1)]],
-      orbitalInclination: [null, Validators.required],
-      semiMajorAxis: [null, Validators.required],
-      distanceFromStar: [null, Validators.required],
-      surfaceTemperature: [null, Validators.required],
+      orbitalInclination: [null, [Validators.required, Validators.min(0), Validators.max(360)]],
+      semiMajorAxis: [null, [Validators.required, Validators.min(0)]],
+      distanceFromStar: [null, [Validators.required, Validators.min(0)]],
+      surfaceTemperature: [null, [Validators.required, Validators.min(0)]],
       discoveryDate: ['', Validators.required],
       description: ['', [Validators.maxLength(500)]],
       composition: this.formBuilder.array([]),

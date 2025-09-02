@@ -41,7 +41,8 @@ namespace StellarDB.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(ChemicalElementsModel element)
         {
-            if (element == null) return BadRequest("Element cannot be null.");
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             await _chemicalElements.InsertOneAsync(element);
             return CreatedAtAction(nameof(GetById), new { id = element.Id }, element);
         }
@@ -49,6 +50,8 @@ namespace StellarDB.Controllers
         [HttpPut]
         public async Task<ActionResult> Update(string id, ChemicalElementsModel element)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var filter = Builders<ChemicalElementsModel>.Filter.Eq(e => e.Id, id);
             var result = await _chemicalElements.ReplaceOneAsync(filter, element);
             if (result.ModifiedCount == 0) return NotFound("Failed to update Element.");

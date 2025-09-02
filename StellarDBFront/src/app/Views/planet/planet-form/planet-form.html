@@ -7,6 +7,9 @@
       <mat-form-field class="col-span-2" appearance="outline">
         <mat-label>Name</mat-label>
         <input matInput formControlName="name" maxlength="50">
+        <mat-error *ngIf="planetForm.get('name')?.errors?.['required']">
+          Name is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Star -->
@@ -15,6 +18,9 @@
         <mat-select formControlName="starId">
           <mat-option *ngFor="let star of stars" [value]="star.id">{{star.name}}</mat-option>
         </mat-select>
+        <mat-error *ngIf="planetForm.get('starId')?.errors?.['required']">
+          Star is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Type -->
@@ -23,75 +29,135 @@
         <mat-select formControlName="planetTypeId">
           <mat-option *ngFor="let planetType of planetTypes" [value]="planetType.id">{{planetType.name}}</mat-option>
         </mat-select>
+        <mat-error *ngIf="planetForm.get('planetTypeId')?.errors?.['required']">
+          Type is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Mass -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Mass</mat-label>
-        <input matInput type="number" formControlName="mass" maxlength="50">
+        <input matInput type="number" formControlName="mass" maxlength="50" min="0">
         <mat-hint>in Earth masses (M⊕)</mat-hint>
+        <mat-error *ngIf="planetForm.get('mass')?.errors?.['required']">
+          Mass is required.
+        </mat-error>
+        <mat-error *ngIf="planetForm.get('mass')?.errors?.['min']">
+          Mass must be a positive value.
+        </mat-error>
       </mat-form-field>
 
       <!-- Diameter -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Diameter</mat-label>
-        <input matInput type="number" formControlName="diameter" maxlength="50">
+        <input matInput type="number" formControlName="diameter" maxlength="50" min="0">
         <mat-hint>in kilometers (km)</mat-hint>
+        <mat-error *ngIf="planetForm.get('diameter')?.errors?.['required']">
+          Diameter is required.
+        </mat-error>
+        <mat-error *ngIf="planetForm.get('diameter')?.errors?.['min']">
+          Diameter must be a positive value.
+        </mat-error>
       </mat-form-field>
 
       <!-- Rotation Period -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Rotation Period</mat-label>
-        <input matInput type="number" formControlName="rotationPeriod" maxlength="50">
+        <input matInput type="number" formControlName="rotationPeriod" maxlength="50" min="0">
         <mat-hint>in hours (hr)</mat-hint>
+        <mat-error *ngIf="planetForm.get('rotationPeriod')?.errors?.['required']">
+          Rotation period is required.
+        </mat-error>
+        <mat-error *ngIf="planetForm.get('rotationPeriod')?.errors?.['min']">
+          Rotation period must be a positive value.
+        </mat-error>
       </mat-form-field>
 
       <!-- Orbital Period -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Orbital Period</mat-label>
-        <input matInput formControlName="orbitalPeriod" maxlength="50">
+        <input matInput formControlName="orbitalPeriod" maxlength="50" min="0">
         <mat-hint>in Earth days</mat-hint>
+        <mat-error *ngIf="planetForm.get('orbitalPeriod')?.errors?.['required']">
+          Orbital period is required.
+        </mat-error>
+        <mat-error *ngIf="planetForm.get('orbitalPeriod')?.errors?.['min']">
+          Orbital period must be a positive value.
+        </mat-error>
       </mat-form-field>
 
       <!-- Orbital Eccentricity -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Orbital Eccentricity</mat-label>
-        <input matInput type="number" formControlName="orbitalEccentricity" max="1" min="0">
+        <input matInput type="number" formControlName="orbitalEccentricity" min="0" max="1">
         <mat-hint>dimensionless value (0 for circular, 1 for parabolic)</mat-hint>
+        <mat-error *ngIf="planetForm.get('orbitalEccentricity')?.errors?.['required']">
+          Orbital eccentricity is required.
+        </mat-error>
+        <mat-error *ngIf="planetForm.get('orbitalEccentricity')?.errors?.['min'] || planetForm.get('orbitalEccentricity')?.errors?.['max']">
+          Orbital eccentricity must be between 0 and 1.
+        </mat-error>
       </mat-form-field>
 
       <!-- Orbital Inclination -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Orbital Inclination</mat-label>
-        <input matInput type="number" formControlName="orbitalInclination" maxlength="50">
+        <input matInput type="number" formControlName="orbitalInclination" maxlength="50" min="0" max="360">
         <mat-hint>in degrees</mat-hint>
+        <mat-error *ngIf="planetForm.get('orbitalInclination')?.errors?.['required']">
+          Orbital inclination is required.
+        </mat-error>
+        <mat-error *ngIf="planetForm.get('orbitalInclination')?.errors?.['min'] || planetForm.get('orbitalInclination')?.errors?.['max']">
+          Orbital inclination must be between 0 and 360 degrees
+        </mat-error>
       </mat-form-field>
 
       <!-- Semi Major Axis -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Semi Major Axis</mat-label>
-        <input matInput type="number" formControlName="semiMajorAxis" maxlength="50">
+        <input matInput type="number" formControlName="semiMajorAxis" maxlength="50" min="0">
         <mat-hint>in astronomical units (AU)</mat-hint>
+        <mat-error *ngIf="planetForm.get('semiMajorAxis')?.errors?.['required']">
+          Semi major axis is required.
+        </mat-error>
+        <mat-error *ngIf="planetForm.get('semiMajorAxis')?.errors?.['min']">
+          Semi major axis must be a positive value.
+        </mat-error>
       </mat-form-field>
 
       <!-- Distance From Star -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Distance From Star</mat-label>
-        <input matInput type="number" formControlName="distanceFromStar" maxlength="50">
+        <input matInput type="number" formControlName="distanceFromStar" maxlength="50" min="0">
         <mat-hint>in astronomical units (AU)</mat-hint>
+        <mat-error *ngIf="planetForm.get('distanceFromStar')?.errors?.['required']">
+          Distance from star is required.
+        </mat-error>
+        <mat-error *ngIf="planetForm.get('distanceFromStar')?.errors?.['min']">
+          Distance from star must be a positive value.
+        </mat-error>
       </mat-form-field>
 
       <!-- Surface Temperature -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Surface Temperature</mat-label>
-        <input matInput type="number" formControlName="surfaceTemperature" maxlength="50">
+        <input matInput type="number" formControlName="surfaceTemperature" maxlength="50" min="0">
         <mat-hint>in Kelvin (K)</mat-hint>
+        <mat-error *ngIf="planetForm.get('surfaceTemperature')?.errors?.['required']">
+          Surface temperature is required.
+        </mat-error>
+        <mat-error *ngIf="planetForm.get('surfaceTemperature')?.errors?.['min']">
+          Surface temperature must be a positive value.
+        </mat-error>
       </mat-form-field>
 
       <!-- Discovery Date -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Discovery Date</mat-label>
         <input matInput type="date" formControlName="discoveryDate" maxlength="50">
+        <mat-error *ngIf="planetForm.get('discoveryDate')?.errors?.['required']">
+          Discovery Date is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Description -->
@@ -103,7 +169,7 @@
       <!-- Planet Composition Accordion -->
       <mat-accordion class="col-span-2 mb-2">
 
-      <!-- Chemical Elements -->
+        <!-- Chemical Elements -->
         <mat-expansion-panel hideToggle>
           <mat-expansion-panel-header>
             <mat-panel-title> Geological Composition </mat-panel-title>
@@ -180,7 +246,7 @@
           <button mat-button type="button" (click)="addComposition()">Add Composition Element</button>
         </mat-expansion-panel>
 
-      <!-- Atmospheric Gases -->
+        <!-- Atmospheric Gases -->
         <mat-expansion-panel hideToggle>
           <mat-expansion-panel-header>
             <mat-panel-title> Atmospheric Composition </mat-panel-title>
@@ -207,7 +273,7 @@
               <!-- Percentage Slider -->
               <div class="w-auto">
                 <mat-slider step="0.01" min="0"
-                            [max]="getRemainingPercentage('atmosphere') + group.get('percentage')?.value" >
+                            [max]="getRemainingPercentage('atmosphere') + group.get('percentage')?.value">
                   <input matSliderThumb formControlName="percentage" />
                 </mat-slider>
               </div>
@@ -260,9 +326,11 @@
     </div>
   </mat-dialog-content>
   <mat-dialog-actions align="center">
+
     <!-- Submit Button -->
     <div class="flex justify-center">
       <button color="primary" mat-button type="submit">Save</button>
     </div>
+
   </mat-dialog-actions>
 </form>

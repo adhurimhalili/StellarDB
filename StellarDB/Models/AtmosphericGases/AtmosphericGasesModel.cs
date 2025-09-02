@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Xml.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace StellarDB.Models.AtmosphericGases
@@ -8,13 +9,31 @@ namespace StellarDB.Models.AtmosphericGases
         [BsonId]
         [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
         public string? Id { get; set; }
+
+        [BsonRequired]
+        [Required(ErrorMessage = "Gas name is required")]
         public string Name { get; set; }
+
+        [BsonRequired]
+        [Required(ErrorMessage = "Chemical formula is required")]
         public string Formula { get; set; }
+
+        [BsonRequired]
+        [Required(ErrorMessage = "Molecular weight is required")]
+        [Range(0, double.MaxValue, ErrorMessage = "Molecular weight must be a positive value")]
         public double MolecularWeight { get; set; }
+
+        [Range(0, double.MaxValue, ErrorMessage = "Density must be a positive value")]
         public double Density { get; set; } // in kg/m^3
+
+        [Range(0, double.MaxValue, ErrorMessage = "Boiling point must be a positive value")]
         public double? BoilingPoint { get; set; } // in Kelvin
+
+        [Range(0, double.MaxValue, ErrorMessage = "Melting point must be a positive value")]
         public double? MeltingPoint { get; set; } // in Kelvin
+
         public int? DiscoveryYear { get; set; }
+
         public string Description { get; set; }
     }
     public class AtmosphericGasesXmlWrapper

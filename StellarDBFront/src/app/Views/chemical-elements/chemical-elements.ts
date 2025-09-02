@@ -33,8 +33,8 @@ export interface ChemicalElement {
   styleUrl: './chemical-elements.css'
 })
 export class ChemicalElementsComponent implements AfterViewInit {
-  availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
-  tableColumns = [
+  readonly title = 'Chemical Elements';
+  readonly tableColumns = [
     { columnDef: 'atomicNumber', header: 'Atomic Number', cssClass: 'w-1/10' },
     { columnDef: 'symbol', header: 'Symbol' },
     { columnDef: 'name', header: 'Name' },
@@ -45,13 +45,14 @@ export class ChemicalElementsComponent implements AfterViewInit {
     { columnDef: 'group', header: 'Group' },
     { columnDef: 'discoveryDateText', header: 'Discovery Year' }
   ];
-  title = 'Chemical Elements';
+  availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
   dataSource = [];
   objects: ChemicalElement[] = [];
   isLoading = true;
+
+  private readonly apiAction = `${GlobalConfig.apiUrl}/ChemicalElements`;
   private readonly formDialog = inject(MatDialog);
   private selectedFile: File | null = null;
-  private apiAction = `${GlobalConfig.apiUrl}/ChemicalElements`;
 
   ngAfterViewInit() {
     this.fetchData();

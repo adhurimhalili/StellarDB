@@ -46,18 +46,20 @@ namespace StellarDB.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(StarSpectralClassesModel starSpectralClass)
         {
-            await _starSpectralClasses.InsertOneAsync(starSpectralClass);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
+            await _starSpectralClasses.InsertOneAsync(starSpectralClass);
             return CreatedAtAction(nameof(GetById), new { id = starSpectralClass.Id }, starSpectralClass);
         }
 
         [HttpPut]
         public async Task<ActionResult> Update(StarSpectralClassesModel starSpectralClass)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var filter = Builders<StarSpectralClassesModel>.Filter.Eq(x => x.Id, starSpectralClass.Id);
             var result = await _starSpectralClasses.ReplaceOneAsync(filter, starSpectralClass);
             if (result.ModifiedCount == 0) return NotFound("Failed to update Star Spectral Class.");
-
             return Ok(result);
         }
 

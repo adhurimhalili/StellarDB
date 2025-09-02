@@ -7,42 +7,69 @@
       <mat-form-field class="" appearance="outline">
         <mat-label>Molecular Weight (g/mol)</mat-label>
         <input matInput formControlName="molecularWeight" type="number" step="any" required>
+        <mat-error *ngIf="atmosphericGasForm.get('molecularWeight')?.errors?.['required']">
+          Molecular weight is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Chemical Formula -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Chemical Formula</mat-label>
         <input matInput formControlName="formula" maxlength="10" required>
+        <mat-error *ngIf="atmosphericGasForm.get('formula')?.errors?.['required']">
+          Chemical formula is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Name -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Name</mat-label>
         <input matInput formControlName="name" maxlength="50" required>
+        <mat-error *ngIf="atmosphericGasForm.get('name')?.errors?.['required']">
+          Name is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Density -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Density (kg/m³)</mat-label>
         <input matInput formControlName="density" type="number" step="any" required>
+        <mat-error *ngIf="atmosphericGasForm.get('density')?.errors?.['required']">
+          Density is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Melting Point -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Melting Point (K)</mat-label>
         <input matInput formControlName="meltingPoint" type="number" step="any" required>
+        <mat-error *ngIf="atmosphericGasForm.get('meltingPoint')?.errors?.['required']">
+          Melting point is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Boiling Point -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Boiling Point (K)</mat-label>
         <input matInput formControlName="boilingPoint" type="number" step="any" required>
+        <mat-error *ngIf="atmosphericGasForm.get('boilingPoint')?.errors?.['required']">
+          Boiling point is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Discovery Year -->
       <mat-form-field class="col-span-2" appearance="outline">
         <mat-label>Discovery Year</mat-label>
         <input matInput formControlName="discoveryYear" type="number" step="1" maxlength="4">
+        <mat-error *ngIf="atmosphericGasForm.get('discoveryYear')?.errors?.['required']">
+          Discovery year is required.
+        </mat-error>
+        <mat-error *ngIf="atmosphericGasForm.get('discoveryYear')?.errors?.['max']">
+          Time travel is not allowed.
+        </mat-error>
+        <mat-error *ngIf="atmosphericGasForm.get('discoveryYear')?.errors?.['pattern']">
+          Please enter a valid 4-digit year.
+        </mat-error>
       </mat-form-field>
 
       <!-- Description -->

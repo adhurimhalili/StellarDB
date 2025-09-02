@@ -15,8 +15,9 @@ import { GlobalConfig } from '../../../global-config';
   styleUrl: './star-spectral-classes-form.css'
 })
 export class StarSpectralClassesForm implements AfterViewInit {
-  apiAction = `${GlobalConfig.apiUrl}/StarSpectralClasses`;
+  readonly title: string;
   starSpectralClassForm: FormGroup;
+  private readonly apiAction = `${GlobalConfig.apiUrl}/StarSpectralClasses`;
   constructor(
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<StarSpectralClassesForm>,
@@ -27,8 +28,9 @@ export class StarSpectralClassesForm implements AfterViewInit {
       code: ['', [Validators.required, Validators.maxLength(2)]],
       temperatureRange: ['', Validators.required],
       color: ['', Validators.required],
-      description: ['', Validators.required]
+      description: ['']
     });
+    this.title = data ? 'Modify Spectral Class' : 'Add Spectral Class';
   }
 
   ngAfterViewInit() {
@@ -49,13 +51,25 @@ export class StarSpectralClassesForm implements AfterViewInit {
   }
 
   onSubmit() {
+    Object.keys(this.starSpectralClassForm.controls).forEach(key => {
+      const control = this.starSpectralClassForm.get(key);
+      control?.markAsTouched();
+    });
+
     const httpMethod = this.data ? "PUT" : "POST";
     fetch(`${this.apiAction}`, {
       method: httpMethod,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(this.starSpectralClassForm.value)
     })
-      .then(response => response.json())
+      .then(async response => {
+        if (!response.ok) {
+          const errorData = await response.json();
+          const errorMessage = errorData.message || `Server returned ${response.status}`;
+          throw new Error(errorMessage);
+        }
+        return response.json();
+      })
       .then(result => {
         this.dialogRef.close(result);
       })

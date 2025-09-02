@@ -10,9 +10,13 @@ namespace StellarDB.Models.PlanetTypes
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
+        [BsonRequired]
+        [Required(ErrorMessage = "Planet type name is required")]
         public string Name { get; set; }
+        [BsonRequired]
+        [Required(ErrorMessage = "Planet type code is required")]
         public string Code { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
     }
 
     public class PlanetTypesXmlWrapper

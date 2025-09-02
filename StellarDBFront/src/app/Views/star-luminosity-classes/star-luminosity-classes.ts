@@ -26,21 +26,21 @@ export interface StarLuminosityClasses {
   styleUrl: './star-luminosity-classes.css'
 })
 export class StarLuminosityClassesComponent {
-  title = 'Star Luminosity Classes';
-  apiAction = `${GlobalConfig.apiUrl}/StarLuminosityClasses`;
-  availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
-  tableColumns = [
+  readonly title = 'Star Luminosity Classes';
+  readonly tableColumns = [
     { columnDef: 'position', header: 'No.', cell: (item: any) => `${item.no}`, cssClass: 'w-1/32' },
     { columnDef: 'code', header: 'Code', cssClass: 'w-1/24' },
     { columnDef: 'name', header: 'Name', cssClass: 'w-1/8' },
     { columnDef: 'description', header: 'Description' }
   ];
-
+  availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
   dataSource = new MatTableDataSource<StarLuminosityClasses>();
   objects: StarLuminosityClasses[] = [];
   isLoading = true;
-  readonly formDialog = inject(MatDialog);
-  selectedFile: File | null = null;
+
+  private readonly apiAction = `${GlobalConfig.apiUrl}/StarLuminosityClasses`;
+  private readonly formDialog = inject(MatDialog);
+  private selectedFile: File | null = null;
 
   ngAfterViewInit() {
     this.fetchData();

@@ -28,22 +28,22 @@ export interface StarSpectralClasses {
   styleUrl: './star-spectral-classes.css'
 })
 export class StarSpectralClassesComponent implements AfterViewInit {
-  title = 'Star Spectral Classes';
-  apiAction = `${GlobalConfig.apiUrl}/StarSpectralClasses`;
-  availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
-  tableColumns = [
+  readonly title = 'Star Spectral Classes';
+  readonly tableColumns = [
     { columnDef: 'position', header: 'No.', cell: (item: any) => `${item.no}`, cssClass: 'w-1/32' },
     { columnDef: 'code', header: 'Code', cssClass: 'w-1/24' },
     { columnDef: 'temperatureRange', header: 'Temperature Range' },
     { columnDef: 'color', header: 'Color', cssClass: 'w-1/16' },
     { columnDef: 'description', header: 'Description' }
   ];
-
+  availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
   dataSource = new MatTableDataSource<StarSpectralClasses>();
   objects: StarSpectralClasses[] = []
   isLoading = true;
-  readonly formDialog = inject(MatDialog);
-  selectedFile: File | null = null;
+
+  private readonly apiAction = `${GlobalConfig.apiUrl}/StarSpectralClasses`;
+  private readonly formDialog = inject(MatDialog);
+  private selectedFile: File | null = null;
 
   ngAfterViewInit() {
     this.fetchData();

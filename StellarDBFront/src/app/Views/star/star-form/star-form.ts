@@ -23,11 +23,13 @@ import { ChemicalElement } from '../../chemical-elements/chemical-elements';
   styleUrl: './star-form.css'
 })
 export class StarForm {
-  private apiAction = `${GlobalConfig.apiUrl}/Star`;
+  readonly title: string;
   starForm: FormGroup;
   starSpectralClasses: StarSpectralClasses[] = [];
   starLuminosityClasses: StarLuminosityClasses[] = [];
   chemicalElements: ChemicalElement[] = [];
+
+  private readonly apiAction = `${GlobalConfig.apiUrl}/Star`;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -39,15 +41,16 @@ export class StarForm {
       name: ['', [Validators.required, Validators.maxLength(50)]],
       spectralClassId: [null, Validators.required],
       luminosityClassId: [null, Validators.required],
-      magnitude: [null, Validators.required],
-      distance: [null, Validators.required],
-      diameter: [null, Validators.required],
-      mass: [null, Validators.required],
-      temperature: [null, Validators.required],
+      magnitude: [null, [Validators.required, Validators.min(0)]],
+      distance: [null, [Validators.required, Validators.min(0)]],
+      diameter: [null, [Validators.required, Validators.min(0)]],
+      mass: [null, [Validators.required, Validators.min(0)]],
+      temperature: [null, [Validators.required, Validators.min(0)]],
       discoveryDate: ['', Validators.required],
       composition: this.formBuilder.array([]),
       description: ['', [Validators.maxLength(500)]]
     });
+    this.title = data ? 'Modify Star' : 'Add Star';
   }
 
   fetchSpectralClasses() {

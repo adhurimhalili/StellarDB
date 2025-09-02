@@ -53,7 +53,7 @@ namespace StellarDB.Controllers
                 star.Distance,
                 star.Diameter,
                 star.Mass,
-                star.Temperature,
+                Temperature = star.Temperature.ToString("N0"),
                 DiscoveryDate = star.DiscoveryDate.ToString("yyyy-MM-dd"),
                 Composition = star.Composition?.Select(c => new
                 {

@@ -1,7 +1,4 @@
-<div>
-  <span *ngIf="data != null" mat-dialog-title>Modify Star Spectral Class</span>
-  <span *ngIf="data == null" mat-dialog-title>Add Star Spectral Class</span>
-</div>
+<div mat-dialog-title>{{title}}</div>
 
 <!-- Form -->
 <form [formGroup]="starForm" (ngSubmit)="onSubmit()">
@@ -11,6 +8,9 @@
       <mat-form-field class="col-span-2" appearance="outline">
         <mat-label>Name</mat-label>
         <input matInput formControlName="name" maxlength="50">
+        <mat-error *ngIf="starForm.get('name')?.errors?.['required']">
+          Name is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Spectral Class -->
@@ -21,6 +21,9 @@
             {{ spectralClass.code }}
           </mat-option>
         </mat-select>
+        <mat-error *ngIf="starForm.get('spectralClassId')?.errors?.['required']">
+          Spectral class is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Luminosity Class -->
@@ -31,42 +34,78 @@
             {{ luminosityClass.code }}
           </mat-option>
         </mat-select>
+        <mat-error *ngIf="starForm.get('spectralClassId')?.errors?.['required']">
+          Luminosity class is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Magnitude -->
       <mat-form-field appearance="outline">
         <mat-label>Magnitude</mat-label>
-        <input matInput formControlName="magnitude" type="number" step="any">
+        <input matInput formControlName="magnitude" type="number" step="any" min="0">
+        <mat-error *ngIf="starForm.get('magnitude')?.errors?.['required']">
+          Magnitude is required.
+        </mat-error>
+        <mat-error *ngIf="starForm.get('magnitude')?.errors?.['min']">
+          Magnitude must be a positive value.
+        </mat-error>
       </mat-form-field>
 
       <!-- Diameter -->
       <mat-form-field appearance="outline">
         <mat-label>Diameter (km)</mat-label>
         <input matInput formControlName="diameter" type="number" step="any">
+        <mat-error *ngIf="starForm.get('diameter')?.errors?.['required']">
+          Diameter is required.
+        </mat-error>
+        <mat-error *ngIf="starForm.get('diameter')?.errors?.['min']">
+          Diameter must be a positive value.
+        </mat-error>
       </mat-form-field>
 
       <!-- Distance -->
       <mat-form-field appearance="outline">
         <mat-label>Distance (ly)</mat-label>
         <input matInput formControlName="distance" type="number" step="any">
+        <mat-error *ngIf="starForm.get('distance')?.errors?.['required']">
+          Distance is required.
+        </mat-error>
+        <mat-error *ngIf="starForm.get('distance')?.errors?.['min']">
+          Distance must be a positive value.
+        </mat-error>
       </mat-form-field>
 
       <!-- Mass -->
       <mat-form-field appearance="outline">
         <mat-label>Mass (M☉)</mat-label>
         <input matInput formControlName="mass" type="number" step="any">
+        <mat-error *ngIf="starForm.get('mass')?.errors?.['required']">
+          Mass is required.
+        </mat-error>
+        <mat-error *ngIf="starForm.get('mass')?.errors?.['min']">
+          Mass must be a positive value.
+        </mat-error>
       </mat-form-field>
 
       <!-- Temperature -->
       <mat-form-field appearance="outline">
         <mat-label>Temperature (K)</mat-label>
         <input matInput formControlName="temperature" type="number" step="any">
+        <mat-error *ngIf="starForm.get('temperature')?.errors?.['required']">
+          Temperature is required.
+        </mat-error>
+        <mat-error *ngIf="starForm.get('temperature')?.errors?.['min']">
+          Temperature must be a positive value.
+        </mat-error>
       </mat-form-field>
 
       <!-- Discovery Date -->
       <mat-form-field appearance="outline">
         <mat-label>Discovery Date</mat-label>
         <input matInput formControlName="discoveryDate" type="date">
+        <mat-error *ngIf="starForm.get('discoveryDate')?.errors?.['required']">
+          Discovery date is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Description -->
@@ -81,7 +120,7 @@
         <!-- Chemical Elements -->
         <mat-expansion-panel hideToggle>
           <mat-expansion-panel-header>
-            <mat-panel-title> Geological Composition </mat-panel-title>
+            <mat-panel-title> Chemical Composition </mat-panel-title>
 
             <!-- Total Percentage -->
             <mat-panel-description class="text-sm">

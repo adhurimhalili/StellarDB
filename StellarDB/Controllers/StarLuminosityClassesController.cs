@@ -34,17 +34,19 @@ namespace StellarDB.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<StarLuminosityClassesModel?>> GetById(string id)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var filter = Builders<StarLuminosityClassesModel>.Filter.Eq(stBody => stBody.Id, id);
             var starLuminosityClass = _starLuminosityClasses.Find(filter).FirstOrDefault();
-
             return starLuminosityClass is not null ? Ok(starLuminosityClass) : NotFound("Failed to find Star Luminosity Class.");
         }
 
         [HttpPost]
         public async Task<ActionResult> Create(StarLuminosityClassesModel starLuminosityClass)
         {
-            await _starLuminosityClasses.InsertOneAsync(starLuminosityClass);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
+            await _starLuminosityClasses.InsertOneAsync(starLuminosityClass);
             return CreatedAtAction(nameof(GetById), new { id = starLuminosityClass.Id }, starLuminosityClass);
         }
 

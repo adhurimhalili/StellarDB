@@ -24,7 +24,7 @@
       <ng-template #expandedContent let-element>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
           <!-- Composition Chart -->
-          <div *ngIf="element.composition?.length" class="mb-6">
+          <div *ngIf="element.composition?.length" class="mb-6 col-span-2">
             <apx-chart [series]="compositionChart(element)?.series!"
                        [chart]="compositionChart(element)?.chart!"
                        [labels]="compositionChart(element)?.labels!"

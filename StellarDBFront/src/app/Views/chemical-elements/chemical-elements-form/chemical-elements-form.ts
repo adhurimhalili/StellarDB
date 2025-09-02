@@ -16,9 +16,9 @@ import { MatSelectModule } from '@angular/material/select'
   styleUrl: './chemical-elements-form.css'
 })
 export class ChemicalElementsForm {
-  private readonly apiAction = `${GlobalConfig.apiUrl}/ChemicalElements`;
   readonly title: string;
   chemicalElementForm: FormGroup;
+  private readonly apiAction = `${GlobalConfig.apiUrl}/ChemicalElements`;
 
   constructor(private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<ChemicalElementsForm>,
@@ -26,15 +26,18 @@ export class ChemicalElementsForm {
   ) {
     this.chemicalElementForm = this.formBuilder.group({
       id: data,
-      atomicNumber: [null, [Validators.required, Validators.maxLength(2)]],
-      atomicWeight: [null, [Validators.required, Validators.maxLength(10)]],
+      atomicNumber: [null, [Validators.required, Validators.min(0), Validators.maxLength(2)]],
+      atomicWeight: [null, [Validators.required, Validators.min(0), Validators.maxLength(10)]],
       symbol: ['', [Validators.required, Validators.maxLength(3)]],
       name: ['', [Validators.required, Validators.maxLength(50)]],
-      meltingPoint: [null,Validators.maxLength(10)],
-      boilingPoint: [null, Validators.maxLength(10)],
-      period: [null, [Validators.required, Validators.maxLength(2)]],
-      group: [null, [Validators.required, Validators.maxLength(2)]],
-      discoveryYear: null,
+      meltingPoint: [null, [Validators.min(0), Validators.maxLength(10)]],
+      boilingPoint: [null, [Validators.min(0), Validators.maxLength(10)]],
+      period: [null, [Validators.required, Validators.min(0), Validators.maxLength(2)]],
+      group: [null, [Validators.required, Validators.min(0), Validators.maxLength(2)]],
+      discoveryYear: [null, [
+        Validators.max(new Date().getFullYear()), // Current year
+        Validators.pattern(/^\d{4}$/) // Must be exactly 4 digits
+      ]],
       description: ['', [Validators.maxLength(500)]]
     });
     this.title = data ? 'Modify Chemical Element' : 'Add Chemical Element';
@@ -58,13 +61,25 @@ export class ChemicalElementsForm {
   }
 
   onSubmit() {
+    Object.keys(this.chemicalElementForm.controls).forEach(key => {
+      const control = this.chemicalElementForm.get(key);
+      control?.markAsTouched();
+    });
+
     const httpMethod = this.data ? "PUT" : "POST";
     fetch(`${this.apiAction}`, {
       method: httpMethod,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(this.chemicalElementForm.value)
     })
-      .then(response => response.json())
+      .then(async response => {
+        if (!response.ok) {
+          const errorData = await response.json();
+          const errorMessage = errorData.message || `Server returned ${response.status}`;
+          throw new Error(errorMessage);
+        }
+        return response.json();
+      })
       .then(result => {
         this.dialogRef.close(result);
       })

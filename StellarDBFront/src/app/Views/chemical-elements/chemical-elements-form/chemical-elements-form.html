@@ -6,55 +6,97 @@
       <!-- Atomic Number -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Atomic Number</mat-label>
-        <input matInput formControlName="atomicNumber" type="number" required>
+        <input matInput formControlName="atomicNumber" type="number" min="0" required>
+        <mat-error *ngIf="chemicalElementForm.get('atomicNumber')?.errors?.['required']">
+          Atomic number is required.
+        </mat-error>
+        <mat-error *ngIf="chemicalElementForm.get('atomicNumber')?.errors?.['min']">
+          Atomic number must be a positive value.
+        </mat-error>
       </mat-form-field>
 
       <!-- Atomic Weight -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Atomic Weight</mat-label>
-        <input matInput formControlName="atomicWeight" type="number" step="any" required>
+        <input matInput formControlName="atomicWeight" type="number" min="0" step="any" required>
+        <mat-error *ngIf="chemicalElementForm.get('atomicWeight')?.errors?.['required']">
+          Atomic weight is required.
+        </mat-error>
+        <mat-error *ngIf="chemicalElementForm.get('atomicWeight')?.errors?.['min']">
+          Atomic weight must be a positive value.
+        </mat-error>
       </mat-form-field>
 
       <!-- Symbol -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Symbol</mat-label>
         <input matInput formControlName="symbol" maxlength="3" required>
+        <mat-error *ngIf="chemicalElementForm.get('symbol')?.errors?.['required']">
+          Symbol is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Name -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Name</mat-label>
         <input matInput formControlName="name" maxlength="50" required>
-      </mat-form-field>
-
-      <!-- Melting Point -->
-      <mat-form-field class="" appearance="outline">
-        <mat-label>Melting Point (K)</mat-label>
-        <input matInput formControlName="meltingPoint" type="number" step="any">
-      </mat-form-field>
-
-      <!-- Boiling Point -->
-      <mat-form-field class="" appearance="outline">
-        <mat-label>Boiling Point (K)</mat-label>
-        <input matInput formControlName="boilingPoint" type="number" step="any">
+        <mat-error *ngIf="chemicalElementForm.get('name')?.errors?.['required']">
+          Name is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Period -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Period</mat-label>
         <input matInput formControlName="period" type="number" required>
+        <mat-error *ngIf="chemicalElementForm.get('period')?.errors?.['required']">
+          Period is required.
+        </mat-error>
+        <mat-error *ngIf="chemicalElementForm.get('period')?.errors?.['min']">
+          Period must be a positive value.
+        </mat-error>
       </mat-form-field>
 
       <!-- Group -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Group</mat-label>
         <input matInput formControlName="group" type="number" required>
+        <mat-error *ngIf="chemicalElementForm.get('group')?.errors?.['required']">
+          Group is required.
+        </mat-error>
+        <mat-error *ngIf="chemicalElementForm.get('group')?.errors?.['min']">
+          Group must be a positive value.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Melting Point -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Melting Point (K)</mat-label>
+        <input matInput formControlName="meltingPoint" type="number" step="any">
+        <mat-error *ngIf="chemicalElementForm.get('meltingPoint')?.errors?.['min']">
+          Melting point must be a positive value.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Boiling Point -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Boiling Point (K)</mat-label>
+        <input matInput formControlName="boilingPoint" type="number" step="any">
+        <mat-error *ngIf="chemicalElementForm.get('boilingPoint')?.errors?.['min']">
+          Boiling point must be a positive value.
+        </mat-error>
       </mat-form-field>
 
       <!-- Discovery Year -->
       <mat-form-field class="col-span-2" appearance="outline">
         <mat-label>Discovery Year</mat-label>
-        <input matInput formControlName="discoveryYear" type="number" step="1" maxlength="4">
+        <input matInput formControlName="discoveryYear" type="number" step="1" max="9999" placeholder="YYYY">
+        <mat-error *ngIf="chemicalElementForm.get('discoveryYear')?.errors?.['max']">
+          Time travel is not allowed.
+        </mat-error>
+        <mat-error *ngIf="chemicalElementForm.get('discoveryYear')?.errors?.['pattern']">
+          Please enter a valid 4-digit year.
+        </mat-error>
       </mat-form-field>
 
       <!-- Description -->

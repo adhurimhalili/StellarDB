@@ -15,9 +15,9 @@ import { GlobalConfig } from '../../../global-config';
   styleUrl: './planet-types-form.css'
 })
 export class PlanetTypesForm {
+  readonly title: string;
   private apiAction = `${GlobalConfig.apiUrl}/PlanetTypes`;
   planetTypesForm: FormGroup;
-  title: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -39,7 +39,7 @@ export class PlanetTypesForm {
   }
 
   loadFromData() {
-    fetch(`${this.apiAction}/${this.data.planetTypeId}`, { method: 'GET' })
+    fetch(`${this.apiAction}/${this.data}`, { method: 'GET' })
       .then(response => response.json())
       .then(formData => {
         this.planetTypesForm.patchValue(formData);
@@ -50,13 +50,25 @@ export class PlanetTypesForm {
   }
 
   onSubmit() {
-    const httpMethod = this.data.planetTypeId ? 'PUT' : 'POST';
+    Object.keys(this.planetTypesForm.controls).forEach(key => {
+      const control = this.planetTypesForm.get(key);
+      control?.markAsTouched();
+    });
+
+    const httpMethod = this.data ? 'PUT' : 'POST';
     fetch(`${this.apiAction}`, {
       method: httpMethod,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(this.planetTypesForm.value)
     })
-      .then(response => response.json())
+      .then(async response => {
+        if (!response.ok) {
+          const errorData = await response.json();
+          const errorMessage = errorData.message || `Server returned ${response.status}`;
+          throw new Error(errorMessage);
+        }
+        return response.json();
+      })
       .then(result => {
         this.dialogRef.close(result);
       })

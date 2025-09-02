@@ -1,33 +1,43 @@
 <div>
-  <span *ngIf="data != null" mat-dialog-title>Modify Star Spectral Class</span>
-  <span *ngIf="data == null" mat-dialog-title>Add Star Spectral Class</span>
+  <span mat-dialog-title>{{title}}</span>
 </div>
 <!-- Form -->
 <form [formGroup]="starSpectralClassForm" (ngSubmit)="onSubmit()">
   <mat-dialog-content>
-    <!-- Code -->
-    <mat-form-field appearance="outline" class="w-full">
-      <mat-label>Code</mat-label>
-      <input matInput formControlName="code" maxlength="2">
-    </mat-form-field>
+    <div class="grid grid-cols-1 gap-4">
+      <!-- Code -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Code</mat-label>
+        <input matInput formControlName="code" maxlength="2">
+        <mat-error *ngIf="starSpectralClassForm.get('code')?.errors?.['required']">
+          Code is required.
+        </mat-error>
+      </mat-form-field>
 
-    <!-- Temperature Range -->
-    <mat-form-field appearance="outline" class="w-full">
-      <mat-label>Temperature Range</mat-label>
-      <input matInput formControlName="temperatureRange">
-    </mat-form-field>
+      <!-- Temperature Range -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Temperature Range</mat-label>
+        <input matInput formControlName="temperatureRange">
+        <mat-error *ngIf="starSpectralClassForm.get('temperatureRange')?.errors?.['required']">
+          Temperature range is required.
+        </mat-error>
+      </mat-form-field>
 
-    <!-- Color -->
-    <mat-form-field appearance="outline" class="w-full">
-      <mat-label>Color</mat-label>
-      <input matInput formControlName="color">
-    </mat-form-field>
+      <!-- Color -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Color</mat-label>
+        <input matInput formControlName="color">
+        <mat-error *ngIf="starSpectralClassForm.get('color')?.errors?.['required']">
+          Color is required.
+        </mat-error>
+      </mat-form-field>
 
-    <!-- Description -->
-    <mat-form-field appearance="outline" class="w-full">
-      <mat-label>Description</mat-label>
-      <input matInput formControlName="description">
-    </mat-form-field>
+      <!-- Description -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+      </mat-form-field>
+    </div>
   </mat-dialog-content>
   <mat-dialog-actions align="center">
     <!-- Submit Button -->

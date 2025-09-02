@@ -40,8 +40,8 @@ export interface Planet {
   styleUrl: './planet.css'
 })
 export class PlanetComponent implements AfterViewInit {
-  availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
-  tableColumns = [
+  readonly title = 'Planets';
+  readonly tableColumns = [
     { columnDef: 'position', header: 'No.', cell: (item: any) => `${item.no}`, cssClass: 'w-1/32' },
     { columnDef: 'name', header: 'Name', cssClass: 'w-1/24' },
     { columnDef: 'starName', header: 'Star' },
@@ -53,14 +53,15 @@ export class PlanetComponent implements AfterViewInit {
     { columnDef: 'surfaceTemperature', header: 'Surface Temp. (K)' },
     { columnDef: 'discoveryDate', header: 'Discovery Date' }
   ];
-  title = 'Planets';
+  availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
   dataSource = new MatTableDataSource<Planet>();
   objects: Planet[] = [];
   isLoading = true;
   expandedElement: Planet | null = null;
-  private selectedFile: File | null = null;
-  private readonly formDialog = inject(MatDialog);
+
   private readonly apiAction = `${GlobalConfig.apiUrl}/Planet`;
+  private readonly formDialog = inject(MatDialog);
+  private selectedFile: File | null = null;
 
   ngAfterViewInit() {
     this.fetchData();
@@ -266,7 +267,10 @@ export class PlanetComponent implements AfterViewInit {
         floating: true,
         position: 'right',
         offsetX: 0,
-        offsetY: 0
+        offsetY: 0,
+        formatter: function (seriesName: string, opts: any) {
+          return `${seriesName}: <b>${opts.w.globals.series[opts.seriesIndex]}%</b>`
+        }
       },
       colors: [
         '#00B0F0', '#92D050', '#FFC000', '#FF6B6B', '#B895FF',
@@ -329,7 +333,10 @@ export class PlanetComponent implements AfterViewInit {
         floating: true,
         position: 'right',
         offsetX: 0,
-        offsetY: 0
+        offsetY: 0,
+        formatter: function (seriesName: string, opts: any) {
+          return `${seriesName}: <b>${opts.w.globals.series[opts.seriesIndex]}%</b>`
+        }
       },
       colors: [
         // Using different color scheme for composition to distinguish from atmosphere

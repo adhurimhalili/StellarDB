@@ -1,28 +1,35 @@
-<div class="">
-  <span *ngIf="data != null" mat-dialog-title>Modify Star Luminosity Class</span>
-  <span *ngIf="data == null" mat-dialog-title>Add Star Luminosity Class</span>
+<div>
+  <span mat-dialog-title>{{title}}</span>
 </div>
+
 <!-- Form -->
 <form [formGroup]="starLuminosityClassForm" (ngSubmit)="onSubmit()">
   <mat-dialog-content>
-    <!-- Code -->
-    <div class="grid grid-cols-2 gap-2">
+    <div class="grid grid-cols-2 gap-4">
+      <!-- Code -->
       <mat-form-field appearance="outline">
         <mat-label>Code</mat-label>
         <input matInput formControlName="code" maxlength="4">
+        <mat-error *ngIf="starLuminosityClassForm.get('code')?.errors?.['required']">
+          Code is required.
+        </mat-error>
       </mat-form-field>
 
       <!-- Name -->
       <mat-form-field appearance="outline">
         <mat-label>Name</mat-label>
         <input matInput formControlName="name">
+        <mat-error *ngIf="starLuminosityClassForm.get('name')?.errors?.['required']">
+          Name is required.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Description -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description"></textarea>
       </mat-form-field>
     </div>
-    <!-- Description -->
-    <mat-form-field appearance="outline" class="w-full">
-      <mat-label>Description</mat-label>
-      <input matInput formControlName="description">
-    </mat-form-field>
   </mat-dialog-content>
   <mat-dialog-actions align="center">
     <!-- Submit Button -->

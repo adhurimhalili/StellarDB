@@ -15,8 +15,9 @@ import { GlobalConfig } from '../../../global-config';
   styleUrl: './star-luminosity-classes-form.css'
 })
 export class StarLuminosityClassesForm {
-  apiAction = `${GlobalConfig.apiUrl}/StarLuminosityClasses`;
+  readonly title: string;
   starLuminosityClassForm: FormGroup;
+  private readonly apiAction = `${GlobalConfig.apiUrl}/StarLuminosityClasses`;
   constructor(
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<StarLuminosityClassesForm>,
@@ -26,8 +27,9 @@ export class StarLuminosityClassesForm {
       id: data,
       code: ['', [Validators.required, Validators.maxLength(4)]],
       name: ['', Validators.required],
-      description: ['', Validators.required]
+      description: ['']
     });
+    this.title = data ? 'Modify Luminosity Class' : 'Add  Luminosity Class';
   }
 
   ngAfterViewInit() {
@@ -48,13 +50,25 @@ export class StarLuminosityClassesForm {
   }
 
   onSubmit() {
+    Object.keys(this.starLuminosityClassForm.controls).forEach(key => {
+      const control = this.starLuminosityClassForm.get(key);
+      control?.markAsTouched();
+    });
+
     const httpMethod = this.data ? "PUT" : "POST";
     fetch(`${this.apiAction}`, {
       method: httpMethod,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(this.starLuminosityClassForm.value)
     })
-      .then(response => response.json())
+      .then(async response => {
+        if (!response.ok) {
+          const errorData = await response.json();
+          const errorMessage = errorData.message || `Server returned ${response.status}`;
+          throw new Error(errorMessage);
+        }
+        return response.json();
+      })
       .then(result => {
         this.dialogRef.close(result);
       })
