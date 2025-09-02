@@ -47,7 +47,7 @@ namespace StellarDB.Models.Planet
         [Range(0, double.MaxValue, ErrorMessage = "Surface temperature must be a positive value")]
         public double SurfaceTemperature { get; set; }
 
-        public DateTime DiscoveryDate { get; set; }
+        public DateOnly DiscoveryDate { get; set; }
 
         public string? Description { get; set; }
 
@@ -89,7 +89,7 @@ namespace StellarDB.Models.Planet
         [XmlElement("SurfaceTemperature")]
         public double SurfaceTemperature { get; set; } // in Kelvin (K)
         [XmlElement("DiscoveryDate")]
-        public DateTime DiscoveryDate { get; set; }
+        public DateOnly DiscoveryDate { get; set; }
         [XmlElement("StarId")]
         public string? StarId { get; set; } // Reference to the star this planet orbits
         [XmlElement("Description")]
