@@ -83,7 +83,7 @@ export class StarComponent implements AfterViewInit {
 
   onOpenForm(starId?: string) {
     const dialogRef = this.formDialog.open(StarForm, {
-      width: '40%',
+      width: '60%',
       maxWidth: '1000px',
       data: starId
     });

@@ -50,10 +50,6 @@ export class PlanetComponent implements AfterViewInit {
     { columnDef: 'diameter', header: 'Diameter (km)' },
     { columnDef: 'rotationPeriod', header: 'Rotation Period (h)' },
     { columnDef: 'orbitalPeriod', header: 'Orbital Period (days)' },
-    { columnDef: 'orbitalEccentricity', header: 'Eccentricity' },
-    { columnDef: 'orbitalInclination', header: 'Inclination (°)' },
-    { columnDef: 'semiMajorAxis', header: 'Semi-Major Axis (AU)' },
-    { columnDef: 'distanceFromStar', header: 'Distance from Star (AU)' },
     { columnDef: 'surfaceTemperature', header: 'Surface Temp. (K)' },
     { columnDef: 'discoveryDate', header: 'Discovery Date' }
   ];

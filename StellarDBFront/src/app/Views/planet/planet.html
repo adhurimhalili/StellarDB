@@ -22,7 +22,7 @@
 
       <!-- Define the expanded content template -->
       <ng-template #expandedContent let-element>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
+        <div class="grid lg:grid-cols-2 gap-6 p-4">
           <!-- Atmosphere Chart -->
           <div *ngIf="element.atmosphere?.length" class="mb-6">
             <apx-chart [series]="atmosphereChart(element)?.series!"
@@ -48,10 +48,36 @@
           </div>
         </div>
 
-        <!-- Description Section -->
-        <div *ngIf="element.description" class="mt-4">
-          <h3 class="text-lg font-medium mb-2">Description</h3>
-          <p class="text-gray-700">{{element.description}}</p>
+        <div class="grid grid-cols-4">
+          <!-- Eccentricity Section -->
+          <div class="mt-4">
+            <h3 class="text-lg font-medium mb-2">Eccentricity</h3>
+            <p class="text-gray-700">{{element.orbitalEccentricity}}</p>
+          </div>
+
+          <!-- Inclination Section -->
+          <div class="mt-4">
+            <h3 class="text-lg font-medium mb-2">Inclination</h3>
+            <p class="text-gray-700">{{element.orbitalInclination}}°</p>
+          </div>
+
+          <!-- Semi-Major Axis Section -->
+          <div class="mt-4">
+            <h3 class="text-lg font-medium mb-2">Semi-Major Axis</h3>
+            <p class="text-gray-700">{{element.semiMajorAxis}} AU</p>
+          </div>
+
+          <!-- Distance from Star Section -->
+          <div class="mt-4">
+            <h3 class="text-lg font-medium mb-2">Distance from Star</h3>
+            <p class="text-gray-700">{{element.distanceFromStar}} AU</p>
+          </div>
+
+          <!-- Description Section -->
+          <div *ngIf="element.description" class="mt-4 col-span-4">
+            <h3 class="text-lg font-medium mb-2">Description</h3>
+            <p class="text-gray-700">{{element.description}}</p>
+          </div>
         </div>
 
         <!-- No Data Message -->
