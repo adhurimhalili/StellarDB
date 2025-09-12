@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using StellarDB.Models.Identity.Users;
+using StellarDB.Services.Identity.Users;
 
 namespace StellarDB.Controllers
 {
@@ -9,59 +9,71 @@ namespace StellarDB.Controllers
     public class UserController : ControllerBase
     {
         private readonly ILogger<UserController> _logger;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        public UserController   (UserManager<IdentityUser> userManager,
-                                 RoleManager<IdentityRole> roleManager)
+        private readonly IUserServices _userServices;
+
+        public UserController(ILogger<UserController> logger, IUserServices userServices)
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
+            _logger = logger;
+            _userServices = userServices;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var users = _userManager.Users.ToList();
+            var users = await _userServices.GetAllAsync();
             return Ok(users);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] IdentityUser user)
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserViewModel model)
         {
-            if (user == null)
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
             {
-                return BadRequest("User cannot be null");
+                var userId = await _userServices.CreateAsync(model, Request.Headers["origin"]);
+                return CreatedAtAction(nameof(Get), new { id = userId }, model);
             }
-
-            var result = await _userManager.CreateAsync(user);
-
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
-
-            // Assign roles if needed
-
-            return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating user");
+                return BadRequest(ex.Message);
+            }
         }
 
-        [HttpPut("Edit/{id}")]
-        public async Task<IActionResult> EditUser(string id, [FromBody] IdentityUser user)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditUser(string id, [FromBody] UpdateUserViewModel model)
         {
-            var userToUpdate = await _userManager.FindByIdAsync(id);
-            if (userToUpdate == null)
-                return NotFound($"User with ID {id} not found.");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
+            try
+            {
+                model.Id = id;
+                await _userServices.UpdateAsync(model, Request.Headers["origin"]);
+                return Ok("User updated successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating user");
+                return BadRequest(ex.Message);
+            }
+        }
 
-            userToUpdate.UserName = user.UserName;
-            userToUpdate.Email = user.Email;
-
-            var result = await _userManager.UpdateAsync(userToUpdate);
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
-
-            // Update Roles
-            // Add role code...
-
-            return Ok("User updated");
+        [HttpPut("toggle-status/{id}")]
+        public async Task<IActionResult> ToggleUserStatus(string id)
+        {
+            try
+            {
+                await _userServices.ToggleStatusAsync(id);
+                return Ok("User status toggled successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error toggling user status");
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
