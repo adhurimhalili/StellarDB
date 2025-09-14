@@ -56,10 +56,9 @@ export class LoginComponent implements OnInit {
     this.errorMessage = '';
 
     try {
-      await firstValueFrom(this.authService.login(this.loginForm.value));
+      var test = await firstValueFrom(this.authService.login(this.loginForm.value));
       this.loading = false;
       await this.router.navigate([this.returnUrl]);
-      
     } catch (error: any) {
       console.error('Login error:', error);
       this.errorMessage = error.status === 423

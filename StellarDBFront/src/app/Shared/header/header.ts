@@ -14,17 +14,16 @@ export class Header {
     public authService: AuthService,
     private router: Router,) { }
 
+  shouldShowHeader(): boolean {
+    return this.router.url !== '/Login'; // Hide header on login page
+  }
+
   async onLogout(): Promise<void> {
     try {
       await firstValueFrom(this.authService.logout());
-      const navigationSuccess = await this.router.navigate(["/Login"]);
-      if (!navigationSuccess) {
-        await this.router.navigate(["/login"]);
-      }
-      
+      await this.router.navigate(["/Login"]);      
     } catch (error) {
       console.error('Logout error:', error);
-      // Still navigate to login even if logout request fails
       await this.router.navigate(["/Login"]);
     }
   }

@@ -21,6 +21,10 @@ export class AuthService {
   private readonly authUrl = `${GlobalConfig.apiUrl}/Auth`;
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY = 'currentUser';
+  
+  // For session-only storage (when rememberMe = false)
+  private sessionToken: string | null = null;
+  private sessionUser: LoginResponse | null = null;
 
   constructor(
     private http: HttpClient,
@@ -61,6 +65,8 @@ export class AuthService {
   private clearStorageData(): void {
     localStorage.removeItem(this.USER_KEY);
     localStorage.removeItem(this.TOKEN_KEY);
+    this.sessionToken = null;
+    this.sessionUser = null;
     this.currentUserSubject.next(null);
   }
 
@@ -70,6 +76,14 @@ export class AuthService {
       if (user.token) {
         localStorage.setItem(this.TOKEN_KEY, user.token);
       }
+      // Clear session storage
+      this.sessionToken = null;
+      this.sessionUser = null;
+    } else {
+      // Session-only storage (in memory)
+      this.sessionToken = user.token;
+      this.sessionUser = user;
+      // Don't save to localStorage for session-only
     }
   }
 
@@ -125,19 +139,13 @@ export class AuthService {
     // Use JwtService to check if token is still valid
     const isExpired = this.jwtService.isTokenExpired(token);
     const isAuth = isExpired !== true; // true if not expired, false if expired, true if cannot determine (null)
-    
-    console.log('Auth check:', { 
-      authenticated: isAuth, 
-      hasUser: !!currentUser, 
-      hasToken: !!token,
-      isExpired: isExpired
-    });
-    
+        
     return isAuth;
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    // Check session storage first, then localStorage
+    return this.sessionToken || localStorage.getItem(this.TOKEN_KEY);
   }
 
   private storeUser(token: string, rememberMe: boolean = false): void {
@@ -158,9 +166,11 @@ export class AuthService {
         expiresAt: new Date(payload.exp * 1000)
       };
       
+      // Always update the current user subject
       this.currentUserSubject.next(user);
+      
+      // Handle storage based on rememberMe preference
       this.saveUserToStorage(user, rememberMe);
-      localStorage.setItem("currentUser", JSON.stringify(user));
     } else {
       throw new Error('Invalid JWT token received');
     }

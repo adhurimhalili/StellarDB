@@ -1,0 +1,9 @@
+.login-container {
+  /* Add your styles here */
+  padding: 20px; /* Example: Add padding */
+}
+
+.mat-form-field {
+  width: 100%;
+  min-width: 300px;
+}

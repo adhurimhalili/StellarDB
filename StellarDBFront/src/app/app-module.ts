@@ -20,6 +20,7 @@ import { Header } from './Shared/header/header';
 import { Home } from './Views/home/home';
 import { ThemeToggleSwitchComponent } from './Shared/theme-toggle-switch/theme-toggle-switch';
 import { AuthInterceptor } from './Core/Interceptors/auth.interceptor';
+import { IconService } from './Services/Icon/icon.service';
 
 export function tokenGetter() {
   return localStorage.getItem("auth_token"); // Changed to match your actual token key
@@ -51,6 +52,7 @@ export function tokenGetter() {
     }),
   ],
   providers: [
+    IconService,
     provideBrowserGlobalErrorListeners(),
     provideAnimations(),
     provideHttpClient(

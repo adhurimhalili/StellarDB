@@ -1,46 +1,74 @@
-<div class="login-container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Login to StellarDB</mat-card-title>
-    </mat-card-header>
+<div class="min-h-screen flex items-center justify-center bg-gray-50">
+  <div class="max-w-md w-full space-y-8 p-6">
+    <mat-card class="loginContainer">
 
-    <mat-card-content>
+      <!-- Header -->
+      <mat-card-header>
+        <mat-card-title>Login</mat-card-title>
+      </mat-card-header>
+
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="outline">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" type="email" autocomplete="email">
-          <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
-            Email is required
-          </mat-error>
-          <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
-            Please enter a valid email address
-          </mat-error>
-        </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Password</mat-label>
-          <input matInput formControlName="password" type="password" autocomplete="currencclst-password">
-          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
-            Password is required
-          </mat-error>
-          <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
-            Password must be at least 8 characters
-          </mat-error>
-        </mat-form-field>
+        <mat-card-content class="grid grid-cols-3 gap-4">
 
-        <mat-checkbox formControlName="rememberMe">
-          Remember me
-        </mat-checkbox>
+          <!-- Email Input -->
+          <div>
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" type="email" autocomplete="email">
 
-        <div class="error-message" *ngIf="errorMessage">
-          {{ errorMessage }}
-        </div>
+              <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+                Email is required
+              </mat-error>
 
-        <button mat-raised-button color="primary" type="submit"
-                [disabled]="loginForm.invalid || loading">
-          {{ loading ? 'Logging in...' : 'Login' }}
-        </button>
+              <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+                Please enter a valid email address
+              </mat-error>
+
+            </mat-form-field>
+          </div>
+
+          <!-- Password Input -->
+          <div>
+            <mat-form-field appearance="outline" class="w-full">
+
+              <mat-label>Password</mat-label>
+              <input matInput formControlName="password" type="password" autocomplete="current-password">
+
+              <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                Password is required
+              </mat-error>
+
+              <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
+                Password must be at least 8 characters
+              </mat-error>
+
+            </mat-form-field>
+          </div>
+
+          <!-- Variable Error Message -->
+          <div class="error-message" *ngIf="errorMessage">
+            {{ errorMessage }}
+          </div>
+
+          <!-- Checkbox -->
+          <div>
+            <mat-checkbox formControlName="rememberMe">
+              Remember me
+            </mat-checkbox>
+          </div>
+
+        </mat-card-content>
+
+        <!-- Actions -->
+        <mat-card-actions class="m-1">
+          <button class="w-full" mat-raised-button matButton="filled" color="primary" type="submit"
+                  [disabled]="loginForm.invalid || loading">
+            {{ loading ? 'Logging in...' : 'Login' }}
+          </button>
+        </mat-card-actions>
+
       </form>
-    </mat-card-content>
-  </mat-card>
+    </mat-card>
+  </div>
 </div>
