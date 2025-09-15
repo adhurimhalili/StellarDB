@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './Views/login/login';
+import { RegisterComponent } from './Views/register/register';
 import { Home } from './Views/home/home';
 import { StellarObjectTypesService } from './Views/stellar-object-types/stellar-object-types';
 import { StarSpectralClassesComponent } from './Views/star-spectral-classes/star-spectral-classes';
@@ -18,6 +19,11 @@ const routes: Routes = [
   { 
     path: 'Login', 
     component: LoginComponent,
+    canActivate: [NoAuthGuard]  
+  },
+  { 
+    path: 'Register', 
+    component: RegisterComponent,
     canActivate: [NoAuthGuard]  
   },
   {

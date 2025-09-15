@@ -7,63 +7,73 @@
         <mat-card-title>Login</mat-card-title>
       </mat-card-header>
 
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
 
-        <mat-card-content class="grid grid-cols-3 gap-4">
+        <mat-card-content>
+          <div class="grid grid-cols-1 gap-4">
+            <!-- Email Input -->
+            <div>
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email" type="email" autocomplete="email">
+                <mat-icon matSuffix>alternate_email</mat-icon>
 
-          <!-- Email Input -->
-          <div>
-            <mat-form-field appearance="outline" class="w-full">
-              <mat-label>Email</mat-label>
-              <input matInput formControlName="email" type="email" autocomplete="email">
+                <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
+                  Email is required
+                </mat-error>
 
-              <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
-                Email is required
-              </mat-error>
+                <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
+                  Please enter a valid email address
+                </mat-error>
 
-              <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
-                Please enter a valid email address
-              </mat-error>
+              </mat-form-field>
+            </div>
 
-            </mat-form-field>
+            <!-- Password Input -->
+            <div>
+              <mat-form-field appearance="outline" class="w-full">
+
+                <mat-label>Password</mat-label>
+                <input matInput formControlName="password" type="password" autocomplete="current-password">
+                <mat-icon matSuffix>lock</mat-icon>
+
+                <mat-error *ngIf="registerForm.get('password')?.hasError('required')">
+                  Password is required
+                </mat-error>
+
+                <mat-error *ngIf="registerForm.get('password')?.hasError('minlength')">
+                  Password must be at least 8 characters
+                </mat-error>
+
+              </mat-form-field>
+            </div>
+
+            <!-- Variable Error Message -->
+            <div class="error-message text-red-500 font-semibold" *ngIf="errorMessage">
+              {{ errorMessage }}
+            </div>
+
+            <!-- Checkbox -->
+            <div>
+              <mat-checkbox formControlName="rememberMe">
+                Remember me
+              </mat-checkbox>
+            </div>
+
           </div>
 
-          <!-- Password Input -->
-          <div>
-            <mat-form-field appearance="outline" class="w-full">
-
-              <mat-label>Password</mat-label>
-              <input matInput formControlName="password" type="password" autocomplete="current-password">
-
-              <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
-                Password is required
-              </mat-error>
-
-              <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
-                Password must be at least 8 characters
-              </mat-error>
-
-            </mat-form-field>
+          <div class="pt-4 flex items-center">
+            <span>
+              Don't have an account?
+              <a class="font-medium text-blue-600 dark:text-blue-500 hover:underline" color="primary" routerLink="/Register">Register</a>
+            </span>
           </div>
-
-          <!-- Variable Error Message -->
-          <div class="error-message" *ngIf="errorMessage">
-            {{ errorMessage }}
-          </div>
-
-          <!-- Checkbox -->
-          <div>
-            <mat-checkbox formControlName="rememberMe">
-              Remember me
-            </mat-checkbox>
-          </div>
-
         </mat-card-content>
 
         <!-- Actions -->
         <mat-card-actions class="m-1">
           <button class="w-full" mat-raised-button matButton="filled" color="primary" type="submit"
-                  [disabled]="loginForm.invalid || loading">
+                  [disabled]="registerForm.invalid || loading">
             {{ loading ? 'Logging in...' : 'Login' }}
           </button>
         </mat-card-actions>

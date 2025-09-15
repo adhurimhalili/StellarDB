@@ -7,7 +7,7 @@ using StellarDB.Services.Identity.Token;
 
 namespace StellarDB.Services.Identity.Auth
 {
-    public class AuthServices : IAuthServices
+    internal partial class AuthServices : IAuthServices
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;

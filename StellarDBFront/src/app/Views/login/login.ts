@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../Services/Auth/auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
@@ -14,18 +15,20 @@ import { firstValueFrom } from 'rxjs';
   selector: 'app-login',
   imports: [
     CommonModule,
+    RouterModule,
     ReactiveFormsModule,
     MatCardModule,
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
+    MatIconModule,
     MatCheckboxModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
   standalone: true
 })
 export class LoginComponent implements OnInit {
-  loginForm: FormGroup;
+  registerForm: FormGroup;
   errorMessage: string = '';
   loading: boolean = false;
   returnUrl!: string;
@@ -36,7 +39,7 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.loginForm = this.fb.group({
+    this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       rememberMe: [false]
@@ -48,7 +51,7 @@ export class LoginComponent implements OnInit {
   }
 
   async onSubmit(): Promise<void> {
-    if (this.loginForm.invalid) {
+    if (this.registerForm.invalid) {
       return;
     }
 
@@ -56,7 +59,7 @@ export class LoginComponent implements OnInit {
     this.errorMessage = '';
 
     try {
-      var test = await firstValueFrom(this.authService.login(this.loginForm.value));
+      var test = await firstValueFrom(this.authService.login(this.registerForm.value));
       this.loading = false;
       await this.router.navigate([this.returnUrl]);
     } catch (error: any) {
