@@ -9,5 +9,6 @@ namespace StellarDB.Services.Identity.Auth
         Task<(bool succeeded, string message, TokenResponse token)> LoginAsync(LoginRequest request, string ipAddress);
         Task LogoutAsync();
         Task<(bool succeeded, string message)> RegisterAsync(RegisterRequest request);
+        Task ConfirmEmailAsync(string userId, string token);
     }
 }

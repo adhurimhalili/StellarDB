@@ -107,10 +107,16 @@
             </div>
 
             <!-- Confirm Password -->
-            <!-- Variable Error Message -->
-            <div class="error-message" *ngIf="errorMessage">
-              {{ errorMessage }}
-            </div>
+
+          </div>
+          <!-- Variable Error Message -->
+          <div *ngIf="validationErrors.length > 0" class="validation-errors">
+            <span class="text-red-500 font-semibold">{{ errorMessage }}</span>
+            <ul>
+              <li class="text-red-500" *ngFor="let error of validationErrors">
+                {{ error.message }}
+              </li>
+            </ul>
           </div>
 
           <div class="pt-4 flex items-center"><span>Already have an account? <a class="font-medium text-blue-600 dark:text-blue-500 hover:underline" color="primary" routerLink="/Login">Log in</a></span></div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -24,9 +24,9 @@ import { firstValueFrom } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnChanges {
   registerForm: FormGroup;
-  errorMessage: string = "";
+  errorMessage: string = "TEST";
   loading: boolean = false;
   returnUrl!: string;
   strongPassword = false;
@@ -89,8 +89,10 @@ export class RegisterComponent implements OnInit {
       const clientValidationErrors = this.registrationService.validateRegistrationData(registerData);
       if (clientValidationErrors.length > 0) {
         this.validationErrors = clientValidationErrors;
-        this.errorMessage = "Please correct the errors below";
+        var test = this.validationErrors.length > 0
+        this.errorMessage = "Please correct the errors below:";
         this.loading = false;
+        this.cdr.detectChanges(); 
         return;
       }
 

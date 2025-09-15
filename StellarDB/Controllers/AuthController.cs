@@ -44,13 +44,19 @@ namespace StellarDB.Controllers
         [HttpPost("register")]
         public async Task<RegisterResponse> Register([FromBody] RegisterRequest request)
         {
-            string userId = await _authServices.RegisterAsync(request);
-            if (String.IsNullOrEmpty(userId)) return new RegisterResponse { Succeeded = false, Message = "Registration failed" };
-            return new RegisterResponse { Succeeded = true, UserId = userId, Message = "Registration successful" };
+            (bool succeeded, string message) = await _authServices.RegisterAsync(request);
+            if (!succeeded) return new RegisterResponse { Succeeded = false, Message = message };
+            return new RegisterResponse { Succeeded = true, Message = "Registration successful" };
         }
         private string? GetIPAddress() =>
             Request.Headers.ContainsKey("X-Forwarded-For")
             ? Request.Headers["X-Forwarded-For"]
             : HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "N/A";
+
+        [HttpGet]
+        public async Task ConfirmEmail([FromQuery] string userId, [FromQuery] string token)
+        {
+            await _authServices.ConfirmEmailAsync(userId, token);
+        }
     }
 }
