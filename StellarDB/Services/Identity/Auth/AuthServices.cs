@@ -13,16 +13,19 @@ namespace StellarDB.Services.Identity.Auth
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<AuthServices> _logger;
         private readonly ITokenServices _tokenServices;
+        private readonly IConfiguration _config;
         public AuthServices(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             ILogger<AuthServices> logger,
-            ITokenServices tokenServices)
+            ITokenServices tokenServices,
+            IConfiguration config)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
             _tokenServices = tokenServices;
+            _config = config;
         }
 
         public async Task<(bool succeeded, string message, TokenResponse token)> LoginAsync(LoginRequest request, string ipAddress)
