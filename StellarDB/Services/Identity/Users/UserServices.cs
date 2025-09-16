@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Identity;
 using StellarDB.Models.Identity;
 using StellarDB.Models.Identity.Users;
 using StellarDB.Services.Identity.Roles;
@@ -32,7 +33,44 @@ namespace StellarDB.Services.Identity.Users
 
         public async Task<List<UserViewModel>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var users = _userManager.Users.ToList();
+            var userViewModels = new List<UserViewModel>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+
+                var userViewModel = new UserViewModel
+                {
+                    Id = user.Id,
+                    Email = user.Email ?? string.Empty,
+                    UserName = user.UserName ?? string.Empty,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    DateOfBirth = user.DateOfBirth,
+                    PhoneNumber = user.PhoneNumber ?? string.Empty,
+                    Roles = roles.ToList()
+                };
+
+                userViewModels.Add(userViewModel);
+            }
+            return userViewModels;
+        }
+        public async Task<UserViewModel> GetByIdAsync(string userId)
+        {
+            ApplicationUser? findUser = await _userManager.FindByIdAsync(userId);
+            if (findUser is null) throw new Exception($"User with the ID [{userId}] not found.");
+            UserViewModel user = new UserViewModel
+            {
+                Id = findUser.Id,
+                Email = findUser.Email,
+                UserName = findUser.UserName ?? string.Empty,
+                FirstName = findUser.FirstName,
+                LastName = findUser.LastName,
+                DateOfBirth = findUser.DateOfBirth,
+                PhoneNumber = findUser.PhoneNumber ?? string.Empty,
+            };
+            return user;
         }
 
         public async Task ToggleStatusAsync(string userId)

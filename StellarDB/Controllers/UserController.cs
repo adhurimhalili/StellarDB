@@ -23,6 +23,13 @@ namespace StellarDB.Controllers
             var users = await _userServices.GetAllAsync();
             return Ok(users);
         }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(string id)
+        {
+            return await _userServices.GetByIdAsync(id) is UserViewModel user
+                ? Ok(user)
+                : NotFound();
+        }
 
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserViewModel model)

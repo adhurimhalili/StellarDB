@@ -24,7 +24,7 @@ import { firstValueFrom } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class RegisterComponent implements OnInit, OnChanges {
+export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
   errorMessage: string = "TEST";
   loading: boolean = false;
