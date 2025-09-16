@@ -11,14 +11,43 @@ namespace StellarDB.Data
         public static async Task SeedDatabaseAsync(IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.CreateScope();
-            
+
             // Get the database context and migrate
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             await MigrateDatabaseAsync(context);
-            
-            // Seed roles and users
-            await SeedRolesAsync(scope.ServiceProvider);
-            await SeedUsersAsync(scope.ServiceProvider);
+
+            // Check if seeding is needed before proceeding
+            if (await SeedingRequiredAsync(scope.ServiceProvider))
+            {
+                // Seed roles and users
+                await SeedRolesAsync(scope.ServiceProvider);
+                await SeedUsersAsync(scope.ServiceProvider);
+            }
+        } // +2,800ms start
+
+        private static async Task<bool> SeedingRequiredAsync(IServiceProvider serviceProvider)
+        {
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+            // Check if any of the required roles exist
+            string[] requiredRoles = new[] { "Admin", "Manager", "User" };
+            bool hasAnyRole = false;
+            foreach (var roleName in requiredRoles)
+            {
+                if (await roleManager.RoleExistsAsync(roleName))
+                {
+                    hasAnyRole = true;
+                    break;
+                }
+            }
+
+            // Check if any of the seed users exist
+            bool hasAnyUser = await userManager.FindByEmailAsync("admin@stellardb.com") != null ||
+                             await userManager.FindByEmailAsync("manager@stellardb.com") != null;
+
+            // Return true if seeding is needed (no roles or users exist)
+            return !hasAnyRole || !hasAnyUser;
         }
 
         private static async Task MigrateDatabaseAsync(ApplicationDbContext context)
@@ -55,7 +84,7 @@ namespace StellarDB.Data
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-            if (await userManager.FindByEmailAsync("admin@stellar.com") == null)
+            if (await userManager.FindByEmailAsync("admin@stellardb.com") == null)
             {
                 var adminUser = new ApplicationUser
                 {
@@ -74,7 +103,7 @@ namespace StellarDB.Data
                 }
             }
 
-            if (await userManager.FindByEmailAsync("manager@stellar.com") == null)
+            if (await userManager.FindByEmailAsync("manager@stellardb.com") == null)
             {
                 var managerUser = new ApplicationUser
                 {
