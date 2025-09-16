@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
 import { LoginComponent } from './Views/login/login';
 import { RegisterComponent } from './Views/register/register';
 import { Home } from './Views/home/home';
@@ -11,6 +12,8 @@ import { PlanetTypesComponent } from './Views/planet-types/planet-types';
 import { PlanetComponent } from './Views/planet/planet';
 import { ChemicalElementsComponent } from './Views/chemical-elements/chemical-elements';
 import { AtmosphericGasesComponent } from './Views/atmospheric-gases/atmospheric-gases';
+import { RolesComponent } from './Views/Identity/roles/roles';
+
 import { AuthGuard } from './Core/Guards/auth.guard';
 import { NoAuthGuard } from './Core/Guards/noAuth.Guard';
 
@@ -69,6 +72,11 @@ const routes: Routes = [
   {
     path: 'AtmosphericGases',
     component: AtmosphericGasesComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'Roles',
+    component: RolesComponent,
     canActivate: [AuthGuard]
   }
 ];

@@ -76,16 +76,13 @@ namespace StellarDB.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRole(string id, [FromBody] RoleViewModel model)
+        [HttpPut]
+        public async Task<IActionResult> UpdateRole([FromBody] RoleViewModel model)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
-
-                if (id != model.Id)
-                    return BadRequest("ID mismatch");
 
                 var roleId = await _rolesServices.UpdateRoleAsync(model);
                 return NoContent();
@@ -96,7 +93,7 @@ namespace StellarDB.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating role {RoleId}", id);
+                _logger.LogError(ex, "Error updating role {RoleId}", model.Id);
                 return StatusCode(500, "An error occurred while updating the role");
             }
         }
