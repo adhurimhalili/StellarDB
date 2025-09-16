@@ -26,7 +26,7 @@ import { firstValueFrom } from 'rxjs';
 
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
-  errorMessage: string = "TEST";
+  errorMessage: string = "";
   loading: boolean = false;
   returnUrl!: string;
   strongPassword = false;
