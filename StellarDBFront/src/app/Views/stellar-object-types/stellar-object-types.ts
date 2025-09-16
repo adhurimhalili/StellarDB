@@ -24,7 +24,7 @@ export interface StellarObjectTypes {
   standalone: true,
   templateUrl: './stellar-object-types.html',
   styleUrl: './stellar-object-types.css',
-  imports: [CustomTable, CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, StellarObjectTypesForm, MatProgressSpinnerModule, MatMenuModule],
+  imports: [CustomTable, CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule, MatMenuModule],
 })
 export class StellarObjectTypesService implements AfterViewInit {
   title = 'Stellar Object Types';

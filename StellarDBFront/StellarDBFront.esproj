@@ -8,6 +8,8 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\StellarDBFront\browser\</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="src\app\Services\" />
+    <Folder Include="src\app\Core\Models\Auth\" />
+    <Folder Include="src\app\Core\Guards\" />
+    <Folder Include="src\app\Services\Auth\" />
   </ItemGroup>
 </Project>

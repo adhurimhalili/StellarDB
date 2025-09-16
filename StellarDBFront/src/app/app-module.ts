@@ -4,6 +4,8 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { JwtModule } from "@auth0/angular-jwt";
 
 // Angular Material
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -17,7 +19,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Header } from './Shared/header/header';
 import { Home } from './Views/home/home';
 import { ThemeToggleSwitchComponent } from './Shared/theme-toggle-switch/theme-toggle-switch';
-//import { StellarObjectTypes } from './Views/stellar-object-types/stellar-object-types';
+import { AuthInterceptor } from './Core/Interceptors/auth.interceptor';
+import { IconService } from './Services/Icon/icon.service';
+
+export function tokenGetter() {
+  return localStorage.getItem("auth_token"); // Changed to match your actual token key
+}
 
 @NgModule({
   declarations: [
@@ -34,11 +41,24 @@ import { ThemeToggleSwitchComponent } from './Shared/theme-toggle-switch/theme-t
     MatIconModule,
     MatMenuModule,
     MatCardModule,
-    MatTooltipModule
+    MatTooltipModule,
+    //HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: ["example.com"],
+        disallowedRoutes: ["http://example.com/examplebadroute/"],
+      },
+    }),
   ],
   providers: [
+    IconService,
     provideBrowserGlobalErrorListeners(),
-    provideAnimations() 
+    provideAnimations(),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([AuthInterceptor.intercept])
+    )
   ],
   bootstrap: [App]
 })

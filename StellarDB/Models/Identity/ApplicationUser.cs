@@ -8,5 +8,8 @@ namespace StellarDB.Models.Identity
         public string? LastName { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public bool Active { get; set; } = true;
+        public string? ProfilePictureUrl { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime RefreshTokenExpiryTime { get; set; }
     }
 }
