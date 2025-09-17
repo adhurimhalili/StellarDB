@@ -38,7 +38,7 @@ namespace StellarDB.Services.Identity.Roles
                     Id = r.Id,
                     Name = r.Name,
                     Description = r.Description,
-                    Claims = claims.Select(c => new RoleClaimModel
+                    RoleClaims = claims.Select(c => new RoleClaimModel
                     {
                         ClaimType = c.Type,
                         ClaimValue = c.Value
@@ -53,11 +53,17 @@ namespace StellarDB.Services.Identity.Roles
         {
             var role = await _roleManager.FindByIdAsync(roleId);
             if (role == null) return null;
+            var roleClaims = await _roleManager.GetClaimsAsync(role);
             return new RoleViewModel
             {
                 Id = role.Id,
                 Name = role.Name,
-                Description = role.Description
+                Description = role.Description,
+                RoleClaims = roleClaims.Select(c => new RoleClaimModel
+                {
+                    ClaimType = c.Type,
+                    ClaimValue = c.Value
+                }).ToList()
             };
         }
 
@@ -71,18 +77,20 @@ namespace StellarDB.Services.Identity.Roles
             return (result, role.Id);
         }
 
-        public async Task<string> UpdateRoleAsync(RoleViewModel model)
+        public async Task<bool> UpdateRoleAsync(RoleViewModel model)
         {
             var role = await _roleManager.FindByIdAsync(model.Id);
             if (role == null)
                 throw new Exception($"Role with ID {model.Id} not found.");
+
             role.Name = model.Name;
             role.Description = model.Description;
             var result = await _roleManager.UpdateAsync(role);
             if (!result.Succeeded)
                 throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
-            await AddRoleClaimsAsync(model, model.Id);
-            return role.Id;
+
+            await SyncRoleClaimsAsync(role, model.RoleClaims ?? new List<RoleClaimModel>());
+            return true;
         }
 
         public async Task<string> DeleteRoleAsync(string roleId)
@@ -165,12 +173,12 @@ namespace StellarDB.Services.Identity.Roles
         private async Task AddRoleClaimsAsync(RoleViewModel model, string roleId)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
-            if (model.Claims == null) throw new ArgumentNullException(nameof(model.Claims));
+            if (model.RoleClaims == null) throw new ArgumentNullException(nameof(model.RoleClaims));
 
             var role = await _roleManager.FindByIdAsync(roleId);
             if (role == null) throw new InvalidOperationException($"Role with ID '{model.Id}' not found.");
 
-            foreach (var claim in model.Claims)
+            foreach (var claim in model.RoleClaims)
             {
                 var roleClaim = new Claim(claim.ClaimType, claim.ClaimValue);
 
@@ -187,5 +195,32 @@ namespace StellarDB.Services.Identity.Roles
             }
         }
 
+
+        /// <summary>
+        /// Synchronizes the claims of a role to match the provided list.
+        /// Removes claims not present in the new list and adds missing ones.
+        /// </summary>
+        private async Task SyncRoleClaimsAsync(ApplicationRole role, List<RoleClaimModel> desiredClaims)
+        {
+            var currentClaims = await _roleManager.GetClaimsAsync(role);
+
+            foreach (var claim in currentClaims)
+            {
+                if (!desiredClaims.Any(dc => dc.ClaimType == claim.Type && dc.ClaimValue == claim.Value))
+                {
+                    await _roleManager.RemoveClaimAsync(role, claim);
+                }
+            }
+
+            foreach (var desired in desiredClaims)
+            {
+                if (!currentClaims.Any(c => c.Type == desired.ClaimType && c.Value == desired.ClaimValue))
+                {
+                    var addResult = await _roleManager.AddClaimAsync(role, new Claim(desired.ClaimType, desired.ClaimValue));
+                    if (!addResult.Succeeded)
+                        throw new InvalidOperationException(string.Join(", ", addResult.Errors.Select(e => e.Description)));
+                }
+            }
+        }
     }
 }

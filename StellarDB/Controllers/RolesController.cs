@@ -84,8 +84,9 @@ namespace StellarDB.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var roleId = await _rolesServices.UpdateRoleAsync(model);
-                return NoContent();
+                bool succeeded = await _rolesServices.UpdateRoleAsync(model);
+                if (!succeeded) return BadRequest("Failed to update the role");
+                return Ok("Role updated successfully");
             }
             catch (Exception ex) when (ex.Message.Contains("not found"))
             {

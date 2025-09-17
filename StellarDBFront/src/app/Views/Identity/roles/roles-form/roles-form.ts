@@ -23,7 +23,7 @@ import { GlobalConfig } from '../../../../global-config';
 export class RolesForm implements AfterViewInit{
   readonly title: string;
   roleForm: FormGroup;
-  roleClaims: { type: string; value: string; }[] = [];
+  roleClaims: { claimType: string; claimValue: string; }[] = [];
 
   private readonly apiAction = `${GlobalConfig.apiUrl}/Roles`;
 
@@ -53,6 +53,7 @@ export class RolesForm implements AfterViewInit{
       .then(formData => {
         this.roleClaimsArray.clear();
         this.roleForm.patchValue(formData);
+        formData.roleClaims.forEach((c: { claimType: string; claimValue: string; }) => this.addRoleClaim(c.claimType, c.claimValue));
       })
       .catch(error => {
         console.error('Error fetching data:', error);
@@ -63,21 +64,14 @@ export class RolesForm implements AfterViewInit{
     return this.roleForm.get('roleClaims') as FormArray;
   }
 
-  addRoleClaim(type?: string, value?: string): void {
+  addRoleClaim(claimType?: string, claimValue?: string): void {
     const newGroup = this.formBuilder.group({
-      type: [type ?? '', [
-        Validators.min(0),
-        Validators.max(100),
-        Validators.required
-      ]],
-      value: [value ?? '', [
-        Validators.min(0),
-        Validators.max(100),
-        Validators.required
-      ]]
+      claimType: [claimType ?? '', Validators.required],
+      claimValue: [claimValue ?? '', Validators.required]
     });
 
     this.roleClaimsArray.push(newGroup);
+    this.roleClaimsArray.updateValueAndValidity();
   }
 
   removeRoleClaim(index: number) {
@@ -90,17 +84,11 @@ export class RolesForm implements AfterViewInit{
       control?.markAsTouched();
     });
 
-    // Map roleClaims to Claims
-    const payload = {
-      ...this.roleForm.value,
-      Claims: this.roleForm.value.roleClaims
-    };
-
     const httpMethod = this.data ? "PUT" : "POST";
     fetch(`${this.apiAction}`, {
       method: httpMethod,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(this.roleForm.value)
     })
       .then(async response => {
         if (!response.ok) {

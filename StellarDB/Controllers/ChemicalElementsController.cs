@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Xml.Serialization;
 using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -13,6 +14,7 @@ namespace StellarDB.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class ChemicalElementsController : ControllerBase
     {
         private readonly IMongoCollection<ChemicalElementsModel>? _chemicalElements;
@@ -23,7 +25,7 @@ namespace StellarDB.Controllers
             _chemicalElements = mongoDbService.Database.GetCollection<ChemicalElementsModel>("ChemicalElements");
             _csvServices = csvServices;
         }
-
+        [Authorize(Policy = "ReadOnlyAccess")]
         [HttpGet]
         public async Task<IEnumerable<ChemicalElementsModel>> Get()
         {

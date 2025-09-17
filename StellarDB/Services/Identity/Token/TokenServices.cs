@@ -65,6 +65,8 @@ namespace StellarDB.Services.Identity.Token
         private string GenerateEncryptedToken(SigningCredentials signingCredentials, IEnumerable<Claim> claims)
         {
             var token = new JwtSecurityToken(
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(_jwtSettings.TokenExpirationInMinutes),
                 signingCredentials: signingCredentials);
@@ -98,7 +100,7 @@ namespace StellarDB.Services.Identity.Token
 
         private SigningCredentials GetSigningCredentials()
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
             return new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         }
 
@@ -107,7 +109,7 @@ namespace StellarDB.Services.Identity.Token
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey)),
                 ValidateIssuer = false,
                 ValidateAudience = false,
                 ValidateLifetime = false, // We want to get claims from expired tokens as well

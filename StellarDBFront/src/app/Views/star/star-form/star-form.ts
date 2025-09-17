@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject } from '@angular/core';
+import { AfterViewInit, Component, inject, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -14,6 +14,7 @@ import { MatSelectModule } from '@angular/material/select'
 import { StarSpectralClasses } from '../../star-spectral-classes/star-spectral-classes';
 import { StarLuminosityClasses } from '../../star-luminosity-classes/star-luminosity-classes';
 import { ChemicalElement } from '../../chemical-elements/chemical-elements';
+import { AuthService } from '../../../Services/Auth/auth.service';
 
 
 @Component({
@@ -30,6 +31,8 @@ export class StarForm {
   chemicalElements: ChemicalElement[] = [];
 
   private readonly apiAction = `${GlobalConfig.apiUrl}/Star`;
+  private authService = inject(AuthService);
+  private readonly token = this.authService.getToken();
 
   constructor(
     private formBuilder: FormBuilder,
@@ -66,7 +69,7 @@ export class StarForm {
   }
 
   fetchChemicalElements() {
-    fetch(`${GlobalConfig.apiUrl}/ChemicalElements`, { method: 'GET' })
+    fetch(`${GlobalConfig.apiUrl}/ChemicalElements`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}` } })
       .then(response => response.json())
       .then(data => this.chemicalElements = data)
       .catch(error => console.error('Error fetching chemical elements:', error));

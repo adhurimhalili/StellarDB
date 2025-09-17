@@ -33,24 +33,26 @@
 
         </mat-expansion-panel-header>
 
-        <div formArrayName="roleClaims" class="grid grid-cols-3 gap-4" *ngFor="let group of roleClaimsArray.controls; let i = index" [formGroupName]="i">
-          <!-- Type -->
-          <mat-form-field class="w-auto" appearance="outline">
-            <mat-label>Type</mat-label>
-            <input matInput formControlName="type">
-          </mat-form-field>
+        <div formArrayName="roleClaims">
+          <div class="grid grid-cols-3 gap-4" *ngFor="let group of roleClaimsArray.controls; let i = index" [formGroupName]="i">
+            <!-- Type -->
+            <mat-form-field class="w-auto" appearance="outline">
+              <mat-label>Type</mat-label>
+              <input matInput formControlName="claimType">
+            </mat-form-field>
 
-          <!-- Value -->
-          <mat-form-field class="w-auto" appearance="outline">
-            <mat-label>Value</mat-label>
-            <input matInput formControlName="value">
-          </mat-form-field>
+            <!-- Value -->
+            <mat-form-field class="w-auto" appearance="outline">
+              <mat-label>Value</mat-label>
+              <input matInput formControlName="claimValue">
+            </mat-form-field>
 
-          <!-- Delete Button -->
-          <div class="w-[30px]">
-            <button matIconButton type="button" (click)="removeRoleClaim(i)">
-              <span class="text-red-500"><mat-icon class="text-red-500">delete</mat-icon></span>
-            </button>
+            <!-- Delete Button -->
+            <div class="w-[30px]">
+              <button matIconButton type="button" (click)="removeRoleClaim(i)">
+                <span class="text-red-500"><mat-icon class="text-red-500">delete</mat-icon></span>
+              </button>
+            </div>
           </div>
         </div>
 

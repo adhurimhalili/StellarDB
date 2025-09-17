@@ -1,26 +1,25 @@
 import { AfterViewInit, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
 import Swal from 'sweetalert2';
 import { GlobalConfig } from '../../../global-config';
 import { CustomTable } from '../../../Shared/custom-table/custom-table';
 import { RolesForm } from './roles-form/roles-form';
+import { MatListModule } from '@angular/material/list';
 
 export interface Role {
   id: string,
   name: string,
   description: string,
-  claims: { type: string; value: string; }
+  roleClaims: { claimType: string; claimValue: string; }
 }
 
 @Component({
   selector: 'app-roles',
-  imports: [CustomTable, CommonModule, MatCardModule],
+  imports: [CustomTable, CommonModule, MatCardModule, MatListModule, MatIconModule],
   templateUrl: './roles.html',
   styleUrl: './roles.css'
 })

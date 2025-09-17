@@ -25,16 +25,17 @@
         <div class="grid lg:grid-cols-2 gap-6 p-4">
 
           <!-- List Role Claims -->
-          <div *ngIf="element.claims && element.claims.length > 0" class="mb-6">
-            <ul class="list-disc pl-5">
-              <li *ngFor="let claim of element.claims">
-                {{ claim.claimType }} : {{ claim.claimValue }}
-              </li>
-            </ul>
+          <div *ngIf="element.roleClaims && element.roleClaims.length > 0" class="mb-6">
+            <div class="flex items-center"> <mat-icon class="me-2">key</mat-icon> <span class="text-lg font-medium"> Claims </span> </div>
+            <mat-list role="list">
+              <mat-list-item role="listitem" *ngFor="let claim of element.roleClaims">
+                <span class="text-gray-700">{{ claim.claimType }} : {{ claim.claimValue }}</span>
+              </mat-list-item>
+            </mat-list>
           </div>
 
           <!-- No Data Message -->
-          <div *ngIf="!element.claims || element.claims.length === 0"
+          <div *ngIf="!element.roleClaims || element.roleClaims.length === 0"
                class="text-gray-500 text-center py-4">
             No claims assigned to this role.
           </div>

@@ -9,7 +9,7 @@ namespace StellarDB.Services.Identity.Roles
         Task<List<RoleViewModel>> GetAllRolesAsync();
         Task<RoleViewModel?> GetRoleByIdAsync(string roleId);
         Task<(IdentityResult Result, string RoleId)> CreateRoleAsync(RoleViewModel model);
-        Task<string> UpdateRoleAsync(RoleViewModel model);
+        Task<bool> UpdateRoleAsync(RoleViewModel model);
         Task<string?> DeleteRoleAsync(string roleId);
         Task<bool> AddUserToRolesAsync(ApplicationUser user, IEnumerable<string> roles);
         Task<bool> RemoveUserFromRolesAsync(ApplicationUser user, IEnumerable<string> roles);

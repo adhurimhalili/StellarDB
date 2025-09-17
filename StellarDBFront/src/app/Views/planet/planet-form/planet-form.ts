@@ -1,4 +1,4 @@
-import { Component, Inject, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, Inject, ChangeDetectionStrategy, signal, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray, AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -16,6 +16,7 @@ import { PlanetType } from '../../planet-types/planet-types';
 import { Star } from '../../star/star';
 import { ChemicalElement } from '../../chemical-elements/chemical-elements';
 import { AtmosphericGas } from '../../atmospheric-gases/atmospheric-gases';
+import { AuthService } from '../../../Services/Auth/auth.service';
 
 @Component({
   selector: 'app-planet-form',
@@ -36,6 +37,8 @@ export class PlanetForm {
 
   private readonly apiAction = `${GlobalConfig.apiUrl}/Planet`;
   readonly compositionPanelState = signal(false);
+  private authService = inject(AuthService);
+  private readonly token = this.authService.getToken();
 
   constructor(private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<PlanetForm>,
@@ -78,7 +81,7 @@ export class PlanetForm {
   }
 
   fetchChemicalElements() {
-    fetch(`${GlobalConfig.apiUrl}/ChemicalElements`, { method: 'GET' })
+    fetch(`${GlobalConfig.apiUrl}/ChemicalElements`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}` } })
       .then(response => response.json())
       .then(data => this.chemicalElements = data)
       .catch(error => console.error('Error fetching chemical elements:', error));

@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 import { GlobalConfig } from '../../global-config';
 import { CustomTable } from '../../Shared/custom-table/custom-table';
 import { ChemicalElementsForm } from './chemical-elements-form/chemical-elements-form';
+import { AuthService } from '../../Services/Auth/auth.service';
 
 export interface ChemicalElement {
   id: string;
@@ -53,6 +54,7 @@ export class ChemicalElementsComponent implements AfterViewInit {
   private readonly apiAction = `${GlobalConfig.apiUrl}/ChemicalElements`;
   private readonly formDialog = inject(MatDialog);
   private selectedFile: File | null = null;
+  private authService = inject(AuthService);
 
   ngAfterViewInit() {
     this.fetchData();
@@ -60,7 +62,10 @@ export class ChemicalElementsComponent implements AfterViewInit {
 
   fetchData() {
     this.isLoading = true;
-    fetch(this.apiAction)
+    const token = this.authService.getToken();
+    fetch(this.apiAction, {
+      headers: { 'Authorization': `Bearer ${token}`}
+    })
       .then(response => response.json())
       .then(result => {
         this.objects = result.map((item: ChemicalElement, itemPosition: number) => ({
