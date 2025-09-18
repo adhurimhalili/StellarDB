@@ -90,9 +90,10 @@ namespace StellarDB.Services.Identity.Token
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
             var userClaims = await _userManager.GetClaimsAsync(user);
             var role = await _roleManager.FindByNameAsync(roles.FirstOrDefault() ?? string.Empty);
-            var roleClaims = await _roleManager.GetClaimsAsync(role);
-            claims.AddRange(userClaims);
-            claims.AddRange(roleClaims);
+            IList<Claim> roleClaims = null;
+            if (role != null) roleClaims = await _roleManager.GetClaimsAsync(role);
+            claims.AddRange(userClaims.Any() ? userClaims : []);
+            claims.AddRange(roleClaims != null && roleClaims.Any() ? roleClaims : Array.Empty<Claim>());
             return claims;
         }
 
