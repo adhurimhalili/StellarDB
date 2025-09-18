@@ -70,8 +70,15 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("ReadOnlyAccess", policy =>
-        policy.RequireRole("Admin")); // Example
+    string[] UniversalRoles = { "User", "Manager", "Admin" };
+    options.AddPolicy("ReadAccess", policy =>
+        policy.RequireRole(UniversalRoles));
+    options.AddPolicy("WriteAccess", policy =>
+        policy.RequireRole(UniversalRoles));
+    options.AddPolicy("DeleteAccess", policy =>
+        policy.RequireRole(UniversalRoles));
+    options.AddPolicy("IdentityAccess", policy =>
+        policy.RequireRole("Admin"));
 });
 
 // Register StellarDB services

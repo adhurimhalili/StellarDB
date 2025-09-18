@@ -1,4 +1,4 @@
-import { Component, Inject, ChangeDetectionStrategy, signal, AfterViewInit } from '@angular/core';
+import { Component, Inject, ChangeDetectionStrategy, signal, AfterViewInit, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray, AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -12,6 +12,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatIconModule } from '@angular/material/icon';
 import { GlobalConfig } from '../../../../global-config';
+import { AuthService } from '../../../../Services/Auth/auth.service';
 
 
 @Component({
@@ -26,6 +27,7 @@ export class RolesForm implements AfterViewInit{
   roleClaims: { claimType: string; claimValue: string; }[] = [];
 
   private readonly apiAction = `${GlobalConfig.apiUrl}/Roles`;
+  private authService = inject(AuthService);
 
   constructor(
     private formBuilder: FormBuilder,
@@ -48,7 +50,8 @@ export class RolesForm implements AfterViewInit{
   }
 
   loadFromData() {
-    fetch(`${this.apiAction}/${this.data}`, { method: 'GET' })
+    const token = this.authService.getToken();
+    fetch(`${this.apiAction}/${this.data}`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
       .then(response => response.json())
       .then(formData => {
         this.roleClaimsArray.clear();
@@ -85,9 +88,10 @@ export class RolesForm implements AfterViewInit{
     });
 
     const httpMethod = this.data ? "PUT" : "POST";
+    const token = this.authService.getToken();
     fetch(`${this.apiAction}`, {
       method: httpMethod,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify(this.roleForm.value)
     })
       .then(async response => {

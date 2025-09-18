@@ -46,7 +46,6 @@ export class ChemicalElementsComponent implements AfterViewInit {
     { columnDef: 'group', header: 'Group' },
     { columnDef: 'discoveryDateText', header: 'Discovery Year' }
   ];
-  availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
   dataSource = [];
   objects: ChemicalElement[] = [];
   isLoading = true;
@@ -55,6 +54,11 @@ export class ChemicalElementsComponent implements AfterViewInit {
   private readonly formDialog = inject(MatDialog);
   private selectedFile: File | null = null;
   private authService = inject(AuthService);
+  userRoleClaims: string[] = [];
+
+  constructor() {
+    this.userRoleClaims = this.authService.getRoleClaims();
+  }
 
   ngAfterViewInit() {
     this.fetchData();
@@ -116,7 +120,8 @@ export class ChemicalElementsComponent implements AfterViewInit {
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`${this.apiAction}/${element.id}`, { method: 'DELETE' })
+        const token = this.authService.getToken();
+        fetch(`${this.apiAction}/${element.id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } })
           .then(response => {
             this.fetchData();
             Swal.fire({
@@ -158,10 +163,11 @@ export class ChemicalElementsComponent implements AfterViewInit {
 
     const fileFormData = new FormData();
     fileFormData.append('file', this.selectedFile);
-
+    const token = this.authService.getToken();
     fetch(`${this.apiAction}/import`, {
       method: 'POST',
-      body: fileFormData
+      body: fileFormData,
+      headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(async response => {
         if (!response.ok) {
@@ -194,7 +200,39 @@ export class ChemicalElementsComponent implements AfterViewInit {
       })
   }
 
-  onExport(format: string) {
-    window.open(`${this.apiAction}/export?format=${format}`, '_blank');
+  async onExport(format: string) {
+    const token = this.authService.getToken();
+    const url = `${this.apiAction}/export?format=${format}`;
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Failed to export data');
+
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      const disposition = response.headers.get('Content-Disposition');
+      let filename = `atmospheric-gases.${format}`;
+      if (disposition) {
+        const match = disposition.match(/filename\*?=(?:UTF-8'')?["']?([^;"']+)["']?/i);
+        if (match && match[1]) {
+          filename = decodeURIComponent(match[1]);
+        }
+      }
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error: any) {
+      Swal.fire({
+        title: "Error",
+        text: error.message,
+        icon: "error"
+      });
+    }
   }
 }

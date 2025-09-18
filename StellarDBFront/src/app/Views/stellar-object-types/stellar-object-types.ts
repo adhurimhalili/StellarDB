@@ -29,7 +29,6 @@ export interface StellarObjectTypes {
 export class StellarObjectTypesService implements AfterViewInit {
   title = 'Stellar Object Types';
   apiAction = `${GlobalConfig.apiUrl}/StellarObjectTypes`;
-  availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
   tableColumns = [
     { columnDef: 'position', header: 'No.', cell: (item: any) => `${item.no}`, cssClass: 'w-1/32' },
     { columnDef: 'name', header: 'Name' },
@@ -41,6 +40,7 @@ export class StellarObjectTypesService implements AfterViewInit {
   isLoading = true;
   readonly formDialog = inject(MatDialog);
   selectedFile: File | null = null;
+  userRoleClaims: string[] = ['create', 'edit', 'delete', 'import', 'export'];
 
   ngAfterViewInit() {
     this.fetchData();

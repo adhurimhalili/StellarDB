@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Xml.Serialization;
 using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
@@ -11,6 +12,7 @@ using StellarDB.Services;
 
 namespace StellarDB.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class StarLuminosityClassesController : ControllerBase
@@ -24,6 +26,7 @@ namespace StellarDB.Controllers
             _csvServices = csvServices;
         }
 
+        [Authorize(Policy = "ReadAccess")]
         [HttpGet]
         public async Task<IEnumerable<StarLuminosityClassesModel>> Get()
         {
@@ -31,6 +34,7 @@ namespace StellarDB.Controllers
                 .ToListAsync();
         }
 
+        [Authorize(Policy = "ReadAccess")]
         [HttpGet("{id}")]
         public async Task<ActionResult<StarLuminosityClassesModel?>> GetById(string id)
         {
@@ -41,6 +45,7 @@ namespace StellarDB.Controllers
             return starLuminosityClass is not null ? Ok(starLuminosityClass) : NotFound("Failed to find Star Luminosity Class.");
         }
 
+        [Authorize(Policy = "WriteAccess")]
         [HttpPost]
         public async Task<ActionResult> Create(StarLuminosityClassesModel starLuminosityClass)
         {
@@ -50,6 +55,7 @@ namespace StellarDB.Controllers
             return CreatedAtAction(nameof(GetById), new { id = starLuminosityClass.Id }, starLuminosityClass);
         }
 
+        [Authorize(Policy = "WriteAccess")]
         [HttpPut]
         public async Task<ActionResult> Update(StarLuminosityClassesModel starLuminosityClass)
         {
@@ -60,6 +66,7 @@ namespace StellarDB.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "DeleteAccess")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(string id)
         {
@@ -69,6 +76,7 @@ namespace StellarDB.Controllers
             return NoContent();
         }
 
+        [Authorize(Policy = "WriteAccess")]
         [HttpPost("import")]
         public async Task<IActionResult> ImportFile(IFormFile file)
         {
@@ -132,6 +140,7 @@ namespace StellarDB.Controllers
             });
         }
 
+        [Authorize(Policy = "ReadAccess")]
         [HttpGet("export")]
         public async Task<IActionResult> ExportFile(string format)
         {

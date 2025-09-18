@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Xml.Serialization;
 using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ using StellarDB.Services;
 
 namespace StellarDB.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PlanetController : ControllerBase
@@ -36,6 +38,7 @@ namespace StellarDB.Controllers
             _csvServices = csvServices;
         }
 
+        [Authorize(Policy = "ReadAccess")]
         [HttpGet]
         public async Task<IEnumerable<object>> Get()
         {
@@ -82,6 +85,7 @@ namespace StellarDB.Controllers
             return result;
         }
 
+        [Authorize(Policy = "ReadAccess")]
         [HttpGet("{id}")]
         public async Task<ActionResult<PlanetModel?>> GetById(string id)
         {
@@ -91,6 +95,7 @@ namespace StellarDB.Controllers
             return planet is not null ? Ok(planet) : NotFound("Failed to find Planet.");
         }
 
+        [Authorize(Policy = "WriteAccess")]
         [HttpPost]
         public async Task<ActionResult<PlanetModel>> Create(PlanetModel planet)
         {
@@ -100,6 +105,7 @@ namespace StellarDB.Controllers
             return CreatedAtAction(nameof(GetById), new { id = planet.Id }, planet);
         }
 
+        [Authorize(Policy = "WriteAccess")]
         [HttpPut]
         public async Task<ActionResult<PlanetModel>> Update(PlanetModel planet)
         {
@@ -111,6 +117,7 @@ namespace StellarDB.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "DeleteAccess")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(string id)
         {
@@ -120,6 +127,7 @@ namespace StellarDB.Controllers
             return NoContent();
         }
 
+        [Authorize(Policy = "WriteAccess")]
         [HttpPost("import")]
         public async Task<IActionResult> ImportFile(IFormFile file)
         {
@@ -189,6 +197,7 @@ namespace StellarDB.Controllers
             });
         }
 
+        [Authorize(Policy = "ReadAccess")]
         [HttpGet("export")]
         public async Task<IActionResult> Export(string format)
         {

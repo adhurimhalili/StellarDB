@@ -6,9 +6,11 @@ using MongoDB.Driver;
 using StellarDB.Data;
 using StellarDB.Models.AtmosphericGases;
 using StellarDB.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StellarDB.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AtmosphericGasesController : ControllerBase
@@ -22,12 +24,14 @@ namespace StellarDB.Controllers
             _csvServices = csvServices;
         }
 
+        [Authorize(Policy = "ReadAccess")]
         [HttpGet]
         public async Task<IEnumerable<AtmosphericGasesModel>> Get()
         {
             return await _atmosphericGases.Find(FilterDefinition<AtmosphericGasesModel>.Empty).ToListAsync();
         }
 
+        [Authorize(Policy = "ReadAccess")]
         [HttpGet("{id}")]
         public async Task<ActionResult<AtmosphericGasesModel?>> GetById(string id)
         {
@@ -36,6 +40,7 @@ namespace StellarDB.Controllers
             return gas;
         }
 
+        [Authorize(Policy = "WriteAccess")]
         [HttpPost]
         public async Task<ActionResult> Create(AtmosphericGasesModel gas)
         {
@@ -45,17 +50,19 @@ namespace StellarDB.Controllers
             return CreatedAtAction(nameof(GetById), new { id = gas.Id }, gas);
         }
 
+        [Authorize(Policy = "WriteAccess")]
         [HttpPut]
-        public async Task<ActionResult> Update(string id, AtmosphericGasesModel gas)
+        public async Task<ActionResult> Update(AtmosphericGasesModel gas)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var filter = Builders<AtmosphericGasesModel>.Filter.Eq(g => g.Id, id);
+            var filter = Builders<AtmosphericGasesModel>.Filter.Eq(g => g.Id, gas.Id);
             var result = await _atmosphericGases.ReplaceOneAsync(filter, gas);
             if (result.ModifiedCount == 0) return NotFound("Failed to update Gas.");
             return Ok(result);
         }
 
+        [Authorize(Policy = "DeleteAccess")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(string id)
         {
@@ -65,6 +72,7 @@ namespace StellarDB.Controllers
             return NoContent();
         }
 
+        [Authorize(Policy = "WriteAccess")]
         [HttpPost("import")]
         public async Task<IActionResult> Import(IFormFile file)
         {
@@ -121,6 +129,7 @@ namespace StellarDB.Controllers
             });
         }
 
+        [Authorize(Policy = "ReadAccess")]
         [HttpGet("export")]
         public async Task<IActionResult> Export(string format)
         {

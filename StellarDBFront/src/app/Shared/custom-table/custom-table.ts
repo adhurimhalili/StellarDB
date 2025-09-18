@@ -32,7 +32,7 @@ export class CustomTable implements OnDestroy, OnChanges, AfterViewInit {
   @Input() objects: any[] = [];
   @Input() dataSource = new MatTableDataSource<any>();
   @Input() isLoading = true;
-  @Input() availableActions: string[] = [];
+  @Input() userRoleClaims: string[] = [];
   @Input() expandableRows = false;
   @Input() expandedElement: any = null;
 
@@ -94,7 +94,7 @@ export class CustomTable implements OnDestroy, OnChanges, AfterViewInit {
   get displayedColumns(): string[] {
     const baseColumns = this.expandableRows ? ['expand'] : [];
     baseColumns.push(...this.columns.map(col => col.columnDef));
-    if (this.availableActions.includes('edit') || this.availableActions.includes('delete')) {
+    if (this.userRoleClaims.includes('WriteAccess') || this.userRoleClaims.includes('DeleteAccess')) {
       baseColumns.push('actions');
     }
     return baseColumns;

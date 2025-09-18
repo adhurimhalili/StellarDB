@@ -19,12 +19,15 @@ namespace StellarDB.Services.Identity.Token
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserServices _userServices;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly JwtSettings _jwtSettings;
         public TokenServices(UserManager<ApplicationUser> userManager,
+            RoleManager<ApplicationRole> roleManager,
             IUserServices userServices,
             IOptions<JwtSettings> jwtSettings)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _userServices = userServices;
             _jwtSettings = jwtSettings.Value;
         }
@@ -86,7 +89,10 @@ namespace StellarDB.Services.Identity.Token
             var roles = await _userManager.GetRolesAsync(user);
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
             var userClaims = await _userManager.GetClaimsAsync(user);
+            var role = await _roleManager.FindByNameAsync(roles.FirstOrDefault() ?? string.Empty);
+            var roleClaims = await _roleManager.GetClaimsAsync(role);
             claims.AddRange(userClaims);
+            claims.AddRange(roleClaims);
             return claims;
         }
 

@@ -2,12 +2,12 @@
   <ng-container>
     <mat-card-actions>
       <!-- Add Data Button -->
-      <ng-container *ngIf="availableActions.includes('create')">
+      <ng-container *ngIf="userRoleClaims.includes('WriteAccess')">
         <button matButton (click)="onOpenForm(undefined)">Add</button>
       </ng-container>
 
       <!-- Import Data Button -->
-      <ng-container *ngIf="availableActions.includes('import')">
+      <ng-container *ngIf="userRoleClaims.includes('WriteAccess')">
         <button matButton type="button" (click)="importFileInput.click()">
           Import
           <input #importFileInput type="file" hidden (change)="onFileSelected($event)" />
@@ -15,7 +15,7 @@
       </ng-container>
 
       <!-- Export Data Button -->
-      <ng-container *ngIf="availableActions.includes('export')">
+      <ng-container *ngIf="userRoleClaims.includes('ReadAccess')">
         <button matButton [matMenuTriggerFor]="export">Export</button>
         <mat-menu #export="matMenu">
           <button mat-menu-item (click)="onExport('csv')">CSV</button>
@@ -43,14 +43,14 @@
           <td class="w-[115px]" mat-cell *matCellDef="let element">
 
             <!-- Edit -->
-            <ng-container *ngIf="availableActions.includes('edit')">
+            <ng-container *ngIf="userRoleClaims.includes('WriteAccess')">
               <button matIconButton (click)="onOpenForm(element.id)">
                 <mat-icon>edit</mat-icon>
               </button>
             </ng-container>
 
             <!-- Delete -->
-            <ng-container *ngIf="availableActions.includes('delete')">
+            <ng-container *ngIf="userRoleClaims.includes('DeleteAccess')">
               <button matIconButton (click)="onDelete(element)">
                 <span class="text-red-500"><mat-icon class="text-red-500">delete</mat-icon></span>
               </button>

@@ -9,6 +9,7 @@ import { GlobalConfig } from '../../../global-config';
 import { CustomTable } from '../../../Shared/custom-table/custom-table';
 import { RolesForm } from './roles-form/roles-form';
 import { MatListModule } from '@angular/material/list';
+import { AuthService } from '../../../Services/Auth/auth.service';
 
 export interface Role {
   id: string,
@@ -29,7 +30,6 @@ export class RolesComponent implements AfterViewInit {
     { columnDef: 'name', header: 'Name', cssClass: 'w-1/24' },
     { columnDef: 'description', header: 'Description', cssClass: 'auto' },
   ]
-  availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
   dataSource = new MatTableDataSource<Role>();
   objects: Role[] = [];
   isLoading = true;
@@ -37,6 +37,13 @@ export class RolesComponent implements AfterViewInit {
   private readonly apiAction = `${GlobalConfig.apiUrl}/Roles`;
   private readonly formDialog = inject(MatDialog);
   private selectedFile: File | null = null;
+  private authService = inject(AuthService);
+  userRoleClaims: string[] = [];
+
+  constructor() {
+    const claims: string[] = this.authService.getRoleClaims();
+    if (claims.includes("IdentityAccess")) this.userRoleClaims = ["WriteAccess"];
+  }
 
   ngAfterViewInit() {
     this.fetchData();
@@ -44,7 +51,10 @@ export class RolesComponent implements AfterViewInit {
 
   fetchData() {
     this.isLoading = true;
-    fetch(this.apiAction)
+    const token = this.authService.getToken();
+    fetch(this.apiAction, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
       .then(response => response.json())
       .then(result => {
         this.objects = result.map((item: any, index: number) => ({

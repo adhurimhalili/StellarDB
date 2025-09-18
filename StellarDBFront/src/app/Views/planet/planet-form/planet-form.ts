@@ -38,7 +38,6 @@ export class PlanetForm {
   private readonly apiAction = `${GlobalConfig.apiUrl}/Planet`;
   readonly compositionPanelState = signal(false);
   private authService = inject(AuthService);
-  private readonly token = this.authService.getToken();
 
   constructor(private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<PlanetForm>,
@@ -66,46 +65,47 @@ export class PlanetForm {
     this.title = data ? 'Modify Planet' : 'Add Planet';
   }
 
-  fetchStars() {
-    fetch(`${GlobalConfig.apiUrl}/Star`, { method: 'GET' })
+  fetchStars(token: string) {
+    fetch(`${GlobalConfig.apiUrl}/Star`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
       .then(response => response.json())
       .then(data => this.stars = data)
       .catch(error => console.error('Error fetching stars:', error));
   }
 
-  fetchPlanetTypes() {
-    fetch(`${GlobalConfig.apiUrl}/PlanetTypes`, { method: 'GET' })
+  fetchPlanetTypes(token: string) {
+    fetch(`${GlobalConfig.apiUrl}/PlanetTypes`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
       .then(response => response.json())
       .then(data => this.planetTypes = data)
       .catch(error => console.error('Error fetching planet types:', error));
   }
 
-  fetchChemicalElements() {
-    fetch(`${GlobalConfig.apiUrl}/ChemicalElements`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}` } })
+  fetchChemicalElements(token: string) {
+    fetch(`${GlobalConfig.apiUrl}/ChemicalElements`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
       .then(response => response.json())
       .then(data => this.chemicalElements = data)
       .catch(error => console.error('Error fetching chemical elements:', error));
   }
 
-  fetchAtmosphericGases() {
-    fetch(`${GlobalConfig.apiUrl}/AtmosphericGases`, { method: 'GET' })
+  fetchAtmosphericGases(token: string) {
+    fetch(`${GlobalConfig.apiUrl}/AtmosphericGases`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
       .then(response => response.json())
       .then(data => this.atmosphericGases = data)
       .catch(error => console.error('Error fetching atmospheric gases:', error));
   }
 
   ngAfterViewInit() {
+    const token = this.authService.getToken();
     if (this.data != null || this.data != undefined) {
-      this.loadFromData();
+      this.loadFromData(token!);
     }
-    this.fetchPlanetTypes();
-    this.fetchStars();
-    this.fetchChemicalElements();
-    this.fetchAtmosphericGases();
+    this.fetchPlanetTypes(token!);
+    this.fetchStars(token!);
+    this.fetchChemicalElements(token!);
+    this.fetchAtmosphericGases(token!);
   }
 
-  loadFromData() {
-    fetch(`${this.apiAction}/${this.data}`, { method: 'GET' })
+  loadFromData(token: string) {
+    fetch(`${this.apiAction}/${this.data}`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
       .then(response => response.json())
       .then(formData => {
         this.compositionArray.clear();
@@ -204,9 +204,10 @@ export class PlanetForm {
     });
 
     const httpMethod = this.data ? "PUT" : "POST";
+    const token = this.authService.getToken();
     fetch(`${this.apiAction}`, {
       method: httpMethod,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify(this.planetForm.value)
     })
       .then(async response => {

@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StellarDB.Models.Identity.Users;
 using StellarDB.Services.Identity.Users;
 
 namespace StellarDB.Controllers
 {
+    [Authorize(Policy = "IdentityAccess")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase

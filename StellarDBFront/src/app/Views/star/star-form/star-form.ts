@@ -56,19 +56,19 @@ export class StarForm {
     this.title = data ? 'Modify Star' : 'Add Star';
   }
 
-  fetchSpectralClasses() {
-    fetch(`${GlobalConfig.apiUrl}/StarSpectralClasses`, { method: 'GET' })
+  fetchSpectralClasses(token: string) {
+    fetch(`${GlobalConfig.apiUrl}/StarSpectralClasses`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}` } })
       .then(response => response.json())
       .then(data => this.starSpectralClasses = data);
   }
 
-  fetchLuminosityClasses() {
-    fetch(`${GlobalConfig.apiUrl}/StarLuminosityClasses`, { method: 'GET' })
+  fetchLuminosityClasses(token: string) {
+    fetch(`${GlobalConfig.apiUrl}/StarLuminosityClasses`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}` } })
       .then(response => response.json())
       .then(data => this.starLuminosityClasses = data);
   }
 
-  fetchChemicalElements() {
+  fetchChemicalElements(token: string) {
     fetch(`${GlobalConfig.apiUrl}/ChemicalElements`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}` } })
       .then(response => response.json())
       .then(data => this.chemicalElements = data)
@@ -76,16 +76,17 @@ export class StarForm {
   }
 
   ngAfterViewInit() {
+    const token = this.authService.getToken();
     if (this.data != null || this.data != undefined) {
-      this.loadFromData();
+      this.loadFromData(token!);
     }
-    this.fetchSpectralClasses();
-    this.fetchLuminosityClasses();
-    this.fetchChemicalElements();
+    this.fetchSpectralClasses(token!);
+    this.fetchLuminosityClasses(token!);
+    this.fetchChemicalElements(token!);
   }
 
-  loadFromData() {
-    fetch(`${this.apiAction}/${this.data}`, { method: 'GET' })
+  loadFromData(token: string) {
+    fetch(`${this.apiAction}/${this.data}`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
       .then(response => response.json())
       .then(formData => {
         this.compositionArray.clear();
@@ -151,9 +152,10 @@ export class StarForm {
     });
 
     const httpMethod = this.data ? "PUT" : "POST";
+    const token = this.authService.getToken();
     fetch(`${this.apiAction}`, {
       method: httpMethod,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify(this.starForm.value)
     })
       .then(async response => {

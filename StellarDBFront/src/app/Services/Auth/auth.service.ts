@@ -205,6 +205,38 @@ export class AuthService {
     return token ? this.jwtService.getClaim(token, 'sub') : null;
   }
 
+  getRoleClaims(): string[] {
+    const token = this.getToken();
+    if (!token) return [];
+    const payload = this.jwtService.decodeJwtPayload(token);
+    if (!payload) return [];
+    const policies: string[] = [];
+    for (const [claimType, claimValue] of Object.entries(payload)) {
+      if (typeof claimValue === 'string' && claimValue.endsWith('Access')) {
+        policies.push(claimValue);
+      }
+    }
+
+    return policies;
+  }
+
+  getUserAvailableActions(): string[] {
+    const policies = this.getRoleClaims();
+    const availableActions: string[] = [];
+
+    if (policies.includes("ReadAccess")) {
+      availableActions.push("export");
+    }
+    if (policies.includes("WriteAccess")) {
+      availableActions.push("create", "edit", "import");
+    }
+    if (policies.includes("DeleteAccess")) {
+      availableActions.push("delete");
+    }
+
+    return availableActions;
+  }
+
   hasRole(role: string): boolean {
     return this.getUserRoles().includes(role);
   }

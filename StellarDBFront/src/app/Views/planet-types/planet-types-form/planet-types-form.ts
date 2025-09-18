@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { GlobalConfig } from '../../../global-config';
+import { AuthService } from '../../../Services/Auth/auth.service';
 
 @Component({
   selector: 'app-planet-types-form',
@@ -18,6 +19,7 @@ export class PlanetTypesForm {
   readonly title: string;
   private apiAction = `${GlobalConfig.apiUrl}/PlanetTypes`;
   planetTypesForm: FormGroup;
+  private authService = inject(AuthService);
 
   constructor(
     private formBuilder: FormBuilder,
@@ -32,14 +34,16 @@ export class PlanetTypesForm {
     });
     this.title = data ? 'Modify Planet Type' : 'Add Planet Type';
   }
+
   ngAfterViewInit() {
+    const token = this.authService.getToken();
     if (this.data != null || this.data != undefined) {
-      this.loadFromData();
+      this.loadFromData(token!);
     }
   }
 
-  loadFromData() {
-    fetch(`${this.apiAction}/${this.data}`, { method: 'GET' })
+  loadFromData(token: string) {
+    fetch(`${this.apiAction}/${this.data}`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
       .then(response => response.json())
       .then(formData => {
         this.planetTypesForm.patchValue(formData);

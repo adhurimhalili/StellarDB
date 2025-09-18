@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StellarDB.Models.Identity.Roles;
 using StellarDB.Services.Identity.Roles;
 
 namespace StellarDB.Controllers
 {
+    [Authorize(Policy = "IdentityAccess")]
     [Route("api/[controller]")]
     [ApiController]
     public class RolesController : ControllerBase
@@ -77,7 +79,7 @@ namespace StellarDB.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateRole([FromBody] RoleViewModel model)
+        public async Task<ActionResult> UpdateRole([FromBody] RoleViewModel model)
         {
             try
             {
@@ -86,7 +88,7 @@ namespace StellarDB.Controllers
 
                 bool succeeded = await _rolesServices.UpdateRoleAsync(model);
                 if (!succeeded) return BadRequest("Failed to update the role");
-                return Ok("Role updated successfully");
+                return Ok(new { message = "Role updated successfully" });
             }
             catch (Exception ex) when (ex.Message.Contains("not found"))
             {
