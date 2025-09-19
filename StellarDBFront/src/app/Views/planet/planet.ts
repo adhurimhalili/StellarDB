@@ -79,7 +79,20 @@ export class PlanetComponent implements AfterViewInit {
     fetch(this.apiAction, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
-      .then(response => response.json())
+      .then(async response => {
+        if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            throw new Error('You do not have permission to view this data.');
+          }
+          let errorMsg = 'Failed to load data';
+          try {
+            const errorData = await response.json();
+            if (errorData && errorData.error) errorMsg = errorData.error;
+          } catch { }
+          throw new Error(errorMsg);
+        }
+        return response.json();
+      })
       .then(result => {
         this.objects = result.map((item: any, index: number) => ({
           no: index + 1,
@@ -90,7 +103,7 @@ export class PlanetComponent implements AfterViewInit {
       })
       .catch(error => {
         console.error('Error fetching data:', error);
-        Swal.fire('Error', 'Failed to load planets data.', 'error');
+        Swal.fire('Error', error.message, 'error');
         this.isLoading = false;
       });
   }

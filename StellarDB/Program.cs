@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using StellarDB.Configuration.Identity;
 using StellarDB.Data;
+using StellarDB.Extensions;
 using StellarDB.Models.Identity;
 using StellarDB.Services;
 using StellarDB.Services.Identity.Auth;
@@ -70,15 +71,22 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    string[] UniversalRoles = { "User", "Manager", "Admin" };
-    options.AddPolicy("ReadAccess", policy =>
-        policy.RequireRole(UniversalRoles));
-    options.AddPolicy("WriteAccess", policy =>
-        policy.RequireRole(UniversalRoles));
-    options.AddPolicy("DeleteAccess", policy =>
-        policy.RequireRole(UniversalRoles));
-    options.AddPolicy("IdentityAccess", policy =>
-        policy.RequireRole("Admin"));
+    using var scope = builder.Services.BuildServiceProvider().CreateScope();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+    // Synchronously load roles/claims and add policies
+    var roles = roleManager.Roles.ToList();
+    foreach (var role in roles)
+    {
+        var claims = roleManager.GetClaimsAsync(role).GetAwaiter().GetResult();
+        foreach (var claim in claims)
+        {
+            if (!options.GetPolicyNames().Contains(claim.Value))
+            {
+                options.AddPolicyWithTracking(claim.Value, policy =>
+                    policy.RequireClaim(claim.Type, claim.Value));
+            }
+        }
+    }
 });
 
 // Register StellarDB services

@@ -71,6 +71,7 @@ export class AuthService {
   }
 
   private saveUserToStorage(user: LoginResponse, rememberMe: boolean): void {
+    rememberMe = true;
     if (rememberMe) {
       localStorage.setItem(this.USER_KEY, JSON.stringify(user));
       if (user.token) {

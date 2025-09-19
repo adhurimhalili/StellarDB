@@ -65,7 +65,20 @@ export class AtmosphericGasesComponent implements AfterViewInit {
     this.isLoading = true;
     const token = this.authService.getToken();
     fetch(this.apiAction, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
-      .then(response => response.json())
+      .then(async response => {
+        if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            throw new Error('You do not have permission to view this data.');
+          }
+          let errorMsg = 'Failed to load data';
+          try {
+            const errorData = await response.json();
+            if (errorData && errorData.error) errorMsg = errorData.error;
+          } catch { }
+          throw new Error(errorMsg);
+        }
+        return response.json();
+      })
       .then(result => {
         this.objects = result.map((item: AtmosphericGas, itemPosition: number) => ({
           index: itemPosition + 1,
@@ -78,7 +91,7 @@ export class AtmosphericGasesComponent implements AfterViewInit {
       })
       .catch(error => {
         console.error('Error fetching data:', error);
-        Swal.fire('Error', 'Failed to load data', 'error');
+        Swal.fire('Error', error.message, 'error');
         this.isLoading = false;
       });
   }

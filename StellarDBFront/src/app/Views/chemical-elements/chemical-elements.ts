@@ -70,7 +70,24 @@ export class ChemicalElementsComponent implements AfterViewInit {
     fetch(this.apiAction, {
       headers: { 'Authorization': `Bearer ${token}`}
     })
-      .then(response => response.json())
+      .then(async response => {
+        if (!response.ok) {
+          // Handle unauthorized or forbidden
+          if (response.status === 401 || response.status === 403) {
+            throw new Error('You do not have permission to view this data.');
+          }
+          // Try to extract error message from backend if available
+          let errorMsg = 'Failed to load data';
+          try {
+            const errorData = await response.json();
+            if (errorData && errorData.error) errorMsg = errorData.error;
+          } catch {
+            // Ignore JSON parse errors
+          }
+          throw new Error(errorMsg);
+        }
+        return response.json();
+      })
       .then(result => {
         this.objects = result.map((item: ChemicalElement, itemPosition: number) => ({
           meltingPointText: item.meltingPoint == null ? "N/A" : item.meltingPoint,
@@ -82,7 +99,7 @@ export class ChemicalElementsComponent implements AfterViewInit {
       })
       .catch(error => {
         console.error('Error fetching data:', error);
-        Swal.fire('Error', 'Failed to load chemical elements data.', 'error');
+        Swal.fire('Error', error.message, 'error');
         this.isLoading = false;
       });
   }
