@@ -42,19 +42,22 @@
           <th class="w-[115px]" mat-header-cell *matHeaderCellDef></th>
           <td class="w-[115px]" mat-cell *matCellDef="let element">
 
-            <!-- Edit -->
-            <ng-container *ngIf="userRoleClaims.includes('WriteAccess')">
-              <button matIconButton (click)="onOpenForm(element.id)">
-                <mat-icon>edit</mat-icon>
-              </button>
-            </ng-container>
+            <div class="flex justify-end">
+              <!-- Edit -->
+              <ng-container *ngIf="userRoleClaims.includes('WriteAccess')">
+                <button matIconButton (click)="onOpenForm(element.id)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </ng-container>
 
-            <!-- Delete -->
-            <ng-container *ngIf="userRoleClaims.includes('DeleteAccess')">
-              <button matIconButton (click)="onDelete(element)">
-                <span class="text-red-500"><mat-icon class="text-red-500">delete</mat-icon></span>
-              </button>
-            </ng-container>
+              <!-- Delete -->
+              <ng-container *ngIf="userRoleClaims.includes('DeleteAccess')">
+                <button matIconButton (click)="onDelete(element)">
+                  <span class="text-red-500"><mat-icon class="text-red-500">delete</mat-icon></span>
+                </button>
+              </ng-container>
+            </div>
+
           </td>
         </ng-container>
 
@@ -62,9 +65,11 @@
         <ng-container matColumnDef="expand">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element">
-            <button mat-icon-button (click)="onToggleExpand(element, $event)">
-              <mat-icon>{{expandedElement === element ? 'expand_less' : 'expand_more'}}</mat-icon>
-            </button>
+            <div class="flex justify-start">
+              <button mat-icon-button (click)="onToggleExpand(element, $event)">
+                <mat-icon>{{expandedElement === element ? 'expand_less' : 'expand_more'}}</mat-icon>
+              </button>
+            </div>
           </td>
         </ng-container>
 

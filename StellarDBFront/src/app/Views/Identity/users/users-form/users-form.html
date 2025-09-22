@@ -1,0 +1,110 @@
+<div mat-dialog-title>{{title}}</div>
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <div class="grid grid-cols-2 gap-4">
+      <!-- Active Checkbox -->
+      <mat-checkbox class="col-span-2" formControlName="active">
+        Active
+      </mat-checkbox>
+
+      <!-- Email -->
+      <mat-form-field class="col-span-1" appearance="outline">
+        <mat-label>E-Mail</mat-label>
+        <input matInput formControlName="email" maxlength="50">
+        <mat-icon matSuffix>mail</mat-icon>
+
+        <mat-error *ngIf="userForm.get('email')?.errors?.['required']">
+          E-Mail is required.
+        </mat-error>
+
+        <mat-error *ngIf="userForm.get('email')?.hasError('email')">
+          Please enter a valid email address
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Name -->
+      <mat-form-field class="col-span-1" appearance="outline">
+        <mat-label>Username</mat-label>
+        <input matInput formControlName="userName" maxlength="50">
+        <mat-error *ngIf="userForm.get('userName')?.errors?.['required']">
+          Username is required.
+        </mat-error>
+        <mat-icon matSuffix>person</mat-icon>
+      </mat-form-field>
+
+      <!-- First Name -->
+      <mat-form-field class="col-span-1" appearance="outline">
+        <mat-label>First Name</mat-label>
+        <input matInput formControlName="firstName" maxlength="50">
+      </mat-form-field>
+
+      <!-- Last Name -->
+      <mat-form-field class="col-span-1" appearance="outline">
+        <mat-label>Last Name</mat-label>
+        <input matInput formControlName="lastName" maxlength="50">
+      </mat-form-field>
+
+
+      <!-- Date of Birth -->
+      <mat-form-field class="col-span-1" appearance="outline">
+        <mat-label>Date of birth</mat-label>
+        <input matInput formControlName="dateOfBirth" [matDatepicker]="picker">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Phone Number -->
+      <mat-form-field class="col-span-1" appearance="outline">
+        <mat-label>Phone Number</mat-label>
+        <input matInput formControlName="phoneNumber" maxlength="50">
+        <mat-icon matSuffix>phone</mat-icon>
+      </mat-form-field>
+
+      <!-- Star -->
+      <!-- Roles Chips Autocomplete -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>Roles</mat-label>
+        <mat-chip-grid #rolesChipGrid>
+          <mat-chip-row *ngFor="let role of selectedRoles" (removed)="remove(role)">
+            {{role.name}}
+            <button matChipRemove [attr.aria-label]="'remove ' + role.name">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+        </mat-chip-grid>
+
+        <input #roleInput
+               [matChipInputFor]="rolesChipGrid"
+               [matAutocomplete]="auto"
+               [matChipInputSeparatorKeyCodes]="separatorKeyCodes"
+               (matChipInputTokenEnd)="add($event)"
+               [value]="currentRole()"
+               (input)="onRoleInputChange(roleInput.value)"
+               placeholder="Add role..."
+               autocomplete="off" />
+        <mat-icon matSuffix>security</mat-icon>
+
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+          <mat-option *ngFor="let role of filteredRoles" [value]="role.id">
+            {{role.name}}
+          </mat-option>
+        </mat-autocomplete>
+
+      </mat-form-field>
+      <!--<mat-select formControlName="rolesFormArray">
+    <mat-option *ngFor="let role of roles" [value]="role.id">{{role.name}}</mat-option>
+  </mat-select>-->
+
+    </div>
+
+  </mat-dialog-content>
+  <mat-dialog-actions align="center">
+
+    <!-- Submit Button -->
+    <div class="flex justify-center">
+      <button color="primary" mat-button type="submit">Save</button>
+    </div>
+
+  </mat-dialog-actions>
+</form>

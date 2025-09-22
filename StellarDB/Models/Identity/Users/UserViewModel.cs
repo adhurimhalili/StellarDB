@@ -9,10 +9,11 @@ namespace StellarDB.Models.Identity.Users
         public string UserName { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public DateTime? DateOfBirth { get; set; }
+        public string? DateOfBirth { get; set; }
         [Phone]
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
         public List<string> Roles { get; set; } = new();
+        public bool Active { get; internal set; }
     }
 
     public class CreateUserViewModel
@@ -47,7 +48,10 @@ namespace StellarDB.Models.Identity.Users
 
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public DateTime? DateOfBirth { get; set; }
+        public string? DateOfBirth { get; set; }
+        [Phone]
+        public string? PhoneNumber { get; set; }
         public List<string> Roles { get; set; } = new();
+        public bool Active { get; set; }
     }
 }

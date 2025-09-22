@@ -47,9 +47,10 @@ namespace StellarDB.Services.Identity.Users
                     UserName = user.UserName ?? string.Empty,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
-                    DateOfBirth = user.DateOfBirth,
-                    PhoneNumber = user.PhoneNumber ?? string.Empty,
-                    Roles = roles.ToList()
+                    DateOfBirth = user.DateOfBirth.HasValue ? user.DateOfBirth.Value.ToString("dd/MM/yyyy") : null,
+                    PhoneNumber = user.PhoneNumber ?? null,
+                    Roles = roles.ToList(),
+                    Active = user.Active
                 };
 
                 userViewModels.Add(userViewModel);
@@ -60,6 +61,19 @@ namespace StellarDB.Services.Identity.Users
         {
             ApplicationUser? findUser = await _userManager.FindByIdAsync(userId);
             if (findUser is null) throw new Exception($"User with the ID [{userId}] not found.");
+
+            // Get role names for the user
+            var roleNames = await _userManager.GetRolesAsync(findUser);
+
+            // Get all roles from the RoleManager
+            var allRoles = _roleManager.Roles.ToList();
+
+            // Map role names to role IDs
+            var roleIds = allRoles
+                .Where(r => roleNames.Contains(r.Name))
+                .Select(r => r.Id)
+                .ToList();
+
             UserViewModel user = new UserViewModel
             {
                 Id = findUser.Id,
@@ -67,8 +81,10 @@ namespace StellarDB.Services.Identity.Users
                 UserName = findUser.UserName ?? string.Empty,
                 FirstName = findUser.FirstName,
                 LastName = findUser.LastName,
-                DateOfBirth = findUser.DateOfBirth,
+                DateOfBirth = findUser.DateOfBirth.HasValue ? findUser.DateOfBirth.Value.ToString("dd/MM/yyyy") : string.Empty,
                 PhoneNumber = findUser.PhoneNumber ?? string.Empty,
+                Roles = roleIds,
+                Active = findUser.Active
             };
             return user;
         }
