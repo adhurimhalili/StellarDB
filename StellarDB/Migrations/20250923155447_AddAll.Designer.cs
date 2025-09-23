@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace StellarDB.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250923140400_AddAuditLog")]
-    partial class AddAuditLog
+    [Migration("20250923155447_AddAll")]
+    partial class AddAll
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

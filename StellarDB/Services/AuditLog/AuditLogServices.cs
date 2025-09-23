@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Bibliography;
+using Microsoft.EntityFrameworkCore;
 using StellarDB.Models.AuditLog;
 
 namespace StellarDB.Services.AuditLog
@@ -35,6 +36,27 @@ namespace StellarDB.Services.AuditLog
             };
             _context.AuditLogs.Add(log);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<AuditLogModel>> QueryAsync(AuditLogQueryParameters parameters)
+        {
+            var query = _context.AuditLogs.AsQueryable();
+            if (!string.IsNullOrEmpty(parameters.UserId))
+                query = query.Where(log => log.UserId == parameters.UserId);
+            if (!string.IsNullOrEmpty(parameters.Action))
+                query = query.Where(log => log.Action == parameters.Action);
+            if (!string.IsNullOrEmpty(parameters.EntityId))
+                query = query.Where(log => log.EntityId == parameters.EntityId);
+            if (!string.IsNullOrEmpty(parameters.EntityName))
+                query = query.Where(log => log.EntityName == parameters.EntityName);
+            if (parameters.From.HasValue)
+                query = query.Where(log => log.Timestamp >= parameters.From.Value);
+            if (parameters.To.HasValue)
+                query = query.Where(log => log.Timestamp <= parameters.To.Value);
+            if (parameters.Severity.HasValue)
+                query = query.Where(log => log.Severity == parameters.Severity.Value);
+
+            return await query.ToListAsync();
         }
     }
 

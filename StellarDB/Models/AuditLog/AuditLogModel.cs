@@ -15,6 +15,19 @@
         public string CorrelationId { get; set; } = Guid.NewGuid().ToString();
     }
 
+    public class AuditLogQueryParameters
+    {
+        public string? UserId { get; set; }
+        public string? Action { get; set; }
+        public string? EntityId { get; set; }
+        public string? EntityName { get; set; }
+        public DateTime? From { get; set; } = DateTime.UtcNow.AddDays(-7);
+        public DateTime? To { get; set; } = DateTime.UtcNow;
+        public Severity? Severity { get; set; }
+        //public int PageNumber { get; set; } = 1;
+        //public int PageSize { get; set; } = 10;
+    }
+
     public enum Severity
     {
         Emergency,      // system is unusable
