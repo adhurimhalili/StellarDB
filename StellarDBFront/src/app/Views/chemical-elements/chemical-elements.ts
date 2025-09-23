@@ -232,7 +232,7 @@ export class ChemicalElementsComponent implements AfterViewInit {
       const a = document.createElement('a');
       a.href = downloadUrl;
       const disposition = response.headers.get('Content-Disposition');
-      let filename = `atmospheric-gases.${format}`;
+      let filename = `chemical-elements.${format}`;
       if (disposition) {
         const match = disposition.match(/filename\*?=(?:UTF-8'')?["']?([^;"']+)["']?/i);
         if (match && match[1]) {

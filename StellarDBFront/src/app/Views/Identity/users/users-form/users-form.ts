@@ -58,7 +58,7 @@ export class UsersForm implements AfterViewInit {
       roles: [[]],
       active: [true]
     });
-    this.title = data ? 'Modify Role' : 'Add Role';
+    this.title = data ? 'Modify User' : 'Add User';
     this.filteredRoles = [];
   }
 
