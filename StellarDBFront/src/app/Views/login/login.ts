@@ -59,7 +59,7 @@ export class LoginComponent implements OnInit {
     this.errorMessage = '';
 
     try {
-      var test = await firstValueFrom(this.authService.login(this.registerForm.value));
+      await firstValueFrom(this.authService.login(this.registerForm.value));
       this.loading = false;
       await this.router.navigate([this.returnUrl]);
     } catch (error: any) {

@@ -8,6 +8,7 @@ using StellarDB.Services.Identity.Token;
 
 namespace StellarDB.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase

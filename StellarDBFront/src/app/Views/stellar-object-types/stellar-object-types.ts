@@ -11,6 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import Swal from 'sweetalert2';
 import { GlobalConfig } from '../../global-config';
 import { CustomTable } from '../../Shared/custom-table/custom-table';
+import { AuthService } from '../../Services/Auth/auth.service';
 
 export interface StellarObjectTypes {
   id: string
@@ -29,7 +30,6 @@ export interface StellarObjectTypes {
 export class StellarObjectTypesService implements AfterViewInit {
   title = 'Stellar Object Types';
   apiAction = `${GlobalConfig.apiUrl}/StellarObjectTypes`;
-  availableActions: string[] = ['create', 'edit', 'delete', 'import', 'export'];
   tableColumns = [
     { columnDef: 'position', header: 'No.', cell: (item: any) => `${item.no}`, cssClass: 'w-1/32' },
     { columnDef: 'name', header: 'Name' },
@@ -41,13 +41,18 @@ export class StellarObjectTypesService implements AfterViewInit {
   isLoading = true;
   readonly formDialog = inject(MatDialog);
   selectedFile: File | null = null;
+  private authService = inject(AuthService);
+  userRoleClaims: string[] = ['ReadAccess', 'WriteAccess', 'DeleteAccess'];
 
   ngAfterViewInit() {
     this.fetchData();
   }
 
   fetchData() {
-    fetch(`${this.apiAction}`)
+    const token = this.authService.getToken();
+    fetch(this.apiAction, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
       .then(response => response.json())
       .then(result => {
         this.objects = result.map((item: StellarObjectTypes, itemPosition: number) => ({
@@ -99,7 +104,8 @@ export class StellarObjectTypesService implements AfterViewInit {
       confirmButtonText: "Yes, delete it!"
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`${this.apiAction}/${stellarObject.id}`, { method: 'DELETE' })
+        const token = this.authService.getToken();
+        fetch(`${this.apiAction}/${stellarObject.id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } })
           .then(response => {
             this.fetchData();
             Swal.fire({
@@ -130,10 +136,11 @@ export class StellarObjectTypesService implements AfterViewInit {
 
     const fileFormData = new FormData();
     fileFormData.append('file', this.selectedFile);
-
+    const token = this.authService.getToken();
     fetch(`${this.apiAction}/import`, {
       method: 'POST',
-      body: fileFormData
+      body: fileFormData,
+      headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(async response => {
         if (!response.ok) {

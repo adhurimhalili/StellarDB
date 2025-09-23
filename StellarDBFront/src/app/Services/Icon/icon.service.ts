@@ -1,6 +1,6 @@
 // icon.service.ts
 // Service for managing icons in the application
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -10,11 +10,13 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class IconService {
   private icons: Map<string, string> = new Map();
 
-  constructor(private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer) {
+  constructor() {
+    const matIconRegistry = inject(MatIconRegistry);
+    const domSanitizer = inject(DomSanitizer)
     // Register the default icon
-    this.matIconRegistry.addSvgIcon(
+    matIconRegistry.addSvgIcon(
       'planet-svgrepo', // Name of the icon
-      this.domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/planet-svgrepo.svg') // Path to the SVG file A:\Repos\StellarDB\StellarDBFront\src\assets\icons\planet-svgrepo.svg
+      domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/planet-svgrepo.svg') // Path to the SVG file A:\Repos\StellarDB\StellarDBFront\src\assets\icons\planet-svgrepo.svg
     );
   }
 

@@ -1,0 +1,73 @@
+<div mat-dialog-title>{{title}}</div>
+<form [formGroup]="roleForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <div class="grid grid-cols-2 gap-4">
+      <!-- Name -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" maxlength="50">
+        <mat-error *ngIf="roleForm.get('name')?.errors?.['required']">
+          Name is required.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Description -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="3"></textarea>
+      </mat-form-field>
+    </div>
+
+    <!-- Roles Accordion -->
+    <mat-accordion class="mb-2">
+
+      <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+          <!-- Title -->
+          <mat-panel-title> Claims </mat-panel-title>
+
+          <!-- Total Claims -->
+          <mat-panel-description class="text-sm">
+            <span>Total: </span>
+          </mat-panel-description>
+
+        </mat-expansion-panel-header>
+
+        <div formArrayName="roleClaims">
+          <div class="grid grid-cols-3 gap-4" *ngFor="let group of roleClaimsArray.controls; let i = index" [formGroupName]="i">
+            <!-- Type -->
+            <mat-form-field class="w-auto" appearance="outline">
+              <mat-label>Type</mat-label>
+              <input matInput formControlName="claimType">
+            </mat-form-field>
+
+            <!-- Value -->
+            <mat-form-field class="w-auto" appearance="outline">
+              <mat-label>Value</mat-label>
+              <input matInput formControlName="claimValue">
+            </mat-form-field>
+
+            <!-- Delete Button -->
+            <div class="w-[30px]">
+              <button matIconButton type="button" (click)="removeRoleClaim(i)">
+                <span class="text-red-500"><mat-icon class="text-red-500">delete</mat-icon></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+
+        <button mat-button type="button" (click)="addRoleClaim()">Add Claim</button>
+      </mat-expansion-panel>
+    </mat-accordion>
+
+  </mat-dialog-content>
+  <mat-dialog-actions align="center">
+
+    <!-- Submit Button -->
+    <div class="flex justify-center">
+      <button color="primary" mat-button type="submit">Save</button>
+    </div>
+
+  </mat-dialog-actions>
+</form>

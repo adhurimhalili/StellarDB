@@ -1,0 +1,47 @@
+<div class="p-[25px]">
+  <mat-card appearance="outlined">
+    <!-- Header -->
+    <mat-card-header>
+      <mat-card-title class="h3">{{title}}</mat-card-title>
+      <!--<mat-card-subtitle class="">List</mat-card-subtitle>-->
+      <span class="spacer"></span>
+    </mat-card-header>
+
+    <!-- Table Component -->
+    <app-custom-table [columns]="tableColumns"
+                      [userRoleClaims]="userRoleClaims"
+                      [objects]="objects"
+                      [isLoading]="isLoading"
+                      [expandableRows]="true"
+                      [expandedElement]="expandedElement"
+                      (openForm)="onOpenForm($event)"
+                      (delete)="onDelete($event)"
+                      (export)="onExport($event)"
+                      (fileSelected)="onImportFile($event)"
+                      (toggleExpand)="onToggleExpand($event)">
+
+      <!-- Define the expanded content template -->
+      <ng-template #expandedContent let-element>
+        <div class="grid lg:grid-cols-2 gap-6 p-4">
+
+          <!-- List Role Claims -->
+          <div *ngIf="element.roleClaims && element.roleClaims.length > 0" class="mb-6">
+            <div class="flex items-center"> <mat-icon class="me-2">key</mat-icon> <span class="text-lg font-medium"> Claims </span> </div>
+            <mat-list role="list">
+              <mat-list-item role="listitem" *ngFor="let claim of element.roleClaims">
+                <span class="text-gray-700">{{ claim.claimType }} : {{ claim.claimValue }}</span>
+              </mat-list-item>
+            </mat-list>
+          </div>
+
+          <!-- No Data Message -->
+          <div *ngIf="!element.roleClaims || element.roleClaims.length === 0"
+               class="text-gray-500 text-center py-4">
+            No claims assigned to this role.
+          </div>
+        </div>
+      </ng-template>
+
+    </app-custom-table>
+  </mat-card>
+</div>

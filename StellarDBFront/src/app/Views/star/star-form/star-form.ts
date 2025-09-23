@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject } from '@angular/core';
+import { AfterViewInit, Component, inject, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -14,6 +14,7 @@ import { MatSelectModule } from '@angular/material/select'
 import { StarSpectralClasses } from '../../star-spectral-classes/star-spectral-classes';
 import { StarLuminosityClasses } from '../../star-luminosity-classes/star-luminosity-classes';
 import { ChemicalElement } from '../../chemical-elements/chemical-elements';
+import { AuthService } from '../../../Services/Auth/auth.service';
 
 
 @Component({
@@ -30,6 +31,8 @@ export class StarForm {
   chemicalElements: ChemicalElement[] = [];
 
   private readonly apiAction = `${GlobalConfig.apiUrl}/Star`;
+  private authService = inject(AuthService);
+  private readonly token = this.authService.getToken();
 
   constructor(
     private formBuilder: FormBuilder,
@@ -53,36 +56,37 @@ export class StarForm {
     this.title = data ? 'Modify Star' : 'Add Star';
   }
 
-  fetchSpectralClasses() {
-    fetch(`${GlobalConfig.apiUrl}/StarSpectralClasses`, { method: 'GET' })
+  fetchSpectralClasses(token: string) {
+    fetch(`${GlobalConfig.apiUrl}/StarSpectralClasses`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}` } })
       .then(response => response.json())
       .then(data => this.starSpectralClasses = data);
   }
 
-  fetchLuminosityClasses() {
-    fetch(`${GlobalConfig.apiUrl}/StarLuminosityClasses`, { method: 'GET' })
+  fetchLuminosityClasses(token: string) {
+    fetch(`${GlobalConfig.apiUrl}/StarLuminosityClasses`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}` } })
       .then(response => response.json())
       .then(data => this.starLuminosityClasses = data);
   }
 
-  fetchChemicalElements() {
-    fetch(`${GlobalConfig.apiUrl}/ChemicalElements`, { method: 'GET' })
+  fetchChemicalElements(token: string) {
+    fetch(`${GlobalConfig.apiUrl}/ChemicalElements`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}` } })
       .then(response => response.json())
       .then(data => this.chemicalElements = data)
       .catch(error => console.error('Error fetching chemical elements:', error));
   }
 
   ngAfterViewInit() {
+    const token = this.authService.getToken();
     if (this.data != null || this.data != undefined) {
-      this.loadFromData();
+      this.loadFromData(token!);
     }
-    this.fetchSpectralClasses();
-    this.fetchLuminosityClasses();
-    this.fetchChemicalElements();
+    this.fetchSpectralClasses(token!);
+    this.fetchLuminosityClasses(token!);
+    this.fetchChemicalElements(token!);
   }
 
-  loadFromData() {
-    fetch(`${this.apiAction}/${this.data}`, { method: 'GET' })
+  loadFromData(token: string) {
+    fetch(`${this.apiAction}/${this.data}`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
       .then(response => response.json())
       .then(formData => {
         this.compositionArray.clear();
@@ -148,9 +152,10 @@ export class StarForm {
     });
 
     const httpMethod = this.data ? "PUT" : "POST";
+    const token = this.authService.getToken();
     fetch(`${this.apiAction}`, {
       method: httpMethod,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify(this.starForm.value)
     })
       .then(async response => {

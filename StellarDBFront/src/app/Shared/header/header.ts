@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../Services/Auth/auth.service';
+import { IconService } from '../../Services/Icon/icon.service';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -12,6 +13,7 @@ import { firstValueFrom } from 'rxjs';
 export class Header {
   constructor(
     public authService: AuthService,
+    private iconService: IconService,
     private router: Router,) { }
 
   shouldShowHeader(): boolean {

@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -7,7 +7,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { GlobalConfig } from '../../../global-config';
-import { MatSelectModule } from '@angular/material/select'
+import { MatSelectModule } from '@angular/material/select';
+import { AuthService } from '../../../Services/Auth/auth.service';
 
 @Component({
   selector: 'app-chemical-elements-form',
@@ -19,6 +20,7 @@ export class ChemicalElementsForm {
   readonly title: string;
   chemicalElementForm: FormGroup;
   private readonly apiAction = `${GlobalConfig.apiUrl}/ChemicalElements`;
+  private authService = inject(AuthService);
 
   constructor(private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<ChemicalElementsForm>,
@@ -44,13 +46,14 @@ export class ChemicalElementsForm {
   }
 
   ngAfterViewInit() {
+    const token = this.authService.getToken();
     if (this.data != null || this.data != undefined) {
-      this.loadFromData();
+      this.loadFromData(token!);
     }
   }
 
-  loadFromData() {
-    fetch(`${this.apiAction}/${this.data}`, { method: 'GET' })
+  loadFromData(token: string) {
+    fetch(`${this.apiAction}/${this.data}`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
       .then(response => response.json())
       .then(formData => {
         this.chemicalElementForm.patchValue(formData);
@@ -67,9 +70,10 @@ export class ChemicalElementsForm {
     });
 
     const httpMethod = this.data ? "PUT" : "POST";
+    const token = this.authService.getToken();
     fetch(`${this.apiAction}`, {
       method: httpMethod,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify(this.chemicalElementForm.value)
     })
       .then(async response => {

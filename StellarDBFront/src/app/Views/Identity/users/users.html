@@ -1,0 +1,46 @@
+<div class="p-[25px]">
+  <mat-card appearance="outlined">
+    <!-- Header -->
+    <mat-card-header>
+      <mat-card-title class="h3">{{title}}</mat-card-title>
+      <mat-card-subtitle class="">List</mat-card-subtitle>
+      <span class="spacer"></span>
+    </mat-card-header>
+
+    <!-- Table Component -->
+    <app-custom-table [columns]="tableColumns"
+                      [userRoleClaims]="userRoleClaims"
+                      [objects]="objects"
+                      [isLoading]="isLoading"
+                      [expandableRows]="true"
+                      [expandedElement]="expandedElement"
+                      (openForm)="onOpenForm($event)"
+                      (toggleExpand)="onToggleExpand($event)">
+
+      <!-- Define the expanded content template -->
+      <ng-template #expandedContent let-element>
+        <div class="grid lg:grid-cols-3 gap-6 p-4">
+
+          <!-- List Roles -->
+          <div class="mb-6">
+            <div class="flex items-center"> <mat-icon class="me-2">key</mat-icon> <span class="text-lg font-medium"> Roles </span> </div>
+            <mat-chip-set>
+              <mat-chip *ngFor="let role of element.roles" color="primary">{{ role }}</mat-chip>
+            </mat-chip-set>
+          </div>
+
+          <div *ngIf="element.dateOfBirth != null || element.dateOfBirth != ''">
+            <div class="flex items-bottom"> <mat-icon class="me-2">cake</mat-icon> <span class="text-lg font-medium"> Date of Birth </span> </div>
+            <span class="text-gray-700">{{element.dateOfBirth}}</span>
+          </div>
+
+          <div>
+            <div *ngIf="element.phoneNumber != null || element.phoneNumber != ''" class="flex items-bottom"> <mat-icon class="me-2">phone</mat-icon> <span class="text-lg font-medium"> Phone Number </span> </div>
+            <span class="text-gray-700">{{element.phoneNumber}}</span>
+          </div>
+        </div>
+      </ng-template>
+
+    </app-custom-table>
+  </mat-card>
+</div>

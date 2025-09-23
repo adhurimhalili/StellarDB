@@ -77,6 +77,17 @@ namespace StellarDB.Data
                 {
                     await roleManager.CreateAsync(new ApplicationRole(roleName, $"Default {roleName} role"));
                 }
+
+                // Add "IdentityAccess" claim for Admin role
+                if (roleName == "Admin")
+                {
+                    var adminRole = await roleManager.FindByNameAsync(roleName);
+                    var claims = await roleManager.GetClaimsAsync(adminRole);
+                    if (!claims.Any(c => c.Type == "IdentityAccess" && c.Value == "true"))
+                    {
+                        await roleManager.AddClaimAsync(adminRole, new System.Security.Claims.Claim("IdentityAccess", "true"));
+                    }
+                }
             }
         }
 

@@ -6,7 +6,7 @@ namespace StellarDB.Services.Identity.Users
 {
     internal partial class UserServices
     {
-        public async Task<string> CreateAsync(CreateUserViewModel model, string origin)
+        public async Task<string> CreateAsync(CreateUserViewModel model)
         {
             var user = new ApplicationUser
             {
@@ -23,11 +23,12 @@ namespace StellarDB.Services.Identity.Users
 
             if (model.Roles?.Any() == true)
             {
-                foreach (var role in model.Roles)
+                foreach (var roleId in model.Roles)
                 {
-                    if (await _roleManager.RoleExistsAsync(role))
+                    var role = await _roleManager.FindByIdAsync(roleId);
+                    if (role is not null)
                     {
-                        await _userManager.AddToRoleAsync(user, role);
+                        await _userManager.AddToRoleAsync(user, role.Name);
                     }
                 }
             }
@@ -35,7 +36,7 @@ namespace StellarDB.Services.Identity.Users
             return user.Id;
         }
 
-        public async Task<string> UpdateAsync(UpdateUserViewModel model, string origin)
+        public async Task<string> UpdateAsync(UpdateUserViewModel model)
         {
             var user = await _userManager.FindByIdAsync(model.Id);
 
@@ -46,7 +47,11 @@ namespace StellarDB.Services.Identity.Users
             user.Email = model.Email;
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
-            user.DateOfBirth = model.DateOfBirth;
+            user.DateOfBirth = string.IsNullOrWhiteSpace(model.DateOfBirth)
+                ? null
+                : DateTime.TryParse(model.DateOfBirth, out var dob) ? dob : throw new Exception("Invalid date format for DateOfBirth.");
+            user.PhoneNumber = model.PhoneNumber;
+            user.Active = model.Active;
             var result = await _userManager.UpdateAsync(user);
 
             await _signInManager.RefreshSignInAsync(user);
@@ -54,11 +59,29 @@ namespace StellarDB.Services.Identity.Users
             if (!result.Succeeded)
                 throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
 
-            if (model.Roles.Any())
+            if (model.Roles != null)
             {
-                var roleUpdateSuccess = await _rolesServices.UpdateUserRolesAsync(user, model.Roles);
-                if (!roleUpdateSuccess)
-                    _logger.LogWarning("Some role updates failed for user {UserId}", user.Id);
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                var rolesToAdd = model.Roles.Except(currentRoles).ToList();
+                var rolesToRemove = currentRoles.Except(model.Roles).ToList();
+
+                foreach (var roleId in rolesToAdd)
+                {
+                    var role = await _roleManager.FindByIdAsync(roleId);
+                    if (role is not null)
+                    {
+                        await _userManager.AddToRoleAsync(user, role.Name);
+                    }
+                }
+
+                foreach (var roleId in rolesToRemove)
+                {
+                    var role = await _roleManager.FindByIdAsync(roleId);
+                    if (role is not null)
+                    {
+                        await _userManager.RemoveFromRoleAsync(user, role.Name);
+                    }
+                }
             }
 
             return user.Id;

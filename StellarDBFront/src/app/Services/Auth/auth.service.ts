@@ -71,6 +71,7 @@ export class AuthService {
   }
 
   private saveUserToStorage(user: LoginResponse, rememberMe: boolean): void {
+    rememberMe = true;
     if (rememberMe) {
       localStorage.setItem(this.USER_KEY, JSON.stringify(user));
       if (user.token) {
@@ -151,7 +152,11 @@ export class AuthService {
   private storeUser(token: string, rememberMe: boolean = false): void {
     // Use JwtService to decode the token
     const payload = this.jwtService.decodeJwtPayload(token);
-    
+    console.log('Roles:', payload!['role']); // string or array
+    console.log('Email:', payload!['email']);
+    console.log('User ID:', payload!['sub']);
+    console.log('RolesSchema:', payload!['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']);
+
     if (payload) {
       if (!payload.exp) {
         throw new Error('Invalid JWT token: missing expiration time');
@@ -182,9 +187,13 @@ export class AuthService {
     if (!token) return [];
     
     const payload = this.jwtService.decodeJwtPayload(token);
-    if (!payload?.['role']) return [];
-    
-    return Array.isArray(payload['role']) ? payload['role'] : [payload['role']];
+
+    let roles = payload?.['role'];
+    if (!roles) {
+      roles = payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+    }
+    if (!roles) return [];
+    return Array.isArray(roles) ? roles : [roles];
   }
 
   getUserEmail(): string | null {
@@ -195,6 +204,38 @@ export class AuthService {
   getUserId(): string | null {
     const token = this.getToken();
     return token ? this.jwtService.getClaim(token, 'sub') : null;
+  }
+
+  getRoleClaims(): string[] {
+    const token = this.getToken();
+    if (!token) return [];
+    const payload = this.jwtService.decodeJwtPayload(token);
+    if (!payload) return [];
+    const policies: string[] = [];
+    for (const [claimType, claimValue] of Object.entries(payload)) {
+      if (typeof claimValue === 'string' && claimValue.endsWith('Access')) {
+        policies.push(claimValue);
+      }
+    }
+
+    return policies;
+  }
+
+  getUserAvailableActions(): string[] {
+    const policies = this.getRoleClaims();
+    const availableActions: string[] = [];
+
+    if (policies.includes("ReadAccess")) {
+      availableActions.push("export");
+    }
+    if (policies.includes("WriteAccess")) {
+      availableActions.push("create", "edit", "import");
+    }
+    if (policies.includes("DeleteAccess")) {
+      availableActions.push("delete");
+    }
+
+    return availableActions;
   }
 
   hasRole(role: string): boolean {

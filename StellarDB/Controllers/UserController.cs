@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StellarDB.Models.Identity.Users;
 using StellarDB.Services.Identity.Users;
 
 namespace StellarDB.Controllers
 {
+    [Authorize(Policy = "IdentityAccess")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -39,7 +41,7 @@ namespace StellarDB.Controllers
 
             try
             {
-                var userId = await _userServices.CreateAsync(model, Request.Headers["origin"]);
+                var userId = await _userServices.CreateAsync(model);
                 return CreatedAtAction(nameof(Get), new { id = userId }, model);
             }
             catch (Exception ex)
@@ -49,17 +51,16 @@ namespace StellarDB.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> EditUser(string id, [FromBody] UpdateUserViewModel model)
+        [HttpPut]
+        public async Task<IActionResult> EditUser([FromBody] UpdateUserViewModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
             {
-                model.Id = id;
-                await _userServices.UpdateAsync(model, Request.Headers["origin"]);
-                return Ok("User updated successfully");
+                await _userServices.UpdateAsync(model);
+                return Ok(new { message = "User updated successfully" });
             }
             catch (Exception ex)
             {

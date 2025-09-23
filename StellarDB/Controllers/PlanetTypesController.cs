@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Xml.Serialization;
 using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
@@ -11,6 +12,7 @@ using StellarDB.Services;
 
 namespace StellarDB.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PlanetTypesController : ControllerBase
@@ -25,12 +27,14 @@ namespace StellarDB.Controllers
             _csvServices = csvServices;
         }
 
+        [Authorize(Policy = "ReadAccess")]
         [HttpGet]
         public async Task<IEnumerable<PlanetTypesModel>> Get()
         {
             return await _planetTypes.Find(FilterDefinition<PlanetTypesModel>.Empty).ToListAsync();
         }
 
+        [Authorize(Policy = "ReadAccess")]
         [HttpGet("{id}")]
         public async Task<ActionResult<PlanetTypesModel?>> GetById(string id)
         {
@@ -39,6 +43,7 @@ namespace StellarDB.Controllers
             return planetType is not null ? Ok(planetType) : NotFound("Failed to find Planet Type.");
         }
 
+        [Authorize(Policy = "WriteAccess")]
         [HttpPost]
         public async Task<ActionResult> Create(PlanetTypesModel planetType)
         {
@@ -46,6 +51,7 @@ namespace StellarDB.Controllers
             return CreatedAtAction(nameof(GetById), new { id = planetType.Id }, planetType);
         }
 
+        [Authorize(Policy = "WriteAccess")]
         [HttpPut]
         public async Task<ActionResult> Update(PlanetTypesModel planetType)
         {
@@ -56,6 +62,7 @@ namespace StellarDB.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "DeleteAccess")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(string id)
         {
@@ -66,6 +73,7 @@ namespace StellarDB.Controllers
             return NoContent();
         }
 
+        [Authorize(Policy = "WriteAccess")]
         [HttpPost("import")]
         public async Task<IActionResult> ImportFile(IFormFile file)
         {
@@ -126,6 +134,7 @@ namespace StellarDB.Controllers
             });
         }
 
+        [Authorize(Policy = "ReadAccess")]
         [HttpGet("export")]
         public async Task<IActionResult> ExportFile(string format)
         {

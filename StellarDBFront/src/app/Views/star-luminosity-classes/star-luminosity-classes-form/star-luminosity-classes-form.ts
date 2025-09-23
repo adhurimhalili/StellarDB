@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject } from '@angular/core';
+import { AfterViewInit, Component, inject, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { GlobalConfig } from '../../../global-config';
+import { AuthService } from '../../../Services/Auth/auth.service';
 
 @Component({
   selector: 'app-star-luminosity-classes-form',
@@ -18,6 +19,7 @@ export class StarLuminosityClassesForm {
   readonly title: string;
   starLuminosityClassForm: FormGroup;
   private readonly apiAction = `${GlobalConfig.apiUrl}/StarLuminosityClasses`;
+  private authService = inject(AuthService);
   constructor(
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<StarLuminosityClassesForm>,
@@ -33,13 +35,14 @@ export class StarLuminosityClassesForm {
   }
 
   ngAfterViewInit() {
+    const token = this.authService.getToken();
     if (this.data != null || this.data != undefined) {
-      this.loadFromData();
+      this.loadFromData(token!);
     }
   }
 
-  loadFromData() {
-    fetch(`${this.apiAction}/${this.data}`, { method: 'GET' })
+  loadFromData(token: string) {
+    fetch(`${this.apiAction}/${this.data}`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
       .then(response => response.json())
       .then(formData => {
         this.starLuminosityClassForm?.patchValue(formData);
@@ -56,9 +59,10 @@ export class StarLuminosityClassesForm {
     });
 
     const httpMethod = this.data ? "PUT" : "POST";
+    const token = this.authService.getToken();
     fetch(`${this.apiAction}`, {
       method: httpMethod,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify(this.starLuminosityClassForm.value)
     })
       .then(async response => {

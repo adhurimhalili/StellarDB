@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StellarDB.Models.Identity.Roles;
 using StellarDB.Services.Identity.Roles;
 
 namespace StellarDB.Controllers
 {
+    [Authorize(Policy = "IdentityAccess")]
     [Route("api/[controller]")]
     [ApiController]
     public class RolesController : ControllerBase
@@ -76,19 +78,17 @@ namespace StellarDB.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRole(string id, [FromBody] RoleViewModel model)
+        [HttpPut]
+        public async Task<ActionResult> UpdateRole([FromBody] RoleViewModel model)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                if (id != model.Id)
-                    return BadRequest("ID mismatch");
-
-                var roleId = await _rolesServices.UpdateRoleAsync(model);
-                return NoContent();
+                bool succeeded = await _rolesServices.UpdateRoleAsync(model);
+                if (!succeeded) return BadRequest("Failed to update the role");
+                return Ok(new { message = "Role updated successfully" });
             }
             catch (Exception ex) when (ex.Message.Contains("not found"))
             {
@@ -96,7 +96,7 @@ namespace StellarDB.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating role {RoleId}", id);
+                _logger.LogError(ex, "Error updating role {RoleId}", model.Id);
                 return StatusCode(500, "An error occurred while updating the role");
             }
         }

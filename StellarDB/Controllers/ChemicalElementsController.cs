@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Xml.Serialization;
 using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +12,7 @@ using StellarDB.Services;
 
 namespace StellarDB.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ChemicalElementsController : ControllerBase
@@ -23,13 +25,13 @@ namespace StellarDB.Controllers
             _chemicalElements = mongoDbService.Database.GetCollection<ChemicalElementsModel>("ChemicalElements");
             _csvServices = csvServices;
         }
-
+        [Authorize(Policy = "ReadAccess")]
         [HttpGet]
         public async Task<IEnumerable<ChemicalElementsModel>> Get()
         {
             return await _chemicalElements.Find(FilterDefinition<ChemicalElementsModel>.Empty).ToListAsync();
         }
-
+        [Authorize(Policy = "ReadAccess")]
         [HttpGet("{id}")]
         public async Task<ActionResult<ChemicalElementsModel?>> GetById(string id)
         {
@@ -38,6 +40,7 @@ namespace StellarDB.Controllers
             return element;
         }
 
+        [Authorize(Policy = "WriteAccess")]
         [HttpPost]
         public async Task<ActionResult> Create(ChemicalElementsModel element)
         {
@@ -47,17 +50,19 @@ namespace StellarDB.Controllers
             return CreatedAtAction(nameof(GetById), new { id = element.Id }, element);
         }
 
+        [Authorize(Policy = "WriteAccess")]
         [HttpPut]
-        public async Task<ActionResult> Update(string id, ChemicalElementsModel element)
+        public async Task<ActionResult> Update(ChemicalElementsModel element)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var filter = Builders<ChemicalElementsModel>.Filter.Eq(e => e.Id, id);
+            var filter = Builders<ChemicalElementsModel>.Filter.Eq(e => e.Id, element.Id);
             var result = await _chemicalElements.ReplaceOneAsync(filter, element);
             if (result.ModifiedCount == 0) return NotFound("Failed to update Element.");
             return Ok(result);
         }
 
+        [Authorize(Policy = "DeleteAccess")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(string id)
         {
@@ -67,6 +72,7 @@ namespace StellarDB.Controllers
             return NoContent();
         }
 
+        [Authorize(Policy = "WriteAccess")]
         [HttpPost("import")]
         public async Task<ActionResult> Import(IFormFile file)
         {
@@ -129,6 +135,7 @@ namespace StellarDB.Controllers
             });
         }
 
+        [Authorize(Policy = "ReadAccess")]
         [HttpGet("export")]
         public async Task<IActionResult> Export(string format)
         {
