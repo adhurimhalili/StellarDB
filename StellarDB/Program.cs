@@ -12,8 +12,10 @@ using MongoDB.Driver;
 using StellarDB.Configuration.Identity;
 using StellarDB.Data;
 using StellarDB.Extensions;
+using StellarDB.Middlewares;
 using StellarDB.Models.Identity;
 using StellarDB.Services;
+using StellarDB.Services.AuditLog;
 using StellarDB.Services.Identity.Auth;
 using StellarDB.Services.Identity.Roles;
 using StellarDB.Services.Identity.Token;
@@ -97,6 +99,7 @@ builder.Services.AddScoped<IRolesServices, RolesServices>();
 builder.Services.AddScoped<IAuthServices, AuthServices>();
 builder.Services.AddScoped<ITokenServices, TokenServices>();
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+builder.Services.AddScoped<IAuditLogServices, AuditLogServices>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>
@@ -130,6 +133,9 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAllOrigins");
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseMiddleware<AuditLogMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
