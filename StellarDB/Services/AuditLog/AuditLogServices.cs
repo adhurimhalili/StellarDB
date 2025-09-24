@@ -65,13 +65,4 @@ namespace StellarDB.Services.AuditLog
         }
     }
 
-    public static class CorrelationIdHelper
-    {
-        public const string CorrelationIdHeader = "X-Correlation-ID";
-
-        public static string? GetCorrelationId(HttpContext context)
-        {
-            return context.Items.TryGetValue(CorrelationIdHeader, out var value) ? value?.ToString() : null;
-        }
-    }
 }
