@@ -7,6 +7,12 @@ import { AuthService } from './../../Services/Auth/auth.service';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { FormBuilder, FormGroup, ReactiveFormsModule, AbstractControl, Validators } from '@angular/forms';
+
 import Swal from 'sweetalert2';
 
 export interface AuditLog {
@@ -22,9 +28,19 @@ export interface AuditLog {
   correlationId?: string //
 }
 
+export interface AuditLogQuery {
+  userId?: string,
+  action?: string,
+  entityId?: string,
+  entityName?: string,
+  from?: string,
+  to?: string,
+  severity?: string,
+}
+
 @Component({
   selector: 'app-audit-logs',
-  imports: [CommonModule, CustomTable, MatListModule, MatIconModule, MatIconModule, MatCardModule],
+  imports: [CommonModule, CustomTable, MatListModule, MatIconModule, MatIconModule, MatCardModule, MatExpansionModule, MatFormFieldModule, MatButtonModule, MatInputModule, ReactiveFormsModule],
   templateUrl: './audit-logs.html',
   styleUrl: './audit-logs.css'
 })
@@ -42,14 +58,24 @@ export class AuditLogsComponent implements AfterViewInit {
   objects: AuditLog[] = [];
   isLoading = true;
   expandedElement: AuditLog | null = null;
+  logQueryForm: FormGroup;
 
   private readonly apiAction = `${GlobalConfig.apiUrl}/AuditLogs`;
   private selectedFile: File | null = null;
   private authService = inject(AuthService);
   userRoleClaims: string[] = [];
 
-  constructor() {
+  constructor(private formBuilder: FormBuilder) {
     this.userRoleClaims = ["ReadAccess"];
+    this.logQueryForm = this.formBuilder.group({
+      userId: '',
+      action: '',
+      entityId: '',
+      entityName: '',
+      from: '',
+      to: '',
+      severity: [null, [Validators.min(0), Validators.max(7)]],
+    });
   }
 
   ngAfterViewInit() {
@@ -59,7 +85,16 @@ export class AuditLogsComponent implements AfterViewInit {
   fetchData() {
     this.isLoading = true;
     const token = this.authService.getToken();
-    fetch(this.apiAction, {
+    const query: AuditLogQuery = this.logQueryForm.value;
+    // Remove empty values from query
+    const params = Object.entries(query)
+      .filter(([_, v]) => v !== null && v !== undefined && v !== '')
+      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v as string)}`)
+      .join('&');
+
+    var fetchDataUrl = `${this.apiAction}?${params}`
+
+    fetch(fetchDataUrl, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(async response => {

@@ -32,7 +32,7 @@
     {
         Emergency,      // system is unusable
         Alert,          // action must be taken immediately
-        Criztical,      // critical conditions
+        Critical,       // critical conditions
         Error,          // error conditions
         Warning,        // warning conditions
         Notice,         // normal but significant condition

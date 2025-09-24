@@ -14,8 +14,9 @@ namespace StellarDB.Middlewares
             var userId = context.User?.Identity?.IsAuthenticated == true ? context.User.Identity.Name : "Anonymous";
             await _next(context);
 
-            // Only log if the request is for an API controller endpoint
-            if (context.Request.Path.StartsWithSegments("/api", StringComparison.OrdinalIgnoreCase))
+            // Only log if the request is for an API controller endpoint or /api/AuditLog
+            if (context.Request.Path.StartsWithSegments("/api", StringComparison.OrdinalIgnoreCase) ||
+                context.Request.Path.Equals("/api/AuditLog", StringComparison.OrdinalIgnoreCase))
             {
                 var ipAddress = context.Connection.RemoteIpAddress?.ToString();
 

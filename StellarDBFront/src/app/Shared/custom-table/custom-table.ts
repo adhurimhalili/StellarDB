@@ -34,6 +34,7 @@ export class CustomTable implements OnDestroy, OnChanges, AfterViewInit {
   @Input() isLoading = true;
   @Input() userRoleClaims: string[] = [];
   @Input() expandableRows = false;
+  @Input() advancedFilter = false;
   @Input() expandedElement: any = null;
 
   // Outputs
@@ -49,6 +50,7 @@ export class CustomTable implements OnDestroy, OnChanges, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ContentChild('expandedContent') expandedContentTemplate!: TemplateRef<any>;
+  @ContentChild('filterForm') filterForm!: TemplateRef<any>;
 
   ngAfterViewInit() {
     this.dataSource = new MatTableDataSource(this.objects);

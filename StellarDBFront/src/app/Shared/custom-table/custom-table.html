@@ -25,6 +25,23 @@
         </mat-menu>
       </ng-container>
 
+      <span class="spacer flex-grow"></span>
+
+      <!-- Advanced Filter -->
+      <ng-container *ngIf="advancedFilter">
+        <mat-accordion>
+          <mat-expansion-panel class="mat-elevation-z0" hideToggle>
+            <mat-expansion-panel-header>
+              <mat-panel-title class="flex justify-end"> <span>Filter</span> </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <ng-container *ngTemplateOutlet="filterForm;">
+            </ng-container>
+
+          </mat-expansion-panel>
+        </mat-accordion>
+      </ng-container>
+
     </mat-card-actions>
     <mat-card-content>
       <table matSort mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">

@@ -22,6 +22,18 @@ namespace StellarDB.Services.AuditLog
             string? userId,
             string? correlationId)
         {
+            Severity severity = action switch
+            {
+                "Login" or "Logout" => Severity.Informational,
+                "Create" or "Update" => Severity.Warning,
+                "Delete" => Severity.Critical,
+                "FailedLogin" or "AccessDenied" => Severity.Error,
+                "DataExport" or "DataImport" => Severity.Warning,
+                "SystemError" or "Exception" => Severity.Critical,
+                "Debug" or "Trace" => Severity.Debug,
+                _ => Severity.Informational
+            };
+
             var log = new AuditLogModel
             {
                 UserId = userId,
@@ -29,9 +41,9 @@ namespace StellarDB.Services.AuditLog
                 Description = description,
                 EntityId = entityId,
                 EntityName = entityName,
-                IpAddress = ipAddress, // You can capture IP address from the request context if available
-                UserAgent = userAgent, // You can capture User-Agent from the request context if available
-                Severity = Severity.Informational, // Default severity, can be adjusted based on action,
+                IpAddress = ipAddress,
+                UserAgent = userAgent,
+                Severity = severity,
                 CorrelationId = correlationId ?? Guid.NewGuid().ToString()
             };
             _context.AuditLogs.Add(log);
@@ -40,21 +52,14 @@ namespace StellarDB.Services.AuditLog
 
         public async Task<List<AuditLogModel>> QueryAsync(AuditLogQueryParameters parameters)
         {
-            var query = _context.AuditLogs.AsQueryable();
-            if (!string.IsNullOrEmpty(parameters.UserId))
-                query = query.Where(log => log.UserId == parameters.UserId);
-            if (!string.IsNullOrEmpty(parameters.Action))
-                query = query.Where(log => log.Action == parameters.Action);
-            if (!string.IsNullOrEmpty(parameters.EntityId))
-                query = query.Where(log => log.EntityId == parameters.EntityId);
-            if (!string.IsNullOrEmpty(parameters.EntityName))
-                query = query.Where(log => log.EntityName == parameters.EntityName);
-            if (parameters.From.HasValue)
-                query = query.Where(log => log.Timestamp >= parameters.From.Value);
-            if (parameters.To.HasValue)
-                query = query.Where(log => log.Timestamp <= parameters.To.Value);
-            if (parameters.Severity.HasValue)
-                query = query.Where(log => log.Severity == parameters.Severity.Value);
+            var query = _context.AuditLogs.AsQueryable()
+                .Where(log => string.IsNullOrEmpty(parameters.UserId)     || log.UserId == parameters.UserId)
+                .Where(log => string.IsNullOrEmpty(parameters.Action)     || log.Action == parameters.Action)
+                .Where(log => string.IsNullOrEmpty(parameters.EntityId)   || log.EntityId == parameters.EntityId)
+                .Where(log => string.IsNullOrEmpty(parameters.EntityName) || log.EntityName == parameters.EntityName)
+                .Where(log => !parameters.From.HasValue                   || log.Timestamp >= parameters.From.Value)
+                .Where(log => !parameters.To.HasValue                     || log.Timestamp <= parameters.To.Value)
+                .Where(log => !parameters.Severity.HasValue               || log.Severity == parameters.Severity.Value);
 
             return await query.ToListAsync();
         }

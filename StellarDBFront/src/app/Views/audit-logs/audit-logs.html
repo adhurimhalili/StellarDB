@@ -5,6 +5,7 @@
       <mat-card-title class="h3">{{title}}</mat-card-title>
       <mat-card-subtitle class="">List</mat-card-subtitle>
       <span class="spacer"></span>
+
     </mat-card-header>
 
     <!-- Table Component -->
@@ -13,6 +14,7 @@
                       [objects]="objects"
                       [isLoading]="isLoading"
                       [expandableRows]="true"
+                      [advancedFilter]="true"
                       [expandedElement]="expandedElement"
                       (toggleExpand)="onToggleExpand($event)">
 
@@ -42,6 +44,65 @@
           </div>
 
         </div>
+      </ng-template>
+
+      <ng-template #filterForm>
+        <form [formGroup]="logQueryForm" (ngSubmit)="fetchData()">
+          <div class="grid grid-cols-4 gap-4">
+
+            <!-- User ID -->
+            <mat-form-field class="" appearance="outline">
+              <mat-label>User ID</mat-label>
+              <input matInput formControlName="userId" maxlength="50">
+            </mat-form-field>
+
+            <mat-form-field class="" appearance="outline">
+              <mat-label>Action</mat-label>
+              <input matInput formControlName="action" maxlength="50">
+            </mat-form-field>
+
+            <mat-form-field class="" appearance="outline">
+              <mat-label>Entity ID</mat-label>
+              <input matInput formControlName="entityId" maxlength="50">
+            </mat-form-field>
+
+            <mat-form-field class="" appearance="outline">
+              <mat-label>Entity Name</mat-label>
+              <input matInput formControlName="entityName" maxlength="50">
+            </mat-form-field>
+
+            <mat-form-field class="" appearance="outline">
+              <mat-label>From</mat-label>
+              <input matInput formControlName="entityName" maxlength="50">
+            </mat-form-field>
+
+            <mat-form-field class="" appearance="outline">
+              <mat-label>To</mat-label>
+              <input matInput formControlName="entityName" maxlength="50">
+            </mat-form-field>
+
+            <mat-form-field class="" appearance="outline">
+              <mat-label>Severity</mat-label>
+              <input matInput formControlName="severity" type="number" min="0" max="7">
+
+              <mat-error *ngIf="logQueryForm.get('severity')?.errors?.['min']">
+                Lowest severity level is 0.
+              </mat-error>
+
+              <mat-error *ngIf="logQueryForm.get('severity')?.errors?.['max']">
+                Highest severity level is 7.
+              </mat-error>
+
+            </mat-form-field>
+
+            <!-- Submit Button -->
+            <div class="place-content-evenly">
+              <button mat-button matButton="tonal" color="primary" type="submit">Filter</button>
+              <button mat-button type="button" (click)="logQueryForm.reset(); fetchData();">Reset</button>
+            </div>
+
+          </div>
+        </form>
       </ng-template>
 
     </app-custom-table>
