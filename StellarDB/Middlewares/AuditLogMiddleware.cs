@@ -11,12 +11,25 @@ namespace StellarDB.Middlewares
         }
         public async Task InvokeAsync(HttpContext context, IAuditLogServices auditLogServices)
         {
-            var userId = context.User?.Identity?.IsAuthenticated == true ? context.User.Identity.Name : "Anonymous";
+            string? userId = null;
+            if (context.User?.Identity?.IsAuthenticated == true)
+            {
+                userId = context.User.Claims.FirstOrDefault(c =>
+                    c.Type == "sub" ||
+                    c.Type == "user_id" ||
+                    c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+                )?.Value ?? context.User.Identity.Name;
+            }
+            else
+            {
+                userId = "Anonymous";
+            }
+
             await _next(context);
 
             // Only log if the request is for an API controller endpoint or /api/AuditLog
             if (context.Request.Path.StartsWithSegments("/api", StringComparison.OrdinalIgnoreCase) ||
-                context.Request.Path.Equals("/api/AuditLog", StringComparison.OrdinalIgnoreCase))
+                context.Request.Path.Equals("/api/AuditLogs", StringComparison.OrdinalIgnoreCase))
             {
                 var ipAddress = context.Connection.RemoteIpAddress?.ToString();
 

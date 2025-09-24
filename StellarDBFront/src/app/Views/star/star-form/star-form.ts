@@ -59,19 +59,19 @@ export class StarForm {
     this.title = data ? 'Modify Star' : 'Add Star';
   }
 
-  fetchSpectralClasses(token: string) {
+  fetchSpectralClasses() {
     fetch(`${GlobalConfig.apiUrl}/StarSpectralClasses`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}`, 'X-Correlation-ID': this.correlationId, } })
       .then(response => response.json())
       .then(data => this.starSpectralClasses = data);
   }
 
-  fetchLuminosityClasses(token: string) {
+  fetchLuminosityClasses() {
     fetch(`${GlobalConfig.apiUrl}/StarLuminosityClasses`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}`, 'X-Correlation-ID': this.correlationId, } })
       .then(response => response.json())
       .then(data => this.starLuminosityClasses = data);
   }
 
-  fetchChemicalElements(token: string) {
+  fetchChemicalElements() {
     fetch(`${GlobalConfig.apiUrl}/ChemicalElements`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}`, 'X-Correlation-ID': this.correlationId, } })
       .then(response => response.json())
       .then(data => this.chemicalElements = data)
@@ -79,16 +79,15 @@ export class StarForm {
   }
 
   ngAfterViewInit() {
-    const token = this.authService.getToken();
     if (this.data != null || this.data != undefined) {
-      this.loadFromData(token!);
+      this.loadFromData();
     }
-    this.fetchSpectralClasses(token!);
-    this.fetchLuminosityClasses(token!);
-    this.fetchChemicalElements(token!);
+    this.fetchSpectralClasses();
+    this.fetchLuminosityClasses();
+    this.fetchChemicalElements();
   }
 
-  loadFromData(token: string) {
+  loadFromData() {
     fetch(`${this.apiAction}/${this.data}`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}`, 'X-Correlation-ID': this.correlationId, } })
       .then(response => response.json())
       .then(formData => {

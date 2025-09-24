@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StellarDB.Models.AuditLog;
@@ -15,7 +16,7 @@ namespace StellarDB.Controllers
         {
             _auditLogServices = auditLogServices;
         }
-
+        [Authorize(Policy = "AdminAccess")]
         [HttpGet]
         public async Task<IActionResult> GetAuditLogsAsync([FromQuery] AuditLogQueryParameters parameters)
         {

@@ -66,7 +66,8 @@ export class AuditLogsComponent implements AfterViewInit {
   userRoleClaims: string[] = [];
 
   constructor(private formBuilder: FormBuilder) {
-    this.userRoleClaims = ["ReadAccess"];
+    const claims: string[] = this.authService.getRoleClaims();
+    if (claims.includes("AdminAccess")) this.userRoleClaims = ["ReadAccess"];
     this.logQueryForm = this.formBuilder.group({
       userId: '',
       action: '',

@@ -134,10 +134,11 @@ app.UseCors("AllowAllOrigins");
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<AuditLogMiddleware>();
 
-app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
