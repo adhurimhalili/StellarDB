@@ -34,6 +34,7 @@ namespace StellarDB.Services.Identity.Auth
             bool isValidUser = await ValidateUserAsync(user!, request.Password);
             if (!isValidUser) return (false, "Invalid email or password", null!);
 
+            await _signInManager.SignInAsync(user!, request.RememberMe);
             var token = await _tokenServices.GenerateTokenAsync(user!, ipAddress);
             return (true, "Login successful", token);
         }

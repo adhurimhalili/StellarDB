@@ -18,6 +18,8 @@ import { Role } from '../../roles/roles';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { v4 as uuidv4 } from 'uuid';
+
 
 @Component({
   selector: 'app-users-form',
@@ -32,15 +34,15 @@ export class UsersForm implements AfterViewInit {
   readonly title: string;
   readonly separatorKeyCodes: number[] = [ENTER, COMMA];
   readonly currentRole = model('');
+  readonly announcer = inject(LiveAnnouncer);
   allRoles: Role[] = [];
   filteredRoles: Role[] = [];
   selectedRoles: Role[] = [];
-  readonly announcer = inject(LiveAnnouncer);
-
   userForm: FormGroup;
 
   private readonly apiAction = `${GlobalConfig.apiUrl}/User`;
   private authService = inject(AuthService);
+  private correlationId: string = uuidv4();
 
   constructor(
     private formBuilder: FormBuilder,
@@ -94,7 +96,7 @@ export class UsersForm implements AfterViewInit {
   }
 
   fetchRoles(token: string) {
-    fetch(`${GlobalConfig.apiUrl}/Roles`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
+    fetch(`${GlobalConfig.apiUrl}/Roles`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}`, 'X-Correlation-ID': this.correlationId, } })
       .then(response => response.json())
       .then((data: Role[]) => {
         this.allRoles = data;

@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using StellarDB.Configuration.Identity;
-using StellarDB.Migrations;
 using StellarDB.Models.Identity;
 using StellarDB.Models.Identity.Tokens;
 using StellarDB.Services.Identity.Users;

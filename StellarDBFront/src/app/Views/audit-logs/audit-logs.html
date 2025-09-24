@@ -1,0 +1,114 @@
+<div class="p-[25px]">
+  <mat-card appearance="outlined">
+    <!-- Header -->
+    <mat-card-header>
+      <mat-card-title class="h3">{{title}}</mat-card-title>
+      <span class="spacer"></span>
+
+    </mat-card-header>
+
+    <!-- Table Component -->
+    <app-custom-table [columns]="tableColumns"
+                      [userRoleClaims]="userRoleClaims"
+                      [objects]="objects"
+                      [isLoading]="isLoading"
+                      [expandableRows]="true"
+                      [advancedFilter]="true"
+                      [expandedElement]="expandedElement"
+                      (toggleExpand)="onToggleExpand($event)">
+
+      <!-- Define the expanded content template -->
+      <ng-template #expandedContent let-element>
+        <div class="grid lg:grid-cols-4 gap-6 p-4">
+
+          <!-- Entity -->
+          <div>
+            <div class="flex items-center"> <mat-icon class="me-2">api</mat-icon> <span class="text-lg font-medium"> Entity </span></div>
+            <div class="grid grid-rows-subgrid mb-2">
+              <div><span class="text-gray-700 font-medium">ID:</span> {{element.entityId ? element.entityId : "N/A"}} </div>
+              <div><span class="text-gray-700 font-medium">Name:</span> {{element.entityName ? element.entityName : "N/A"}}</div>
+            </div>
+          </div>
+
+          <!-- User Agent -->
+          <div>
+            <div class="flex items-center mb-2"> <mat-icon class="me-2">web</mat-icon> <span class="text-lg font-medium"> User Agent </span></div>
+            <span class="text-gray-700">{{element.userAgent}}</span>
+          </div>
+
+          <!-- Correlation ID -->
+          <div>
+            <div class="flex items-center mb-2"> <mat-icon class="me-2" fontSet="material-symbols-outlined">arrow_and_edge</mat-icon> <span class="text-lg font-medium"> Correlation </span></div>
+            <span class="text-gray-700">{{element.correlationId}}</span>
+          </div>
+
+        </div>
+      </ng-template>
+
+      <ng-template #filterForm>
+        <form [formGroup]="logQueryForm" (ngSubmit)="fetchData()">
+          <div class="grid grid-cols-4 gap-4">
+
+            <!-- User ID -->
+            <mat-form-field class="" appearance="outline">
+              <mat-label>User ID</mat-label>
+              <input matInput formControlName="userId" maxlength="50">
+            </mat-form-field>
+
+            <mat-form-field class="" appearance="outline">
+              <mat-label>Action</mat-label>
+              <input matInput formControlName="action" maxlength="50">
+            </mat-form-field>
+
+            <mat-form-field class="" appearance="outline">
+              <mat-label>Entity ID</mat-label>
+              <input matInput formControlName="entityId" maxlength="50">
+            </mat-form-field>
+
+            <mat-form-field class="" appearance="outline">
+              <mat-label>Entity Name</mat-label>
+              <input matInput formControlName="entityName" maxlength="50">
+            </mat-form-field>
+
+            <mat-form-field class="" appearance="outline">
+              <mat-label>From</mat-label>
+              <input matInput formControlName="from" maxlength="50">
+            </mat-form-field>
+
+            <mat-form-field class="" appearance="outline">
+              <mat-label>To</mat-label>
+              <input matInput formControlName="to" maxlength="50">
+            </mat-form-field>
+
+            <mat-form-field class="" appearance="outline">
+              <mat-label>Severity</mat-label>
+              <input matInput formControlName="severity" type="number" min="0" max="7">
+
+              <mat-error *ngIf="logQueryForm.get('severity')?.errors?.['min']">
+                Lowest severity level is 0.
+              </mat-error>
+
+              <mat-error *ngIf="logQueryForm.get('severity')?.errors?.['max']">
+                Highest severity level is 7.
+              </mat-error>
+
+            </mat-form-field>
+
+            <mat-form-field class="" appearance="outline">
+              <mat-label>Correlation ID</mat-label>
+              <input matInput formControlName="correlationId" maxlength="50">
+            </mat-form-field>
+
+            <!-- Buttons -->
+            <div class="place-content-evenly">
+              <button mat-button matButton="tonal" color="primary" type="submit">Filter</button>
+              <button mat-button type="button" (click)="logQueryForm.reset(); fetchData();">Reset</button>
+            </div>
+
+          </div>
+        </form>
+      </ng-template>
+
+    </app-custom-table>
+  </mat-card>
+</div>

@@ -17,6 +17,7 @@ import { Star } from '../../star/star';
 import { ChemicalElement } from '../../chemical-elements/chemical-elements';
 import { AtmosphericGas } from '../../atmospheric-gases/atmospheric-gases';
 import { AuthService } from '../../../Services/Auth/auth.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-planet-form',
@@ -38,6 +39,7 @@ export class PlanetForm {
   private readonly apiAction = `${GlobalConfig.apiUrl}/Planet`;
   readonly compositionPanelState = signal(false);
   private authService = inject(AuthService);
+  private correlationId: string = uuidv4();
 
   constructor(private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<PlanetForm>,
@@ -63,31 +65,32 @@ export class PlanetForm {
       atmosphere: this.formBuilder.array([])
     });
     this.title = data ? 'Modify Planet' : 'Add Planet';
+    window.sessionStorage.setItem('correlationId', this.correlationId);
   }
 
   fetchStars(token: string) {
-    fetch(`${GlobalConfig.apiUrl}/Star`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
+    fetch(`${GlobalConfig.apiUrl}/Star`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}`, 'X-Correlation-ID': this.correlationId, } })
       .then(response => response.json())
       .then(data => this.stars = data)
       .catch(error => console.error('Error fetching stars:', error));
   }
 
   fetchPlanetTypes(token: string) {
-    fetch(`${GlobalConfig.apiUrl}/PlanetTypes`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
+    fetch(`${GlobalConfig.apiUrl}/PlanetTypes`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}`, 'X-Correlation-ID': this.correlationId, } })
       .then(response => response.json())
       .then(data => this.planetTypes = data)
       .catch(error => console.error('Error fetching planet types:', error));
   }
 
   fetchChemicalElements(token: string) {
-    fetch(`${GlobalConfig.apiUrl}/ChemicalElements`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
+    fetch(`${GlobalConfig.apiUrl}/ChemicalElements`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}`, 'X-Correlation-ID': this.correlationId, } })
       .then(response => response.json())
       .then(data => this.chemicalElements = data)
       .catch(error => console.error('Error fetching chemical elements:', error));
   }
 
   fetchAtmosphericGases(token: string) {
-    fetch(`${GlobalConfig.apiUrl}/AtmosphericGases`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
+    fetch(`${GlobalConfig.apiUrl}/AtmosphericGases`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}`, 'X-Correlation-ID': this.correlationId, } })
       .then(response => response.json())
       .then(data => this.atmosphericGases = data)
       .catch(error => console.error('Error fetching atmospheric gases:', error));
@@ -105,7 +108,7 @@ export class PlanetForm {
   }
 
   loadFromData(token: string) {
-    fetch(`${this.apiAction}/${this.data}`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
+    fetch(`${this.apiAction}/${this.data}`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}`, 'X-Correlation-ID': this.correlationId, } })
       .then(response => response.json())
       .then(formData => {
         this.compositionArray.clear();
@@ -207,7 +210,7 @@ export class PlanetForm {
     const token = this.authService.getToken();
     fetch(`${this.apiAction}`, {
       method: httpMethod,
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, 'X-Correlation-ID': this.correlationId, },
       body: JSON.stringify(this.planetForm.value)
     })
       .then(async response => {
