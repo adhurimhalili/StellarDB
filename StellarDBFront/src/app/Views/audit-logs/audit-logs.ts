@@ -36,6 +36,7 @@ export interface AuditLogQuery {
   from?: string,
   to?: string,
   severity?: string,
+  correlation?: string,
 }
 
 @Component({
@@ -47,7 +48,7 @@ export interface AuditLogQuery {
 export class AuditLogsComponent implements AfterViewInit {
   readonly title = "Audit Logs";
   readonly tableColumns = [
-    { columnDef: 'userId', header: 'User ID', cssClass: 'w-1/12' },
+    { columnDef: 'userId', header: 'User ID', cssClass: 'w-1/6' },
     { columnDef: 'action', header: 'Action', cssClass: 'w-1/16' },
     { columnDef: 'description', header: 'Description', cssClass: 'w-auto' },
     { columnDef: 'ipAddress', header: 'IP Address', cssClass: 'w-1/10' },
@@ -76,6 +77,7 @@ export class AuditLogsComponent implements AfterViewInit {
       from: '',
       to: '',
       severity: [null, [Validators.min(0), Validators.max(7)]],
+      correlationId: ''
     });
   }
 

@@ -50,7 +50,7 @@ namespace StellarDB.Services.AuditLog
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<AuditLogModel>> QueryAsync(AuditLogQueryParameters parameters)
+        public async Task<List<AuditLogResult>> QueryAsync(AuditLogQueryParameters parameters)
         {
             var query = _context.AuditLogs.AsQueryable()
                 .Where(log => string.IsNullOrEmpty(parameters.UserId)     || log.UserId == parameters.UserId)
@@ -59,9 +59,28 @@ namespace StellarDB.Services.AuditLog
                 .Where(log => string.IsNullOrEmpty(parameters.EntityName) || log.EntityName == parameters.EntityName)
                 .Where(log => !parameters.From.HasValue                   || log.Timestamp >= parameters.From.Value)
                 .Where(log => !parameters.To.HasValue                     || log.Timestamp <= parameters.To.Value)
-                .Where(log => !parameters.Severity.HasValue               || log.Severity == parameters.Severity.Value);
+                .Where(log => !parameters.Severity.HasValue               || log.Severity == parameters.Severity.Value)
+                .Where(log => string.IsNullOrEmpty(parameters.CorrelationId) || log.CorrelationId == parameters.CorrelationId)
+                .OrderByDescending(log => log.Timestamp);
 
-            return await query.ToListAsync();
+            var result = await query
+                .Select(log => new AuditLogResult
+                {
+                    Id = log.Id,
+                    UserId = log.UserId,
+                    Action = log.Action,
+                    Description = log.Description,
+                    EntityId = log.EntityId,
+                    EntityName = log.EntityName,
+                    IpAddress = log.IpAddress,
+                    UserAgent = log.UserAgent,
+                    Timestamp = log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Severity = log.Severity,
+                    CorrelationId = log.CorrelationId
+                })
+                .ToListAsync();
+
+            return result.ToList();
         }
     }
 

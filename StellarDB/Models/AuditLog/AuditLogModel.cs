@@ -24,8 +24,24 @@
         public DateTime? From { get; set; } = DateTime.UtcNow.AddDays(-7);
         public DateTime? To { get; set; } = DateTime.UtcNow;
         public Severity? Severity { get; set; }
+        public string? CorrelationId { get; set; }
         //public int PageNumber { get; set; } = 1;
         //public int PageSize { get; set; } = 10;
+    }
+
+    public class AuditLogResult
+    {
+        public string? Id { get; set; } = Guid.NewGuid().ToString();
+        public string? UserId { get; set; }
+        public string? Action { get; set; }
+        public string? Description { get; set; }
+        public string? EntityId { get; set; }
+        public string? EntityName { get; set; }
+        public string? IpAddress { get; set; }
+        public string? UserAgent { get; set; }
+        public string? Timestamp { get; set; }
+        public Severity? Severity { get; set; }
+        public string? CorrelationId { get; set; }
     }
 
     public enum Severity
