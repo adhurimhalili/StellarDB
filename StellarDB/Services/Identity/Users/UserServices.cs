@@ -31,14 +31,34 @@ namespace StellarDB.Services.Identity.Users
             _rolesServices = rolesServices;
         }
 
-        public async Task<List<UserViewModel>> GetAllAsync()
+        public async Task<List<UserViewModel>> GetAllAsync(UserQueryParameters parameters)
         {
-            var users = _userManager.Users.ToList();
+            var query = _userManager.Users.AsQueryable()
+                .Where(u => string.IsNullOrEmpty(parameters.Email) || u.Email.Contains(parameters.Email))
+                .Where(u => string.IsNullOrEmpty(parameters.UserName) || u.UserName.Contains(parameters.UserName))
+                .Where(u => string.IsNullOrEmpty(parameters.FirstName) || u.FirstName.Contains(parameters.FirstName))
+                .Where(u => string.IsNullOrEmpty(parameters.LastName) || u.LastName.Contains(parameters.LastName))
+                .Where(u => string.IsNullOrEmpty(parameters.PhoneNumber) || u.PhoneNumber.Contains(parameters.PhoneNumber))
+                .Where(u => !parameters.DateOfBirthFrom.HasValue || u.DateOfBirth >= parameters.DateOfBirthFrom.Value)
+                .Where(u => !parameters.DateOfBirthTo.HasValue || u.DateOfBirth >= parameters.DateOfBirthTo.Value)
+                .Where(u => !parameters.Active.HasValue || u.Active == parameters.Active.Value);
+
+            if (parameters.Active.HasValue)
+                query = query.Where(u => u.Active == parameters.Active.Value);
+
+            var users = query.ToList();
             var userViewModels = new List<UserViewModel>();
 
             foreach (var user in users)
             {
                 var roles = await _userManager.GetRolesAsync(user);
+
+                // If filtering by roles, skip users not in any of the specified roles
+                if (parameters.Roles != null && parameters.Roles.Any())
+                {
+                    if (!roles.Any(r => parameters.Roles.Contains(r)))
+                        continue;
+                }
 
                 var userViewModel = new UserViewModel
                 {
@@ -57,6 +77,7 @@ namespace StellarDB.Services.Identity.Users
             }
             return userViewModels;
         }
+
         public async Task<UserViewModel> GetByIdAsync(string userId)
         {
             ApplicationUser? findUser = await _userManager.FindByIdAsync(userId);

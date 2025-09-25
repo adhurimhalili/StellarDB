@@ -36,9 +36,11 @@ namespace StellarDB.Controllers
 
         [Authorize(Policy = "ReadAccess")]
         [HttpGet]
-        public async Task<IEnumerable<object>> Get()
+        public async Task<IEnumerable<object>> Get([FromQuery] StarQueryParameters parameters)
         {
-            var stars = await _stars.Find(FilterDefinition<StarModel>.Empty).ToListAsync();
+            var filter = BuildStarFilter(parameters);
+
+            var stars = await _stars.Find(filter).ToListAsync();
             var spectralClasses = await _spectralClasses.Find(FilterDefinition<StarSpectralClassesModel>.Empty).ToListAsync();
             var luminosityClasses = await _luminosityClasses.Find(FilterDefinition<StarLuminosityClassesModel>.Empty).ToListAsync();
             var chemicalElements = await _chemicalElements.Find(FilterDefinition<ChemicalElementsModel>.Empty).ToListAsync();
@@ -236,6 +238,59 @@ namespace StellarDB.Controllers
             serializer.Serialize(stringWriter, xmlWrapper);
 
             return stringWriter.ToString();
+        }
+
+        private static FilterDefinition<StarModel> BuildStarFilter(StarQueryParameters parameters)
+        {
+            var filterBuilder = Builders<StarModel>.Filter;
+            var filters = new List<FilterDefinition<StarModel>>();
+
+            if (!string.IsNullOrWhiteSpace(parameters.Name))
+                filters.Add(filterBuilder.Regex(x => x.Name, new MongoDB.Bson.BsonRegularExpression(parameters.Name, "i")));
+
+            if (!string.IsNullOrWhiteSpace(parameters.SpectralClassId))
+                filters.Add(filterBuilder.Eq(x => x.SpectralClassId, parameters.SpectralClassId));
+
+            if (!string.IsNullOrWhiteSpace(parameters.LuminosityClassId))
+                filters.Add(filterBuilder.Eq(x => x.LuminosityClassId, parameters.LuminosityClassId));
+
+            if (parameters.MinMagnitude.HasValue)
+                filters.Add(filterBuilder.Gte(x => x.Magnitude, parameters.MinMagnitude.Value));
+
+            if (parameters.MaxMagnitude.HasValue)
+                filters.Add(filterBuilder.Lte(x => x.Magnitude, parameters.MaxMagnitude.Value));
+
+            if (parameters.MinDistance.HasValue)
+                filters.Add(filterBuilder.Gte(x => x.Distance, parameters.MinDistance.Value));
+
+            if (parameters.MaxDistance.HasValue)
+                filters.Add(filterBuilder.Lte(x => x.Distance, parameters.MaxDistance.Value));
+
+            if (parameters.MinMass.HasValue)
+                filters.Add(filterBuilder.Gte(x => x.Mass, parameters.MinMass.Value));
+
+            if (parameters.MaxMass.HasValue)
+                filters.Add(filterBuilder.Lte(x => x.Mass, parameters.MaxMass.Value));
+
+            if (parameters.MinDiameter.HasValue)
+                filters.Add(filterBuilder.Gte(x => x.Diameter, parameters.MinDiameter.Value));
+
+            if (parameters.MaxDiameter.HasValue)
+                filters.Add(filterBuilder.Lte(x => x.Diameter, parameters.MaxDiameter.Value));
+
+            if (parameters.MinTemperature.HasValue)
+                filters.Add(filterBuilder.Gte(x => x.Temperature, parameters.MinTemperature.Value));
+
+            if (parameters.MaxTemperature.HasValue)
+                filters.Add(filterBuilder.Lte(x => x.Temperature, parameters.MaxTemperature.Value));
+
+            if (parameters.From.HasValue)
+                filters.Add(filterBuilder.Gte(x => x.DiscoveryDate, parameters.From.Value));
+
+            if (parameters.To.HasValue)
+                filters.Add(filterBuilder.Lte(x => x.DiscoveryDate, parameters.To.Value));
+
+            return filters.Count > 0 ? filterBuilder.And(filters) : filterBuilder.Empty;
         }
     }
 }

@@ -42,6 +42,24 @@ namespace StellarDB.Models.Star
         public List<CompositionModel>? Composition { get; set; }
         public string? Description { get; set; }
     }
+    public class StarQueryParameters
+    {
+        public string? Name { get; set; } = string.Empty;
+        public string? SpectralClassId { get; set; } = string.Empty;
+        public string? LuminosityClassId { get; set; } = string.Empty;
+        public double? MinMagnitude { get; set; }
+        public double? MaxMagnitude { get; set; }
+        public double? MinDistance { get; set; }
+        public double? MaxDistance { get; set; }
+        public double? MinMass { get; set; }
+        public double? MaxMass { get; set; }
+        public double? MinDiameter { get; set; }
+        public double? MaxDiameter { get; set; }
+        public double? MinTemperature { get; set; }
+        public double? MaxTemperature { get; set; }
+        public DateOnly? From { get; set; }
+        public DateOnly? To { get; set; }
+    }
     public class StarXmlWrapper
     {
         [XmlElement("Star")]

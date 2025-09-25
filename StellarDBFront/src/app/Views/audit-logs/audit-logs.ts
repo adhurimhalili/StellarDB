@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject } from '@angular/core';
+import { AfterViewInit, Component, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableDataSource } from '@angular/material/table';
 import { GlobalConfig } from './../../global-config';
@@ -11,7 +11,9 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { FormBuilder, FormGroup, ReactiveFormsModule, AbstractControl, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 import Swal from 'sweetalert2';
 
@@ -28,31 +30,22 @@ export interface AuditLog {
   correlationId?: string //
 }
 
-export interface AuditLogQuery {
-  userId?: string,
-  action?: string,
-  entityId?: string,
-  entityName?: string,
-  from?: string,
-  to?: string,
-  severity?: string,
-  correlation?: string,
-}
-
 @Component({
   selector: 'app-audit-logs',
-  imports: [CommonModule, CustomTable, MatListModule, MatIconModule, MatIconModule, MatCardModule, MatExpansionModule, MatFormFieldModule, MatButtonModule, MatInputModule, ReactiveFormsModule],
+  imports: [CommonModule, CustomTable, MatListModule, MatIconModule, MatIconModule, MatCardModule, MatExpansionModule, MatFormFieldModule, MatButtonModule, MatInputModule, ReactiveFormsModule, MatDatepickerModule],
   templateUrl: './audit-logs.html',
-  styleUrl: './audit-logs.css'
+  styleUrl: './audit-logs.css',
+  providers: [provideNativeDateAdapter()],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuditLogsComponent implements AfterViewInit {
   readonly title = "Audit Logs";
   readonly tableColumns = [
-    { columnDef: 'userId', header: 'User ID', cssClass: 'w-1/6' },
+    { columnDef: 'userId', header: 'User ID', cssClass: 'w-1/5' },
     { columnDef: 'action', header: 'Action', cssClass: 'w-1/16' },
     { columnDef: 'description', header: 'Description', cssClass: 'w-auto' },
     { columnDef: 'ipAddress', header: 'IP Address', cssClass: 'w-1/10' },
-    { columnDef: 'timestamp', header: 'Timestamp', cssClass: 'w-1/6' },
+    { columnDef: 'timestamp', header: 'Timestamp', cssClass: 'w-1/8' },
     { columnDef: 'severity', header: 'Severity', cssClass: 'w-1/16' },
   ]
   dataSource = new MatTableDataSource<AuditLog>();
@@ -66,7 +59,7 @@ export class AuditLogsComponent implements AfterViewInit {
   private authService = inject(AuthService);
   userRoleClaims: string[] = [];
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, private cdr: ChangeDetectorRef) {
     const claims: string[] = this.authService.getRoleClaims();
     if (claims.includes("AdminAccess")) this.userRoleClaims = ["ReadAccess"];
     this.logQueryForm = this.formBuilder.group({
@@ -88,7 +81,13 @@ export class AuditLogsComponent implements AfterViewInit {
   fetchData() {
     this.isLoading = true;
     const token = this.authService.getToken();
-    const query: AuditLogQuery = this.logQueryForm.value;
+    const formValue = this.logQueryForm.value;
+    const query = {
+      ...formValue,
+      from: this.toDateOnlyString(formValue.from),
+      to: this.toDateOnlyString(formValue.to),
+    };
+
     // Remove empty values from query
     const params = Object.entries(query)
       .filter(([_, v]) => v !== null && v !== undefined && v !== '')
@@ -121,6 +120,7 @@ export class AuditLogsComponent implements AfterViewInit {
         }));
         this.dataSource.data = this.objects;
         this.isLoading = false;
+        this.cdr.markForCheck();
       })
       .catch(error => {
         console.error('Error fetching data:', error);
@@ -137,5 +137,12 @@ export class AuditLogsComponent implements AfterViewInit {
     }
     this.expandedElement = this.expandedElement === row ? null : row;
 
+  }
+
+  private toDateOnlyString(date: Date | null): string | null {
+    if (!date) return null;
+    const mm = (date.getMonth() + 1).toString().padStart(2, '0');
+    const dd = date.getDate().toString().padStart(2, '0');
+    return `${date.getFullYear()}-${mm}-${dd}`;
   }
 }
