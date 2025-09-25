@@ -7,9 +7,8 @@ StellarDB is a comprehensive astronomical database management system designed fo
 ### Core Functionality
 - **Star Management**: Catalog stars with detailed properties including spectral classes, luminosity classes, magnitude, distance, mass, temperature, and discovery dates
 - **Planet Management**: Track planets with comprehensive orbital mechanics, physical properties, atmospheric composition, and relationship to host stars
-- **Chemical Element Tracking**: Manage chemical compositions for both stellar and atmospheric data
-- **Spectral & Luminosity Classification**: Organized classification system for stellar types
 - **Data Import/Export**: Support for CSV and XML data formats for bulk operations
+- **Advanced List Filtering**: Filter results on various tables
 
 ### Technical Features
 - **JWT Authentication**: Secure user authentication and authorization system
@@ -145,15 +144,12 @@ dotnet ef database update
 ### 5. Initial Data Seeding
 
 The application includes automatic data seeding in development mode. On first run, it will populate:
-- Default stellar spectral classes (O, B, A, F, G, K, M)
-- Luminosity classes (I, II, III, IV, V)
-- Common chemical elements
-- Sample atmospheric gases
-- Admin user account
+- Admin and Manager user account with roles and claims policies.
 
 ## 🔐 Authentication & API Access
 
 ### User Registration
+ `Email:User` and `Email:Password` user secrets required for email confirmation; otherwise user registration will not work.
 1. Navigate to the application frontend
 2. Register a new account with email confirmation
 3. Login to access the dashboard
@@ -169,13 +165,8 @@ The API uses JWT Bearer tokens. To access protected endpoints:
 - **ReadAccess**: View astronomical data, export functionality
 - **WriteAccess**: Create and edit data, import functionality  
 - **DeleteAccess**: Remove data entries
-- **Admin**: Full system access including user management
-
-## 📖 API Documentation
-
-Once the backend is running, access the interactive API documentation at:
-- **Swagger UI**: `https://localhost:7271/swagger`
-- **OpenAPI Spec**: `https://localhost:7271/swagger/v1/swagger.json`
+- **IdentityAccess**: Full system access over user Identity
+- **AdminAccess**: Access on other system administrator tools
 
 ### Key API Endpoints
 
@@ -197,60 +188,6 @@ Once the backend is running, access the interactive API documentation at:
 - `GET /api/planet/{id}` - Get planet by ID
 - `PUT /api/planet/{id}` - Update planet
 - `DELETE /api/planet/{id}` - Delete planet
-
-## 🧪 Development
-
-### Running Tests
-
-Backend tests:
-```bash
-cd StellarDB
-dotnet test
-```
-
-Frontend tests:
-```bash
-cd StellarDBFront
-npm test
-```
-
-### Building for Production
-
-Backend:
-```bash
-cd StellarDB
-dotnet publish -c Release -o ./publish
-```
-
-Frontend:
-```bash
-cd StellarDBFront
-npm run build
-```
-
-## 📊 Data Models
-
-### Star Data
-Stars are stored with the following key properties:
-- **Identification**: Name, discovery date
-- **Classification**: Spectral class (O, B, A, F, G, K, M), luminosity class (I-V)
-- **Physical Properties**: Mass (solar masses), diameter (km), temperature (Kelvin)
-- **Observational Data**: Magnitude, distance (light-years)
-- **Composition**: Chemical element percentages
-
-### Planet Data  
-Planets include comprehensive orbital and physical characteristics:
-- **Basic Info**: Name, planet type, host star relationship
-- **Physical Properties**: Mass (Earth masses), diameter (km), surface temperature (Kelvin)
-- **Orbital Mechanics**: Period, eccentricity, inclination, semi-major axis, distance from star
-- **Composition**: Atmospheric gases and surface/core composition percentages
-- **Temporal Data**: Rotation period, discovery date
-
-### Supporting Data
-- **Chemical Elements**: Periodic table with atomic numbers and properties
-- **Atmospheric Gases**: Common atmospheric compounds
-- **Classification Systems**: Stellar spectral and luminosity classes
-- **Planet Types**: Rocky, gas giant, ice giant, etc.
 
 ## 🔧 Configuration
 
@@ -277,18 +214,6 @@ Configure JWT settings in `appsettings.json`:
 }
 ```
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🛠️ Troubleshooting
 
 ### Common Issues
@@ -300,24 +225,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 #### Backend Issues  
 - **Database connection errors**: Verify MongoDB and SQL Server are running and connection strings are correct
 - **JWT errors**: Ensure JWT secret key is configured in user secrets or appsettings
+- **StellarDB Email**: Ensure `Email:User` and `Email:Password` user secret values are set up for proper account registration
 
 #### API Connection Issues
 - **CORS errors**: Verify the frontend API URL matches the backend URL in `global-config.ts`
 - **Authentication issues**: Check that JWT tokens are being sent with API requests
-
-## 🆘 Support
-
-If you encounter any issues or have questions:
-
-1. Check the [Issues](https://github.com/adhurimhalili/StellarDB/issues) page
-2. Create a new issue with detailed information
-3. Include logs, error messages, and steps to reproduce
-
-## 🚀 Roadmap
-
-- [ ] Advanced search and filtering capabilities
-- [ ] Data visualization and charts
-- [ ] Mobile application
-- [ ] Integration with astronomical databases
-- [ ] Advanced reporting features
-- [ ] Performance optimizations
