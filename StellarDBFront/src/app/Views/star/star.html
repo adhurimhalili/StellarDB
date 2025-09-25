@@ -13,6 +13,7 @@
                       [objects]="objects"
                       [isLoading]="isLoading"
                       [expandableRows]="true"
+                      [advancedFilter]="true"
                       [expandedElement]="expandedElement"
                       (openForm)="onOpenForm($event)"
                       (delete)="onDelete($event)"
@@ -48,6 +49,108 @@
           No additional information available for this star.
         </div>
       </ng-template>
+
+      <!-- Advanced Filter Template -->
+      <ng-template #filterForm>
+        <form [formGroup]="starQueryForm" (ngSubmit)="fetchData()">
+          <div class="grid grid-cols-4 gap-2">
+
+            <!-- Name -->
+            <mat-form-field class="" appearance="outline">
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" maxlength="50">
+            </mat-form-field>
+
+            <!-- Spectral Class -->
+            <mat-form-field appearance="outline">
+              <mat-label>Spectral Class</mat-label>
+              <mat-select formControlName="spectralClassId">
+                <mat-option *ngFor="let spectralClass of starSpectralClasses" [value]="spectralClass.id">{{spectralClass.code}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Luminosity Class -->
+            <mat-form-field appearance="outline">
+              <mat-label>Luminosity Class</mat-label>
+              <mat-select formControlName="luminosityClassId">
+                <mat-option *ngFor="let luminosityClass of starLuminosityClasses" [value]="luminosityClass.id">{{ luminosityClass.code }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Date Range -->
+            <div class="flex items-center place-content-between">
+              <mat-form-field appearance="outline" class="w-[47%]">
+                <mat-label>From</mat-label>
+                <input matInput formControlName="from" [matDatepicker]="fromPicker">
+                <mat-datepicker-toggle matIconSuffix [for]="fromPicker"></mat-datepicker-toggle>
+                <mat-datepicker #fromPicker></mat-datepicker>
+              </mat-form-field>
+
+              <span class="mb-4">–</span>
+
+              <mat-form-field appearance="outline" class="w-[47%]">
+                <mat-label>To</mat-label>
+                <input matInput formControlName="to" [matDatepicker]="toPicker">
+                <mat-datepicker-toggle matIconSuffix [for]="toPicker"></mat-datepicker-toggle>
+                <mat-datepicker #toPicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+
+            <!-- Mass Range -->
+            <div class="flex items-center place-content-between">
+              <mat-form-field appearance="outline" class="w-[47%]">
+                <mat-label>Mass Min</mat-label>
+                <input matInput type="number" formControlName="minMass" min="0" placeholder="Min">
+              </mat-form-field>
+
+              <span class="mb-4">–</span>
+
+              <mat-form-field appearance="outline" class="w-[47%]">
+                <mat-label>Mass Max</mat-label>
+                <input matInput type="number" formControlName="maxMass" min="0" placeholder="Max">
+              </mat-form-field>
+            </div>
+
+            <!-- Diameter Range -->
+            <div class="flex items-center place-content-between">
+              <mat-form-field appearance="outline" class="w-[47%]">
+                <mat-label>Diameter Min</mat-label>
+                <input matInput type="number" formControlName="minDiameter" min="0" placeholder="Min">
+              </mat-form-field>
+
+              <span class="mb-4">–</span>
+
+              <mat-form-field appearance="outline" class="w-[47%]">
+                <mat-label>Diameter Max</mat-label>
+                <input matInput type="number" formControlName="maxDiameter" min="0" placeholder="Max">
+              </mat-form-field>
+            </div>
+
+            <!-- Temperature Range -->
+            <div class="flex items-center place-content-between">
+              <mat-form-field appearance="outline" class="w-[47%]">
+                <mat-label>Temp. Min</mat-label>
+                <input matInput type="number" formControlName="minTemperature" min="0" placeholder="Min">
+              </mat-form-field>
+
+              <span class="mb-4">–</span>
+
+              <mat-form-field appearance="outline" class="w-[47%]">
+                <mat-label>Temp. Max</mat-label>
+                <input matInput type="number" formControlName="maxTemperature" min="0" placeholder="Max">
+              </mat-form-field>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex items-center pb-4">
+              <button mat-button matButton="tonal" color="primary" type="submit">Filter</button>
+              <button mat-button type="button" (click)="starQueryForm.reset(); fetchData();">Reset</button>
+            </div>
+
+          </div>
+        </form>
+      </ng-template>
+
 
     </app-custom-table>
   </mat-card>

@@ -1,4 +1,4 @@
-import { AfterViewInit, OnDestroy, Component, inject } from '@angular/core';
+import { AfterViewInit, OnDestroy, Component, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
@@ -13,6 +13,17 @@ import { CustomTable } from '../../Shared/custom-table/custom-table';
 import { PlanetForm } from './planet-form/planet-form';
 import { ApexOptions, ChartComponent, NgApexchartsModule } from 'ng-apexcharts';
 import { AuthService } from '../../Services/Auth/auth.service';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { PlanetType } from '../planet-types/planet-types';
+import { Star } from '../star/star';
+import { v4 as uuidv4 } from 'uuid';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { provideNativeDateAdapter } from '@angular/material/core';
+
 
 export interface Planet {
   id: string;
@@ -36,9 +47,13 @@ export interface Planet {
 
 @Component({
   selector: 'app-planet',
-  imports: [NgApexchartsModule, CustomTable, CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule, MatMenuModule],
+  providers: [provideNativeDateAdapter()],
+  imports: [NgApexchartsModule, CustomTable, CommonModule,
+    MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule, MatMenuModule, MatExpansionModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule,
+    MatSelectModule, MatDatepickerModule],
   templateUrl: './planet.html',
-  styleUrl: './planet.css'
+  styleUrl: './planet.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlanetComponent implements AfterViewInit {
   readonly title = 'Planets';
@@ -58,26 +73,79 @@ export class PlanetComponent implements AfterViewInit {
   objects: Planet[] = [];
   isLoading = true;
   expandedElement: Planet | null = null;
+  planetQueryForm: FormGroup;
+  stars: Star[] = [];
+  planetTypes: PlanetType[] = [];
 
   private readonly apiAction = `${GlobalConfig.apiUrl}/Planet`;
   private readonly formDialog = inject(MatDialog);
   private selectedFile: File | null = null;
   private authService = inject(AuthService);
+  private readonly token = this.authService.getToken();
+  private correlationId: string = uuidv4();
   userRoleClaims: string[] = [];
 
-  constructor() {
+  constructor(private formBuilder: FormBuilder, private cdr: ChangeDetectorRef) {
     this.userRoleClaims = this.authService.getRoleClaims();
+    window.sessionStorage.setItem('correlationId', this.correlationId);
+    this.planetQueryForm = this.formBuilder.group({
+      name: '',
+      starId: '',
+      planetTypeId: '',
+      minMass: [null, [Validators.min(0)]],
+      maxMass: [null, [Validators.min(0)]],
+      minDiameter: [null, [Validators.min(0)]],
+      maxDiameter: [null, [Validators.min(0)]],
+      minSurfaceTemperature: [null, [Validators.min(0)]],
+      maxSurfaceTemperature: [null, [Validators.min(0)]],
+      rotationPeriod: [null, [Validators.min(0)]],
+      orbitalPeriod: [null, [Validators.min(0)]],
+      orbitallEccentricity: [null, [Validators.min(0), Validators.max(1)]],
+      orbitalInclination: [null, [Validators.min(0), Validators.max(360)]],
+      semiMajorAxis: [null, [Validators.min(0)]],
+      distanceFromStar: [null, [Validators.min(0)]],
+      from: '',
+      to: ''
+    })
   }
 
   ngAfterViewInit() {
     this.fetchData();
+    this.fetchStars();
+    this.fetchPlanetTypes();
+  }
+
+  fetchStars() {
+    fetch(`${GlobalConfig.apiUrl}/Star`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}`, 'X-Correlation-ID': this.correlationId, } })
+      .then(response => response.json())
+      .then(data => this.stars = data)
+      .catch(error => console.error('Error fetching stars:', error));
+  }
+
+  fetchPlanetTypes() {
+    fetch(`${GlobalConfig.apiUrl}/PlanetTypes`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}`, 'X-Correlation-ID': this.correlationId, } })
+      .then(response => response.json())
+      .then(data => this.planetTypes = data)
+      .catch(error => console.error('Error fetching planet types:', error));
   }
 
   fetchData() {
     this.isLoading = true;
-    const token = this.authService.getToken();
-    fetch(this.apiAction, {
-      headers: { 'Authorization': `Bearer ${token}` }
+    const formValue = this.planetQueryForm.value;
+    const query = {
+      ...formValue,
+      from: this.toDateOnlyString(formValue.from),
+      to: this.toDateOnlyString(formValue.to),
+    };
+
+    // Remove empty values from query
+    const params = Object.entries(query)
+      .filter(([_, v]) => v !== null && v !== undefined && v !== '')
+      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v as string)}`)
+      .join('&');
+    var fetchDataUrl = `${this.apiAction}?${params}`
+    fetch(fetchDataUrl, {
+      method: 'GET', headers: { 'Authorization': `Bearer ${this.token}`, 'X-Correlation-ID': this.correlationId, }
     })
       .then(async response => {
         if (!response.ok) {
@@ -100,6 +168,7 @@ export class PlanetComponent implements AfterViewInit {
         }));
         this.dataSource.data = this.objects;
         this.isLoading = false;
+        this.cdr.markForCheck();
       })
       .catch(error => {
         console.error('Error fetching data:', error);
@@ -408,5 +477,12 @@ export class PlanetComponent implements AfterViewInit {
         '#E91E63'  // Pink
       ]
     };
+  }
+
+  private toDateOnlyString(date: Date | null): string | null {
+    if (!date) return null;
+    const mm = (date.getMonth() + 1).toString().padStart(2, '0');
+    const dd = date.getDate().toString().padStart(2, '0');
+    return `${date.getFullYear()}-${mm}-${dd}`;
   }
 }

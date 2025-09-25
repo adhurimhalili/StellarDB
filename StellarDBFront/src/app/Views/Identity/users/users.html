@@ -3,7 +3,6 @@
     <!-- Header -->
     <mat-card-header>
       <mat-card-title class="h3">{{title}}</mat-card-title>
-      <mat-card-subtitle class="">List</mat-card-subtitle>
       <span class="spacer"></span>
     </mat-card-header>
 
@@ -13,6 +12,7 @@
                       [objects]="objects"
                       [isLoading]="isLoading"
                       [expandableRows]="true"
+                      [advancedFilter]="true"
                       [expandedElement]="expandedElement"
                       (openForm)="onOpenForm($event)"
                       (toggleExpand)="onToggleExpand($event)">
@@ -40,6 +40,96 @@
           </div>
         </div>
       </ng-template>
+
+      <!-- Advanced Filter Template -->
+      <ng-template #filterForm>
+        <form [formGroup]="userQueryForm" (ngSubmit)="fetchData()">
+          <div class="grid grid-cols-4 gap-2">
+
+            <!-- E-Mail -->
+            <mat-form-field class="" appearance="outline">
+              <mat-label>E-Mail</mat-label>
+              <input matInput formControlName="email" maxlength="50">
+            </mat-form-field>
+
+            <!-- Username -->
+            <mat-form-field class="" appearance="outline">
+              <mat-label>Username</mat-label>
+              <input matInput formControlName="userName" maxlength="50">
+            </mat-form-field>
+
+            <!-- First Name -->
+            <mat-form-field class="" appearance="outline">
+              <mat-label>First Name</mat-label>
+              <input matInput formControlName="firstName" maxlength="50">
+            </mat-form-field>
+
+            <!-- Last Name -->
+            <mat-form-field class="" appearance="outline">
+              <mat-label>Last Name</mat-label>
+              <input matInput formControlName="lastName" maxlength="50">
+            </mat-form-field>
+
+            <!-- Date of Birth Range -->
+            <div class="flex items-center place-content-between">
+              <mat-form-field appearance="outline" class="w-[47%]">
+                <mat-label>Date of Birth From</mat-label>
+                <input matInput formControlName="dateOfBirthFrom" [matDatepicker]="fromPicker">
+                <mat-datepicker-toggle matIconSuffix [for]="fromPicker"></mat-datepicker-toggle>
+                <mat-datepicker #fromPicker></mat-datepicker>
+              </mat-form-field>
+
+              <span class="mb-4">–</span>
+
+              <mat-form-field appearance="outline" class="w-[47%]">
+                <mat-label>To</mat-label>
+                <input matInput formControlName="dateOfBirthTo" [matDatepicker]="toPicker">
+                <mat-datepicker-toggle matIconSuffix [for]="toPicker"></mat-datepicker-toggle>
+                <mat-datepicker #toPicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+
+            <!-- Roles -->
+            <!--<mat-form-field class="" appearance="outline">
+              <mat-label>Roles</mat-label>
+              <mat-chip-grid #rolesChipGrid>
+                <mat-chip-row *ngFor="let role of selectedRoles" (removed)="remove(role)">
+                  {{role.name}}
+                  <button matChipRemove [attr.aria-label]="'remove ' + role.name">
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </mat-chip-row>
+              </mat-chip-grid>
+
+              <input #roleInput
+                     [matChipInputFor]="rolesChipGrid"
+                     [matAutocomplete]="auto"
+                     [matChipInputSeparatorKeyCodes]="separatorKeyCodes"
+                     (matChipInputTokenEnd)="add($event)"
+                     [value]="currentRole()"
+                     (input)="onRoleInputChange(roleInput.value)"
+                     placeholder="Add role..."
+                     autocomplete="off" />
+              <mat-icon matSuffix>security</mat-icon>
+
+              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                <mat-option *ngFor="let role of filteredRoles" [value]="role.id">
+                  {{role.name}}
+                </mat-option>
+              </mat-autocomplete>
+
+            </mat-form-field>-->
+
+            <!-- Buttons -->
+            <div class="flex items-center pb-4">
+              <button mat-button matButton="tonal" color="primary" type="submit">Filter</button>
+              <button mat-button type="button" (click)="userQueryForm.reset(); fetchData();">Reset</button>
+            </div>
+
+          </div>
+        </form>
+      </ng-template>
+
 
     </app-custom-table>
   </mat-card>

@@ -53,10 +53,10 @@ namespace StellarDB.Services.AuditLog
         public async Task<List<AuditLogResult>> QueryAsync(AuditLogQueryParameters parameters)
         {
             var query = _context.AuditLogs.AsQueryable()
-                .Where(log => string.IsNullOrEmpty(parameters.UserId)     || log.UserId == parameters.UserId)
-                .Where(log => string.IsNullOrEmpty(parameters.Action)     || log.Action == parameters.Action)
+                .Where(log => string.IsNullOrEmpty(parameters.UserId)     || log.UserId.Contains(parameters.UserId))
+                .Where(log => string.IsNullOrEmpty(parameters.Action)     || log.Action.Contains(parameters.Action))
                 .Where(log => string.IsNullOrEmpty(parameters.EntityId)   || log.EntityId == parameters.EntityId)
-                .Where(log => string.IsNullOrEmpty(parameters.EntityName) || log.EntityName == parameters.EntityName)
+                .Where(log => string.IsNullOrEmpty(parameters.EntityName) || log.EntityName.Contains(parameters.EntityName))
                 .Where(log => !parameters.From.HasValue                   || log.Timestamp >= parameters.From.Value)
                 .Where(log => !parameters.To.HasValue                     || log.Timestamp <= parameters.To.Value)
                 .Where(log => !parameters.Severity.HasValue               || log.Severity == parameters.Severity.Value)

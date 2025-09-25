@@ -54,4 +54,16 @@ namespace StellarDB.Models.Identity.Users
         public List<string> Roles { get; set; } = new();
         public bool Active { get; set; }
     }
+    public class UserQueryParameters
+    {
+        public string? Email { get; set; }
+        public string? UserName { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public DateTime? DateOfBirthFrom { get; set; }
+        public DateTime? DateOfBirthTo { get; set; }
+        public string? PhoneNumber { get; set; }
+        public List<string>? Roles { get; set; } = new();
+        public bool? Active { get; internal set; }
+    }
 }

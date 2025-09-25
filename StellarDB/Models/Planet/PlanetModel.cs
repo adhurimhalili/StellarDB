@@ -60,6 +60,22 @@ namespace StellarDB.Models.Planet
         public List<CompositionModel>? Atmosphere { get; set; }
     }
 
+    public class PlanetQueryParameters
+    {
+        public string? Name { get; set; } = string.Empty;
+        public string? PlanetTypeId { get; set; } = string.Empty;
+        public string? StarId { get; set; } = string.Empty;
+        public double? MinMass { get; set; }
+        public double? MaxMass { get; set; }
+        public double? MinDiameter { get; set; }
+        public double? MaxDiameter { get; set; }
+        public double? MinSurfaceTemperature { get; set; }
+        public double? MaxSurfaceTemperature { get; set; }
+        public DateOnly? From { get; set; }
+        public DateOnly? To { get; set; }
+
+    }
+
     public class PlanetXmlWrapper
     {
         [XmlElement("Planet")]

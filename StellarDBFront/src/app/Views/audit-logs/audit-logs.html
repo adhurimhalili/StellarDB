@@ -45,6 +45,7 @@
         </div>
       </ng-template>
 
+      <!-- Advanced Filter Template -->
       <ng-template #filterForm>
         <form [formGroup]="logQueryForm" (ngSubmit)="fetchData()">
           <div class="grid grid-cols-4 gap-4">
@@ -55,31 +56,42 @@
               <input matInput formControlName="userId" maxlength="50">
             </mat-form-field>
 
+            <!-- Action -->
             <mat-form-field class="" appearance="outline">
               <mat-label>Action</mat-label>
               <input matInput formControlName="action" maxlength="50">
             </mat-form-field>
 
+            <!-- Entity ID -->
             <mat-form-field class="" appearance="outline">
               <mat-label>Entity ID</mat-label>
               <input matInput formControlName="entityId" maxlength="50">
+              <mat-hint>ID must be exact.</mat-hint>
             </mat-form-field>
 
+            <!-- Entity Name -->
             <mat-form-field class="" appearance="outline">
               <mat-label>Entity Name</mat-label>
               <input matInput formControlName="entityName" maxlength="50">
             </mat-form-field>
 
+            <!-- From -->
             <mat-form-field class="" appearance="outline">
               <mat-label>From</mat-label>
-              <input matInput formControlName="from" maxlength="50">
+              <input matInput formControlName="from" [matDatepicker]="fromPicker">
+              <mat-datepicker-toggle matIconSuffix [for]="fromPicker"></mat-datepicker-toggle>
+              <mat-datepicker #fromPicker></mat-datepicker>
             </mat-form-field>
 
+            <!-- To -->
             <mat-form-field class="" appearance="outline">
               <mat-label>To</mat-label>
-              <input matInput formControlName="to" maxlength="50">
+              <input matInput formControlName="to" [matDatepicker]="toPicker">
+              <mat-datepicker-toggle matIconSuffix [for]="toPicker"></mat-datepicker-toggle>
+              <mat-datepicker #toPicker></mat-datepicker>
             </mat-form-field>
 
+            <!-- Severity -->
             <mat-form-field class="" appearance="outline">
               <mat-label>Severity</mat-label>
               <input matInput formControlName="severity" type="number" min="0" max="7">
@@ -94,13 +106,15 @@
 
             </mat-form-field>
 
+            <!-- Correlation ID -->
             <mat-form-field class="" appearance="outline">
               <mat-label>Correlation ID</mat-label>
               <input matInput formControlName="correlationId" maxlength="50">
+              <mat-hint>ID must be exact.</mat-hint>
             </mat-form-field>
 
             <!-- Buttons -->
-            <div class="place-content-evenly">
+            <div class="flex items-center pb-4">
               <button mat-button matButton="tonal" color="primary" type="submit">Filter</button>
               <button mat-button type="button" (click)="logQueryForm.reset(); fetchData();">Reset</button>
             </div>

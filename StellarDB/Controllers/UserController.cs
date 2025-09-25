@@ -20,9 +20,9 @@ namespace StellarDB.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] UserQueryParameters parameters)
         {
-            var users = await _userServices.GetAllAsync();
+            var users = await _userServices.GetAllAsync(parameters);
             return Ok(users);
         }
         [HttpGet("{id}")]
