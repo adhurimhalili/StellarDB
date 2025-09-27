@@ -60,9 +60,10 @@ export class PlanetTypesForm {
     });
 
     const httpMethod = this.data ? 'PUT' : 'POST';
+    const token = this.authService.getToken();
     fetch(`${this.apiAction}`, {
       method: httpMethod,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify(this.planetTypesForm.value)
     })
       .then(async response => {

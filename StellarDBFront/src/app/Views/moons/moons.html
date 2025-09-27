@@ -24,17 +24,6 @@
       <!-- Define the expanded content template -->
       <ng-template #expandedContent let-element>
         <div class="grid lg:grid-cols-2 gap-6 p-4">
-          <!-- Atmosphere Chart -->
-          <div *ngIf="element.atmosphere?.length" class="mb-6">
-            <apx-chart [series]="atmosphereChart(element)?.series!"
-                       [chart]="atmosphereChart(element)?.chart!"
-                       [labels]="atmosphereChart(element)?.labels!"
-                       [plotOptions]="atmosphereChart(element)?.plotOptions!"
-                       [legend]="atmosphereChart(element)?.legend!"
-                       [colors]="atmosphereChart(element)?.colors!"
-                       [title]="atmosphereChart(element)?.title!">
-            </apx-chart>
-          </div>
 
           <!-- Composition Chart -->
           <div *ngIf="element.composition?.length" class="mb-6">
@@ -65,13 +54,13 @@
           <!-- Semi-Major Axis Section -->
           <div class="mt-4">
             <h3 class="text-lg font-medium mb-2">Semi-Major Axis</h3>
-            <p class="text-gray-700">{{element.semiMajorAxis}} AU</p>
+            <p class="text-gray-700">{{element.semiMajorAxis}} km</p>
           </div>
 
           <!-- Distance from Star Section -->
           <div class="mt-4">
-            <h3 class="text-lg font-medium mb-2">Distance from Star</h3>
-            <p class="text-gray-700">{{element.distanceFromStar}} AU</p>
+            <h3 class="text-lg font-medium mb-2">Distance from Planet</h3>
+            <p class="text-gray-700">{{element.distanceFromPlanet}} km</p>
           </div>
 
           <!-- Description Section -->
@@ -84,13 +73,13 @@
         <!-- No Data Message -->
         <div *ngIf="!element.atmosphere?.length && !element.composition?.length && !element.description"
              class="text-gray-500 text-center py-4">
-          No additional information available for this planet.
+          No additional information available for this moon.
         </div>
       </ng-template>
 
       <!-- Advanced Filter Template -->
       <ng-template #filterForm>
-        <form [formGroup]="planetQueryForm" (ngSubmit)="fetchData()">
+        <form [formGroup]="moonQueryForm" (ngSubmit)="fetchData()">
           <div class="grid grid-cols-4 gap-2">
 
             <!-- Name -->
@@ -99,19 +88,11 @@
               <input matInput formControlName="name" maxlength="50">
             </mat-form-field>
 
-            <!-- Star -->
+            <!-- Planet -->
             <mat-form-field appearance="outline">
-              <mat-label>Star</mat-label>
-              <mat-select formControlName="starId">
-                <mat-option *ngFor="let star of stars" [value]="star.id">{{star.name}}</mat-option>
-              </mat-select>
-            </mat-form-field>
-
-            <!-- Type -->
-            <mat-form-field appearance="outline">
-              <mat-label>Type</mat-label>
-              <mat-select formControlName="planetTypeId">
-                <mat-option *ngFor="let planetType of planetTypes" [value]="planetType.id">{{planetType.name}}</mat-option>
+              <mat-label>Planet</mat-label>
+              <mat-select formControlName="planetId">
+                <mat-option *ngFor="let planet of planets" [value]="planet.id">{{planet.name}}</mat-option>
               </mat-select>
             </mat-form-field>
 
@@ -179,10 +160,25 @@
               </mat-form-field>
             </div>
 
+            <!-- Orbital Period Range -->
+            <div class="flex items-center place-content-between">
+              <mat-form-field appearance="outline" class="w-[47%]">
+                <mat-label>O. Period. Min</mat-label>
+                <input matInput type="number" formControlName="minOrbitalPeriod" min="0" placeholder="Min">
+              </mat-form-field>
+
+              <span class="mb-4">–</span>
+
+              <mat-form-field appearance="outline" class="w-[47%]">
+                <mat-label>O. Period. Max</mat-label>
+                <input matInput type="number" formControlName="maxOrbitalPeriod" min="0" placeholder="Max">
+              </mat-form-field>
+            </div>
+
             <!-- Buttons -->
             <div class="flex items-center pb-4">
               <button mat-button matButton="tonal" color="primary" type="submit">Filter</button>
-              <button mat-button type="button" (click)="planetQueryForm.reset(); fetchData();">Reset</button>
+              <button mat-button type="button" (click)="moonQueryForm.reset(); fetchData();">Reset</button>
             </div>
 
           </div>
