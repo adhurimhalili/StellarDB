@@ -10,6 +10,7 @@ import { StarComponent } from './Views/star/star';
 import { StarLuminosityClassesComponent } from './Views/star-luminosity-classes/star-luminosity-classes';
 import { PlanetTypesComponent } from './Views/planet-types/planet-types';
 import { PlanetComponent } from './Views/planet/planet';
+import { MoonsComponent } from './Views/moons/moons';
 import { ChemicalElementsComponent } from './Views/chemical-elements/chemical-elements';
 import { AtmosphericGasesComponent } from './Views/atmospheric-gases/atmospheric-gases';
 import { RolesComponent } from './Views/Identity/roles/roles';
@@ -64,6 +65,11 @@ const routes: Routes = [
   {
     path: 'PlanetTypes',
     component: PlanetTypesComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'Moon',
+    component: MoonsComponent,
     canActivate: [AuthGuard]
   },
   {

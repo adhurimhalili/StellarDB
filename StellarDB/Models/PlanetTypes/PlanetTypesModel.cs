@@ -9,7 +9,7 @@ namespace StellarDB.Models.PlanetTypes
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public string? Id { get; set; }
         [BsonRequired]
         [Required(ErrorMessage = "Planet type name is required")]
         public string Name { get; set; }

@@ -1,0 +1,249 @@
+<div mat-dialog-title>{{title}}</div>
+<!-- Form -->
+<form [formGroup]="moonForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <div class="grid grid-cols-2 gap-4">
+      <!-- Name -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" maxlength="50">
+        <mat-error *ngIf="moonForm.get('name')?.errors?.['required']">
+          Name is required.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Planet -->
+      <mat-form-field appearance="outline">
+        <mat-label>Planet</mat-label>
+        <mat-select formControlName="planetId">
+          <mat-option *ngFor="let planet of planets" [value]="planet.id">{{planet.name}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="moonForm.get('planetId')?.errors?.['required']">
+          Planet is required.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Mass -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Mass</mat-label>
+        <input matInput type="number" formControlName="mass" maxlength="50" min="0">
+        <mat-hint>10^22 kg</mat-hint>
+        <mat-error *ngIf="moonForm.get('mass')?.errors?.['required']">
+          Mass is required.
+        </mat-error>
+        <mat-error *ngIf="moonForm.get('mass')?.errors?.['min']">
+          Mass must be a positive value.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Diameter -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Diameter</mat-label>
+        <input matInput type="number" formControlName="diameter" maxlength="50" min="0">
+        <mat-hint>in kilometers (km)</mat-hint>
+        <mat-error *ngIf="moonForm.get('diameter')?.errors?.['required']">
+          Diameter is required.
+        </mat-error>
+        <mat-error *ngIf="moonForm.get('diameter')?.errors?.['min']">
+          Diameter must be a positive value.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Rotation Period -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Rotation Period</mat-label>
+        <input matInput type="number" formControlName="rotationPeriod" maxlength="50" min="0">
+        <mat-hint>in hours (hr)</mat-hint>
+        <mat-error *ngIf="moonForm.get('rotationPeriod')?.errors?.['required']">
+          Rotation period is required.
+        </mat-error>
+        <mat-error *ngIf="moonForm.get('rotationPeriod')?.errors?.['min']">
+          Rotation period must be a positive value.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Orbital Period -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Orbital Period</mat-label>
+        <input matInput formControlName="orbitalPeriod" maxlength="50" min="0">
+        <mat-hint>in Earth days</mat-hint>
+        <mat-error *ngIf="moonForm.get('orbitalPeriod')?.errors?.['required']">
+          Orbital period is required.
+        </mat-error>
+        <mat-error *ngIf="moonForm.get('orbitalPeriod')?.errors?.['min']">
+          Orbital period must be a positive value.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Orbital Eccentricity -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Orbital Eccentricity</mat-label>
+        <input matInput type="number" formControlName="orbitalEccentricity" min="0" max="1">
+        <mat-hint>dimensionless value (0 for circular, 1 for parabolic)</mat-hint>
+        <mat-error *ngIf="moonForm.get('orbitalEccentricity')?.errors?.['required']">
+          Orbital eccentricity is required.
+        </mat-error>
+        <mat-error *ngIf="moonForm.get('orbitalEccentricity')?.errors?.['min'] || moonForm.get('orbitalEccentricity')?.errors?.['max']">
+          Orbital eccentricity must be between 0 and 1.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Orbital Inclination -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Orbital Inclination</mat-label>
+        <input matInput type="number" formControlName="orbitalInclination" maxlength="50" min="0" max="360">
+        <mat-hint>in degrees</mat-hint>
+        <mat-error *ngIf="moonForm.get('orbitalInclination')?.errors?.['required']">
+          Orbital inclination is required.
+        </mat-error>
+        <mat-error *ngIf="moonForm.get('orbitalInclination')?.errors?.['min'] || moonForm.get('orbitalInclination')?.errors?.['max']">
+          Orbital inclination must be between 0 and 360 degrees
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Semi Major Axis -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Semi Major Axis</mat-label>
+        <input matInput type="number" formControlName="semiMajorAxis" maxlength="50" min="0">
+        <mat-hint>in astronomical units (AU)</mat-hint>
+        <mat-error *ngIf="moonForm.get('semiMajorAxis')?.errors?.['required']">
+          Semi major axis is required.
+        </mat-error>
+        <mat-error *ngIf="moonForm.get('semiMajorAxis')?.errors?.['min']">
+          Semi major axis must be a positive value.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Distance From Planet -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Distance From Planet</mat-label>
+        <input matInput type="number" formControlName="distanceFromPlanet" maxlength="50" min="0">
+        <mat-hint>in kilometers</mat-hint>
+        <mat-error *ngIf="moonForm.get('distanceFromPlanet')?.errors?.['required']">
+          Distance from planet is required.
+        </mat-error>
+        <mat-error *ngIf="moonForm.get('distanceFromPlanet')?.errors?.['min']">
+          Distance from planet must be a positive value.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Surface Temperature -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Surface Temperature</mat-label>
+        <input matInput type="number" formControlName="surfaceTemperature" maxlength="50" min="0">
+        <mat-hint>in Kelvin (K)</mat-hint>
+        <mat-error *ngIf="moonForm.get('surfaceTemperature')?.errors?.['required']">
+          Surface temperature is required.
+        </mat-error>
+        <mat-error *ngIf="moonForm.get('surfaceTemperature')?.errors?.['min']">
+          Surface temperature must be a positive value.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Discovery Date -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Discovery Date</mat-label>
+        <input matInput type="date" formControlName="discoveryDate" maxlength="50">
+        <mat-error *ngIf="moonForm.get('discoveryDate')?.errors?.['required']">
+          Discovery Date is required.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Description -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="3"></textarea>
+      </mat-form-field>
+
+      <!-- Moon Composition Accordion -->
+      <mat-accordion class="col-span-2 mb-2">
+
+        <!-- Chemical Elements -->
+        <mat-expansion-panel hideToggle>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Geological Composition </mat-panel-title>
+
+            <!-- Total Percentage -->
+            <mat-panel-description class="text-sm">
+              <span [ngClass]="{'text-red-500': getTotalPercentage('composition') > 100}">Total: {{getTotalPercentage('composition')}}%</span>
+            </mat-panel-description>
+
+          </mat-expansion-panel-header>
+          <div formArrayName="composition">
+            <div class="grid grid-cols-[200px_auto_12%_50px] gap-4" *ngFor="let group of compositionArray.controls; let i = index" [formGroupName]="i">
+
+              <!-- Element Dropdown -->
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Element</mat-label>
+                  <mat-select formControlName="id">
+                    <mat-option *ngFor="let element of chemicalElements" [value]="element.id">
+                      {{element.name}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <!-- Percentage Slider -->
+              <div class="w-auto">
+                <mat-slider step="0.01" min="0"
+                            [max]="getRemainingPercentage('composition') + group.get('percentage')?.value">
+                  <input matSliderThumb formControlName="percentage" value="{{ group.get('percentage')?.value }}" />
+                </mat-slider>
+              </div>
+
+              <!-- Percentage Input -->
+              <mat-form-field class="" appearance="outline">
+                <input matInput type="number" formControlName="percentage" step="0.01" min="0"
+                       [max]="getRemainingPercentage('composition') + group.get('percentage')?.value"
+                       value="{{ group.get('percentage')?.value }}">
+                <span matTextSuffix>%</span>
+                <mat-error *ngIf="compositionArray.hasError('totalExceeded')">
+                  Total percentage cannot exceed 100%
+                </mat-error>
+              </mat-form-field>
+
+              <!-- Delete Button -->
+              <div>
+                <button matIconButton type="button" (click)="removeComposition(i)">
+                  <span class="text-red-500"><mat-icon class="text-red-500">delete</mat-icon></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Remaining percentage row (readonly) -->
+          <div class="grid grid-cols-[200px_auto_12%_50px] gap-4">
+            <div>
+              <mat-form-field appearance="outline" class="w-full">
+                <input matInput readonly value="Other">
+              </mat-form-field>
+            </div>
+            <div class="w-auto">
+              <mat-slider min="0" max="100" step="0.01" [disabled]="true">
+                <input matSliderThumb [value]="100 - getTotalPercentage('composition')" />
+              </mat-slider>
+            </div>
+            <mat-form-field class="" appearance="outline">
+              <input matInput type="number" readonly [value]="100 - getTotalPercentage('composition')">
+              <span matTextSuffix>%</span>
+            </mat-form-field>
+            <div></div>
+          </div>
+
+          <!-- Add -->
+          <button mat-button type="button" (click)="addComposition()">Add Composition Element</button>
+        </mat-expansion-panel>
+
+      </mat-accordion>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="center">
+
+    <!-- Submit Button -->
+    <div class="flex justify-center">
+      <button color="primary" mat-button type="submit">Save</button>
+    </div>
+
+  </mat-dialog-actions>
+</form>
