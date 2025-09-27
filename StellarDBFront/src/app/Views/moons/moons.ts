@@ -220,8 +220,8 @@ export class MoonsComponent implements AfterViewInit {
             });
           })
           .catch(error => {
-            console.error('Error deleting planet:', error);
-            Swal.fire('Error', 'Failed to delete planet.', 'error');
+            console.error('Error deleting moon:', error);
+            Swal.fire('Error', 'Failed to delete moon.', 'error');
           });
       }
     });

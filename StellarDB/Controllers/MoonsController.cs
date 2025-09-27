@@ -88,7 +88,7 @@ namespace StellarDB.Controllers
         }
 
         [Authorize(Policy = "WriteAccess")]
-        [HttpPost]
+        [HttpPost("import")]
         public async Task<IActionResult> ImportFile(IFormFile file)
         {
             if (file is null || file.Length == 0) return BadRequest("No file uploaded.");
@@ -101,7 +101,7 @@ namespace StellarDB.Controllers
         }
 
         [Authorize(Policy = "ReadAccess")]
-        [HttpGet]
+        [HttpGet("export")]
         public async Task<IActionResult> Export(string format)
         {
             try

@@ -2,7 +2,6 @@
 using StellarDB.Data;
 using StellarDB.Models.ChemicalElements;
 using StellarDB.Models.Moon;
-using StellarDB.Models.Planet;
 using System.Text.Json;
 using System.Xml.Serialization;
 
@@ -193,7 +192,7 @@ namespace StellarDB.Services.Moons
                 }).ToList()
             };
             using var stringWriter = new StringWriter();
-            var serializer = new XmlSerializer(typeof(PlanetXmlWrapper));
+            var serializer = new XmlSerializer(typeof(MoonXmlWrapper));
             serializer.Serialize(stringWriter, wrapper);
             return stringWriter.ToString();
         }
@@ -216,7 +215,7 @@ namespace StellarDB.Services.Moons
             }
             if (parameters.MaxMass.HasValue)
             {
-                filter &= filterBuilder.Gte(m => m.Mass, parameters.MaxMass.Value);
+                filter &= filterBuilder.Lte(m => m.Mass, parameters.MaxMass.Value);
             }
             if (parameters.MinDiameter.HasValue)
             {
@@ -228,7 +227,7 @@ namespace StellarDB.Services.Moons
             }
             if (parameters.MinSurfaceTemperature.HasValue)
             {
-                filter &= filterBuilder.Lte(m => m.SurfaceTemperature, parameters.MinSurfaceTemperature.Value);
+                filter &= filterBuilder.Gte(m => m.SurfaceTemperature, parameters.MinSurfaceTemperature.Value);
             }
             if (parameters.MaxSurfaceTemperature.HasValue)
             {
