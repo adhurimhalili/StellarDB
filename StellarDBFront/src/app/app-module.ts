@@ -17,10 +17,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 // Components
 import { Header } from './Shared/header/header';
-import { Home } from './Views/home/home';
 import { ThemeToggleSwitchComponent } from './Shared/theme-toggle-switch/theme-toggle-switch';
 import { AuthInterceptor } from './Core/Interceptors/auth.interceptor';
 import { IconService } from './Services/Icon/icon.service';
+import { FooterComponent } from './Shared/footer/footer';
 
 export function tokenGetter() {
   return localStorage.getItem("auth_token"); // Changed to match your actual token key
@@ -30,7 +30,6 @@ export function tokenGetter() {
   declarations: [
     App,
     Header,
-    Home,
     ThemeToggleSwitchComponent,
   ],
   imports: [
@@ -43,6 +42,7 @@ export function tokenGetter() {
     MatCardModule,
     MatTooltipModule,
     //HttpClientModule,
+    FooterComponent,
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
