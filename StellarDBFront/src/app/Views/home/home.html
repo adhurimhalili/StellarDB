@@ -31,6 +31,56 @@
     </a>
   </section>
 
+  <!-- Charts Section -->
+  <section class="w-full max-w-5xl mt-12">
+    <mat-card class="rounded-xl shadow-lg p-8 bg-white dark:bg-gray-900">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+        <mat-icon class="text-blue-500 me-2" fontIcon="bar_chart"></mat-icon>
+        Analytics & Charts
+      </h2>
+      <div class="w-full flex justify-center">
+        <apx-chart *ngIf="chartOptions"
+                   [series]="chartOptions?.series!"
+                   [chart]="chartOptions?.chart!"
+                   [xaxis]="chartOptions?.xaxis!"
+                   [title]="chartOptions?.title!">
+        </apx-chart>
+      </div>
+    </mat-card>
+  </section>
+
+  <!-- News & Announcements -->
+  <section class="w-full max-w-5xl mt-12">
+    <mat-card class="rounded-xl shadow-lg p-8 bg-white dark:bg-gray-900">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+        <svg class="w-7 h-7 text-blue-500 me-2" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+        </svg>
+        News & Announcements
+      </h2>
+      <ul class="space-y-4">
+        <li>
+          <div class="flex items-start">
+            <span class="text-blue-500 font-semibold mr-2">[Sep 2025]</span>
+            <span class="text-gray-800 dark:text-gray-200">StellarDB v2.0 released with enhanced search and analytics features.</span>
+          </div>
+        </li>
+        <li>
+          <div class="flex items-start">
+            <span class="text-blue-500 font-semibold mr-2">[Aug 2025]</span>
+            <span class="text-gray-800 dark:text-gray-200">New API endpoints for moons and planet types are now available.</span>
+          </div>
+        </li>
+        <li>
+          <div class="flex items-start">
+            <span class="text-blue-500 font-semibold mr-2">[Jul 2025]</span>
+            <span class="text-gray-800 dark:text-gray-200">StellarDB now supports dark mode and improved accessibility.</span>
+          </div>
+        </li>
+      </ul>
+    </mat-card>
+  </section>
+
 </main>
 
 <router-outlet />

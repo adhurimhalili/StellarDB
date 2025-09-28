@@ -21,6 +21,7 @@ using StellarDB.Services.Identity.Roles;
 using StellarDB.Services.Identity.Token;
 using StellarDB.Services.Identity.Users;
 using StellarDB.Services.Moons;
+using StellarDB.Services.Statistics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -102,6 +103,7 @@ builder.Services.AddScoped<ITokenServices, TokenServices>();
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddScoped<IAuditLogServices, AuditLogServices>();
 builder.Services.AddScoped<IMoonsServices, MoonsServices>();
+builder.Services.AddScoped<IStatisticsServices, StatisticsServices>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>
