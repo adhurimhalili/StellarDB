@@ -1,0 +1,59 @@
+<div mat-dialog-title>{{title}}</div>
+
+<form [formGroup]="constellationForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <div class="grid grid-cols-2 gap-4">
+      <!-- Name -->
+      <mat-form-field class="" appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" maxlength="50" required>
+        <mat-error *ngIf="constellationForm.get('name')?.errors?.['required']">
+          Name is required.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Stars Chips Autocomplete -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>Stars</mat-label>
+        <mat-chip-grid #starsChipGrid>
+          <mat-chip-row *ngFor="let star of selectedStars" (removed)="remove(star)">
+            {{star.name}}
+            <button matChipRemove [attr.aria-label]="'remove ' + star.name">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+        </mat-chip-grid>
+
+        <input #starInput
+               [matChipInputFor]="starsChipGrid"
+               [matAutocomplete]="auto"
+               [matChipInputSeparatorKeyCodes]="separatorKeyCodes"
+               (matChipInputTokenEnd)="add($event)"
+               [value]="currentStar()"
+               (input)="onStarInputChange(starInput.value)"
+               placeholder="Add star..."
+               autocomplete="off" />
+        <mat-icon matSuffix>security</mat-icon>
+
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+          <mat-option *ngFor="let star of filteredStars" [value]="star.id">
+            {{star.name}}
+          </mat-option>
+        </mat-autocomplete>
+
+      </mat-form-field>
+
+      <!-- Description -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="3" maxlength="500"></textarea>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="center">
+    <!-- Submit Button -->
+    <div class="flex justify-center">
+      <button color="primary" mat-button type="submit">Save</button>
+    </div>
+  </mat-dialog-actions>
+</form>
