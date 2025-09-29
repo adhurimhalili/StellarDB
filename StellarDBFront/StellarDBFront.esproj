@@ -11,5 +11,6 @@
     <Folder Include="src\app\Core\Models\Auth\" />
     <Folder Include="src\app\Core\Guards\" />
     <Folder Include="src\app\Services\Auth\" />
+    <Folder Include="src\app\Services\Layout\" />
   </ItemGroup>
 </Project>
