@@ -16,6 +16,7 @@ import { AtmosphericGasesComponent } from './Views/atmospheric-gases/atmospheric
 import { RolesComponent } from './Views/Identity/roles/roles';
 import { UsersComponent } from './Views/Identity/users/users';
 import { AuditLogsComponent } from './Views/audit-logs/audit-logs';
+import { ConstellationsComponent } from './Views/constellations/constellations';
 
 import { AuthGuard } from './Core/Guards/auth.guard';
 import { NoAuthGuard } from './Core/Guards/noAuth.Guard';
@@ -80,6 +81,11 @@ const routes: Routes = [
   {
     path: 'AtmosphericGases',
     component: AtmosphericGasesComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'Constellations',
+    component: ConstellationsComponent,
     canActivate: [AuthGuard]
   },
   {

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using StellarDB.Data;
 using StellarDB.Models.ChemicalElements;
+using StellarDB.Models.Planet;
 using StellarDB.Models.Star;
 using StellarDB.Models.StarLuminosityClasses;
 using StellarDB.Models.StarSpectralClasses;
@@ -23,6 +24,7 @@ namespace StellarDB.Controllers
         private readonly IMongoCollection<StarSpectralClassesModel>? _spectralClasses;
         private readonly IMongoCollection<StarLuminosityClassesModel>? _luminosityClasses;
         private readonly IMongoCollection<ChemicalElementsModel>? _chemicalElements;
+        private readonly IMongoCollection<PlanetModel>? _planets;
         private readonly CsvServices _csvServices;
         public StarController(MongoDbService mongoDbService,
                                  CsvServices csvServices)
@@ -31,12 +33,13 @@ namespace StellarDB.Controllers
             _spectralClasses = mongoDbService.Database.GetCollection<StarSpectralClassesModel>("StarSpectralClasses");
             _luminosityClasses = mongoDbService.Database.GetCollection<StarLuminosityClassesModel>("StarLuminosityClasses");
             _chemicalElements = mongoDbService.Database.GetCollection<ChemicalElementsModel>("ChemicalElements");
+            _planets = mongoDbService.Database.GetCollection<PlanetModel>("Planets");
             _csvServices = csvServices;
         }
 
         [Authorize(Policy = "ReadAccess")]
         [HttpGet]
-        public async Task<IEnumerable<object>> Get([FromQuery] StarQueryParameters parameters)
+        public async Task<object[]> Get([FromQuery] StarQueryParameters parameters)
         {
             var filter = BuildStarFilter(parameters);
 
@@ -48,7 +51,7 @@ namespace StellarDB.Controllers
             var luminosityClassDict = luminosityClasses.ToDictionary(lc => lc.Id, lc => lc.Code);
             var compositionDict = chemicalElements.ToDictionary(ch => ch.Id, ch => ch.Name);
 
-            var result = stars.Select(star => new
+            var result = await Task.WhenAll(stars.Select(async star => new
             {
                 star.Id,
                 star.Name,
@@ -65,10 +68,25 @@ namespace StellarDB.Controllers
                     Name = compositionDict.ContainsKey(c.Id) ? compositionDict[c.Id] : "Unknown",
                     c.Percentage
                 }),
-                star.Description
-            });
+                star.Description,
+                Planets = await GetPlanetNamesByStarIdAsync(star.Id)
+            }));
 
             return result;
+        }
+
+        private async Task<IEnumerable<string>> GetPlanetNamesByStarIdAsync(string? id)
+        {
+            // 1. Check if id is null or empty, return empty list if so.
+            if (string.IsNullOrWhiteSpace(id))
+                return Enumerable.Empty<string>();
+
+            // 2. Query for planets where Planet.StarId == id.
+            var filter = Builders<PlanetModel>.Filter.Eq(p => p.StarId, id);
+            var planets = await _planets.Find(filter).ToListAsync();
+
+            // 3. Select and return the planet names as a list.
+            return planets.Select(p => p.Name);
         }
 
         [Authorize(Policy = "ReadAccess")]

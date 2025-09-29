@@ -42,6 +42,22 @@ namespace StellarDB.Models.Star
         public List<CompositionModel>? Composition { get; set; }
         public string? Description { get; set; }
     }
+    public class StarViewModel
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string? SpectralClass { get; set; }
+        public string? LuminosityClass { get; set; }
+        public double Magnitude { get; set; }
+        public double Distance { get; set; } // in light-years
+        public double Diameter { get; set; } // in kilometers
+        public double Mass { get; set; } // in solar masses
+        public double Temperature { get; set; } // in Kelvin
+        public string DiscoveryDate { get; set; }
+        public List<CompositionModel>? Composition { get; set; }
+        public string? Description { get; set; }
+        public string[] Planets { get; set; } = Array.Empty<string>();
+    }
     public class StarQueryParameters
     {
         public string? Name { get; set; } = string.Empty;

@@ -17,6 +17,7 @@ import { MatExpansionModule } from '@angular/material/expansion'; // MatFormFiel
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatChipsModule } from '@angular/material/chips';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { v4 as uuidv4 } from 'uuid';
@@ -37,13 +38,14 @@ export interface Star {
   discoveryDate: string; // dateOnly in C# not supported in TypeScript
   composition?: { name: string; percentage: number; }[];
   description?: string;
+  planets: string[];
 }
 
 @Component({
   selector: 'app-star',
   imports: [CustomTable, CommonModule, ReactiveFormsModule,
     MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule, MatMenuModule, NgApexchartsModule, MatExpansionModule,
-    MatFormFieldModule, MatInputModule, MatInputModule, MatSelectModule, MatDatepickerModule],
+    MatFormFieldModule, MatInputModule, MatInputModule, MatSelectModule, MatDatepickerModule, MatChipsModule],
   templateUrl: './star.html',
   styleUrl: './star.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -399,10 +401,17 @@ export class StarComponent implements AfterViewInit {
     };
   }
 
-  private toDateOnlyString(date: Date | null): string | null {
+  private toDateOnlyString(date: Date | string | null | undefined): string | null {
     if (!date) return null;
-    const mm = (date.getMonth() + 1).toString().padStart(2, '0');
-    const dd = date.getDate().toString().padStart(2, '0');
-    return `${date.getFullYear()}-${mm}-${dd}`;
+    let d: Date;
+    if (typeof date === 'string') {
+      d = new Date(date);
+      if (isNaN(d.getTime())) return null;
+    } else {
+      d = date;
+    }
+    const mm = (d.getMonth() + 1).toString().padStart(2, '0');
+    const dd = d.getDate().toString().padStart(2, '0');
+    return `${d.getFullYear()}-${mm}-${dd}`;
   }
 }
