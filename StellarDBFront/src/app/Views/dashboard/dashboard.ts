@@ -1,7 +1,6 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../Services/Auth/auth.service';
-import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
@@ -17,9 +16,11 @@ import { MatMenuModule } from '@angular/material/menu';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
+
 export class DashboardComponent implements AfterViewInit {
-  constructor() {}
+  constructor() { }
   ngAfterViewInit(): void {
     // Any initialization that requires the view to be fully loaded can go here
+
   }
 }

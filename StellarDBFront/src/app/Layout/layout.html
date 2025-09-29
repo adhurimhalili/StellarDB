@@ -9,18 +9,7 @@
   @if (layoutConfig.showSidebar) {
   <mat-sidenav-container class="h-screen">
     <mat-sidenav mode="side" opened class="p-4 w-64 h-screen">
-      <button mat-button [matMenuTriggerFor]="formsMenu">
-        Explore <mat-icon>more_vert</mat-icon>
-      </button>
-      <mat-menu #formsMenu="matMenu">
-        <button mat-menu-item routerLink="/Star">Stars</button>
-        <button mat-menu-item routerLink="/StarSpectralClasses">Spectral Classes</button>
-        <button mat-menu-item routerLink="/StarLuminosityClasses">Luminosity Classes</button>
-        <button mat-menu-item routerLink="/Planet">Planets</button>
-        <button mat-menu-item routerLink="/PlanetTypes">Planet Types</button>
-        <button mat-menu-item routerLink="/ChemicalElements">Chemical Elements</button>
-        <button mat-menu-item routerLink="/AtmosphericGases">Atmospheric Gases</button>
-      </mat-menu>
+      <app-sidenav></app-sidenav>
     </mat-sidenav>
     <mat-sidenav-content>
       <!-- Main Content -->

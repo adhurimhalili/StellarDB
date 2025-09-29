@@ -12,10 +12,11 @@ import { takeUntil } from 'rxjs/operators';
 import { LayoutService, LayoutConfig } from '../Services/Layout/layout.service';
 import { HeaderComponent } from '../Shared/header/header';
 import { FooterComponent } from '../Shared/footer/footer';
+import { SidenavComponent } from './sidenav/sidenav';
 
 @Component({
   selector: 'app-layout',
-  imports: [CommonModule, MatSidenavModule, MatMenuModule, MatListModule, MatToolbarModule, MatButtonModule, MatIconModule, RouterOutlet, HeaderComponent, FooterComponent],
+  imports: [CommonModule, MatSidenavModule, MatMenuModule, MatListModule, MatToolbarModule, MatButtonModule, MatIconModule, RouterOutlet, HeaderComponent, FooterComponent, SidenavComponent],
   templateUrl: './layout.html',
   styleUrl: './layout.css'
 })

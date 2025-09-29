@@ -1,0 +1,45 @@
+<mat-nav-list>
+  <ng-container *ngFor="let menu of dashboardMenus">
+    <!-- Top-level menu items -->
+    <mat-expansion-panel class="mat-elevation-z0">
+      <mat-expansion-panel-header class="">
+        <mat-panel-title>
+          <mat-icon *ngIf="menu.icon">{{menu.icon}}</mat-icon>
+          <span>{{menu.label}}</span>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <!-- Second-level items -->
+      <ng-container *ngFor="let childMenu of menu.children">
+
+        <!-- Menu items with third level -->
+        <mat-expansion-panel class="mat-elevation-z0 nested-panel" *ngIf="childMenu.children">
+          <mat-expansion-panel-header class="flex items-center">
+            <mat-panel-title>
+              <mat-icon class="material-symbols-outlined" *ngIf="childMenu.icon">{{childMenu.icon}}</mat-icon>
+              <span>{{childMenu.label}}</span>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <!-- Third-level items -->
+          <a mat-list-item *ngFor="let grandChildMenu of childMenu.children"
+             [routerLink]="grandChildMenu.route"
+             [id]="'menu_' + (grandChildMenu.label | menuName)"
+             class="menu-item">
+            <mat-icon class="material-symbols-outlined" *ngIf="grandChildMenu.icon">{{grandChildMenu.icon}}</mat-icon>
+            <span>{{grandChildMenu.label}}</span>
+          </a>
+        </mat-expansion-panel>
+
+        <!-- Menu items without children -->
+        <a mat-list-item *ngIf="!childMenu.children"
+           [routerLink]="childMenu.route"
+           [id]="'menu_' + (childMenu.label | menuName)"
+           class="menu-item">
+          <mat-icon class="material-symbols-outlined" *ngIf="childMenu.icon">{{childMenu.icon}}</mat-icon>
+          <span>{{childMenu.label}}</span>
+        </a>
+      </ng-container>
+    </mat-expansion-panel>
+  </ng-container>
+</mat-nav-list>
