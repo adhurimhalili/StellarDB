@@ -2,7 +2,7 @@
 
 <form [formGroup]="constellationForm" (ngSubmit)="onSubmit()">
   <mat-dialog-content>
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 gap-4">
       <!-- Name -->
       <mat-form-field class="" appearance="outline">
         <mat-label>Name</mat-label>
@@ -13,7 +13,7 @@
       </mat-form-field>
 
       <!-- Stars Chips Autocomplete -->
-      <mat-form-field class="col-span-2" appearance="outline">
+      <mat-form-field class="" appearance="outline">
         <mat-label>Stars</mat-label>
         <mat-chip-grid #starsChipGrid>
           <mat-chip-row *ngFor="let star of selectedStars" (removed)="remove(star)">
@@ -33,7 +33,7 @@
                (input)="onStarInputChange(starInput.value)"
                placeholder="Add star..."
                autocomplete="off" />
-        <mat-icon matSuffix>security</mat-icon>
+        <mat-icon matSuffix>star</mat-icon>
 
         <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
           <mat-option *ngFor="let star of filteredStars" [value]="star.id">
@@ -44,7 +44,7 @@
       </mat-form-field>
 
       <!-- Description -->
-      <mat-form-field class="col-span-2" appearance="outline">
+      <mat-form-field class="" appearance="outline">
         <mat-label>Description</mat-label>
         <textarea matInput formControlName="description" rows="3" maxlength="500"></textarea>
       </mat-form-field>

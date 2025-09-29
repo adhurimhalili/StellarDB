@@ -40,6 +40,7 @@ export class ConstellationsForm {
   constellationForm: FormGroup;
   private readonly apiAction = `${GlobalConfig.apiUrl}/Constellations`;
   private authService = inject(AuthService);
+  private readonly token = this.authService.getToken();
   private correlationId: string = uuidv4();
 
   constructor(private formBuilder: FormBuilder,
@@ -57,10 +58,9 @@ export class ConstellationsForm {
   }
 
   ngAfterViewInit() {
-    const token = this.authService.getToken();
-    this.fetchStars(token!);
+    this.fetchStars(this.token!);
     if (this.data != null || this.data != undefined) {
-      this.loadFromData(token!);
+      this.loadFromData(this.token!);
     }
   }
 
@@ -142,13 +142,12 @@ export class ConstellationsForm {
       control?.markAsTouched();
     });
 
-
     this.constellationForm.get('starIds')?.setValue(this.selectedStars.map(s => s.id));
 
     const httpMethod = this.data ? "PUT" : "POST";
     fetch(`${this.apiAction}`, {
       method: httpMethod,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.token}`, 'X-Correlation-ID': this.correlationId, },
       body: JSON.stringify(this.constellationForm.value)
     })
       .then(async response => {

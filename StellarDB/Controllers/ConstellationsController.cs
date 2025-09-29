@@ -86,7 +86,7 @@ namespace StellarDB.Controllers
 
             var filter = Builders<ConstellationsModel>.Filter.Eq(c => c.Id, model.Id);
             var result = await _constellations.ReplaceOneAsync(filter, model);
-            if (result.ModifiedCount > 0) return NotFound("Failed to update Constellation");
+            if (result.ModifiedCount == 0) return NotFound("Failed to update Constellation");
             return Ok(result);
         }
 
@@ -132,7 +132,7 @@ namespace StellarDB.Controllers
                     break;
                 case ".xls":
                 case ".xlsx":
-                case "xlsm":
+                case ".xlsm":
                 case ".xlsb":
                     constellations = ExcelServices.ParseExcel<ConstellationsModel>(file.OpenReadStream());
                     break;
