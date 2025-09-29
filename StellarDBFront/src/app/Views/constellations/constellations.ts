@@ -39,6 +39,7 @@ export class ConstellationsComponent implements AfterViewInit {
   expandedElement: Constellation | null = null;
   private readonly apiAction = `${GlobalConfig.apiUrl}/Constellations`;
   private readonly formDialog = inject(MatDialog);
+  private selectedFile: File | null = null;
   private authService = inject(AuthService);
   userRoleClaims: string[] = this.authService.getRoleClaims();;
 
@@ -98,6 +99,136 @@ export class ConstellationsComponent implements AfterViewInit {
         });
       }
     });
+  }
+
+  onDelete(constellation: Constellation) {
+    Swal.fire({
+      title: 'Are you sure?',
+      html: `You are deleting <span class="text-blue-600 font-medium">${constellation.name}<span>.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(result => {
+      if (result.isConfirmed) {
+        const token = this.authService.getToken();
+        fetch(`${this.apiAction}/${constellation.id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } })
+          .then(response => {
+            this.fetchData();
+            Swal.fire({
+              title: "Deleted!",
+              icon: "success",
+              position: 'top',
+              timer: 2000,
+              timerProgressBar: true,
+              showConfirmButton: false,
+              backdrop: false
+            });
+          })
+          .catch(error => {
+            console.error('Error deleting constellation:', error);
+            Swal.fire('Error', 'Failed to delete constellation.', 'error');
+          });
+      }
+    });
+  }
+
+  onImportFile(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+      this.onImport();
+    }
+  }
+
+  onImport() {
+    if (!this.selectedFile) {
+      Swal.fire({
+        title: "File not found.",
+        icon: "error",
+        position: 'top',
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        backdrop: false
+      });
+      return;
+    }
+
+    const fileFormData = new FormData();
+    fileFormData.append('file', this.selectedFile);
+    const token = this.authService.getToken();
+    fetch(`${this.apiAction}/import`, {
+      method: 'POST',
+      body: fileFormData,
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+      .then(async response => {
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error);
+        }
+        return response.json();
+      })
+      .then(result => {
+        this.fetchData();
+        Swal.fire({
+          title: "Imported!",
+          html:
+            `<p>Inserted: <span class="font-medium text-blue-500">${result.inserted}</span></p>
+             <p>Skipped: <span class="font-medium text-blue-500">${result.skipped}</span></p>`,
+          icon: "success",
+          position: 'top',
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          backdrop: false
+        });
+      })
+      .catch(error => {
+        Swal.fire({
+          title: "Error",
+          text: error.message,
+          icon: "error"
+        });
+      })
+  }
+
+  async onExport(format: string) {
+    const token = this.authService.getToken();
+    const url = `${this.apiAction}/export?format=${format}`;
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Failed to export data');
+
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      const disposition = response.headers.get('Content-Disposition');
+      let filename = `constellation.${format}`;
+      if (disposition) {
+        const match = disposition.match(/filename\*?=(?:UTF-8'')?["']?([^;"']+)["']?/i);
+        if (match && match[1]) {
+          filename = decodeURIComponent(match[1]);
+        }
+      }
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error: any) {
+      Swal.fire({
+        title: "Error",
+        text: error.message,
+        icon: "error"
+      });
+    }
   }
 
   isExpandedRow = (row: Constellation) => this.expandedElement === row;

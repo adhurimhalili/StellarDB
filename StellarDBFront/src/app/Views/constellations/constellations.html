@@ -14,7 +14,10 @@
                       [isLoading]="isLoading"
                       [expandableRows]="true"
                       (openForm)="onOpenForm($event)"
-                      (toggleExpand)="onToggleExpand($event)">
+                      (toggleExpand)="onToggleExpand($event)"
+                      (delete)="onDelete($event)"
+                      (export)="onExport($event)"
+                      (fileSelected)="onImportFile($event)">
 
       <!-- Define the expanded content template -->
       <ng-template #expandedContent let-element>
