@@ -12,16 +12,7 @@
   <div class="grid grid-cols-4 row-span-1">
     <div class="flex justify-end"><app-theme-toggle-switch /></div>
     <button mat-button routerLink="/">Home</button>
-    <button matButton [matMenuTriggerFor]="menu">Explore<mat-icon>more_vert</mat-icon></button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item routerLink="/Star">Stars</button>
-      <button mat-menu-item routerLink="/StarSpectralClasses">Spectral Classes</button>
-      <button mat-menu-item routerLink="/StarLuminosityClasses">Luminosity Classes</button>
-      <button mat-menu-item routerLink="/Planet">Planets</button>
-      <button mat-menu-item routerLink="/PlanetTypes">Planet Types</button>
-      <button mat-menu-item routerLink="/ChemicalElements">Chemical Elements</button>
-      <button mat-menu-item routerLink="/AtmosphericGases">Atmospheric Gases</button>
-    </mat-menu>
+    <div *ngIf="showDashboard"><button mat-button routerLink="/Dashboard">Dashboard</button></div>
     <button matButton *ngIf="authService.isAuthenticated()" (click)="onLogout()">Log Out<mat-icon>logout</mat-icon></button>
   </div>
 </mat-toolbar>

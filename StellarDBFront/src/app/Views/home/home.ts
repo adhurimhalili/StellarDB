@@ -37,6 +37,7 @@ export class Home implements AfterViewInit {
       ],
       chart: {
         height: 350,
+        width: 800,
         type: 'bar',
         toolbar: {
           show: true, // Enable or disable the toolbar (default is true)

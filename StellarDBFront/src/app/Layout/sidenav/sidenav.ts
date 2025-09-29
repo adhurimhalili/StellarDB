@@ -1,7 +1,6 @@
-import { Component, AfterViewInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Component, AfterViewInit, inject } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../Services/Auth/auth.service';
-import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
@@ -45,14 +44,14 @@ export const DASHBOARD_MENUS: MenuItem[] = [
   {
     label: 'Identity',
     children: [
-      { label: 'Users', route: '/User', icon: 'person' },
-      { label: 'Roles', route: '/Role', icon: 'security' }
+      { label: 'Users', route: '/Users', icon: 'person' },
+      { label: 'Roles', route: '/Roles', icon: 'security' }
     ]
   },
   {
     label: 'Administration',
     children: [
-      { label: 'AuditLog', route: '/audit-log', icon: 'history' }
+      { label: 'AuditLog', route: '/AuditLogs', icon: 'history' }
     ]
   }
 ];
@@ -72,9 +71,32 @@ export class MenuNamePipe implements PipeTransform {
   styleUrl: './sidenav.css'
 })
 export class SidenavComponent implements AfterViewInit {
-  dashboardMenus: MenuItem[] = DASHBOARD_MENUS;
+  private readonly authService = inject(AuthService);
+  private readonly token = this.authService.getToken();
+  dashboardMenus: MenuItem[] = [];
+  userRoleClaims: string[] = [];
+
+  constructor() {
+    this.userRoleClaims = this.authService.getRoleClaims();
+    this.filterMenusByUserClaims();
+  }
 
   ngAfterViewInit(): void {
     // Any initialization that requires the view to be fully loaded can go here
+  }
+
+
+  private filterMenusByUserClaims(): void {
+    // Filter menus based on user claims
+    this.dashboardMenus = DASHBOARD_MENUS.filter(menu => {
+      if (menu.label === 'Data Forms') {
+        return this.userRoleClaims.includes('ReadAccess');
+      } else if (menu.label === 'Identity') {
+        return this.userRoleClaims.includes('IdentityAccess');
+      } else if (menu.label === 'Administration') {
+        return this.userRoleClaims.includes('AdminAccess');
+      }
+      return false; // Hide any other menus by default
+    });
   }
 }
