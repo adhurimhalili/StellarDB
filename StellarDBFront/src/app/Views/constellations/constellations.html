@@ -12,7 +12,27 @@
                       [userRoleClaims]="userRoleClaims"
                       [objects]="objects"
                       [isLoading]="isLoading"
-                      (openForm)="onOpenForm($event)">
+                      [expandableRows]="true"
+                      (openForm)="onOpenForm($event)"
+                      (toggleExpand)="onToggleExpand($event)">
+
+      <!-- Define the expanded content template -->
+      <ng-template #expandedContent let-element>
+        <div class="grid lg:grid-cols-3 gap-6 p-4">
+
+          <!-- List Stars -->
+          <div class="mb-6">
+            <div class="flex items-center"> <mat-icon class="me-2">star</mat-icon> <span class="text-lg font-medium"> Stars </span> </div>
+            <mat-chip-set>
+              <mat-chip *ngFor="let star of element.stars" color="primary">{{ star }}</mat-chip>
+            </mat-chip-set>
+          </div>
+
+        </div>
+
+      </ng-template>
+
+
     </app-custom-table>
   </mat-card>
 </div>

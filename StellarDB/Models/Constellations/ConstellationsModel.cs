@@ -9,7 +9,15 @@ namespace StellarDB.Models.Constellations
 		public string? Id { get; set; }
 		[BsonRequired]
 		public string Name { get; set; }
-		public string[]? StarId { get; set; }
+		public string[]? StarIds { get; set; }
+		public string Description { get; set; }
+	}
+
+	public class ConstellationsViewModel
+	{
+		public string Id { get; set; }
+		public string Name { get; set; }
+		public string[] Stars { get; set; }
 		public string Description { get; set; }
 	}
 }

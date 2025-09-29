@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatChipsModule } from '@angular/material/chips';
 import Swal from 'sweetalert2';
 import { GlobalConfig } from '../../global-config';
 import { CustomTable } from '../../Shared/custom-table/custom-table';
@@ -16,31 +17,30 @@ import { AuthService } from '../../Services/Auth/auth.service';
 export interface Constellation {
   id: string,
   name: string,
-  starId: string[],
+  stars: string[],
   description: string
 }
 
 @Component({
   selector: 'app-constellations',
-  imports: [CustomTable, CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule, MatMenuModule],
+  imports: [CustomTable, CommonModule, MatTableModule, MatCardModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule, MatMenuModule, MatChipsModule],
   templateUrl: './constellations.html',
   styleUrl: './constellations.css'
 })
 export class ConstellationsComponent implements AfterViewInit {
-  readonly title = 'Atmospheric Gases';
+  readonly title = 'Constellations';
   readonly tableColumns = [
     { columnDef: 'name', header: 'Name' },
-    { columnDef: 'stars', header: 'Stars' },
     { columnDef: 'description', header: 'Description' }
   ]
   dataSource = [];
   objects: Constellation[] = [];
   isLoading = true;
+  expandedElement: Constellation | null = null;
   private readonly apiAction = `${GlobalConfig.apiUrl}/Constellations`;
   private readonly formDialog = inject(MatDialog);
   private authService = inject(AuthService);
-
-  userRoleClaims: string[] = ["ReadAccess", "WriteAccess"];
+  userRoleClaims: string[] = this.authService.getRoleClaims();;
 
   ngAfterViewInit() {
     this.fetchData();
@@ -100,4 +100,13 @@ export class ConstellationsComponent implements AfterViewInit {
     });
   }
 
+  isExpandedRow = (row: Constellation) => this.expandedElement === row;
+
+  onToggleExpand(row: Constellation, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.expandedElement = this.expandedElement === row ? null : row;
+
+  }
 }

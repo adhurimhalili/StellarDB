@@ -16,6 +16,8 @@ import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { v4 as uuidv4 } from 'uuid';
+import { AuthService } from '../../../Services/Auth/auth.service';
 
 
 @Component({
@@ -37,6 +39,8 @@ export class ConstellationsForm {
   selectedStars: Star[] = [];
   constellationForm: FormGroup;
   private readonly apiAction = `${GlobalConfig.apiUrl}/Constellations`;
+  private authService = inject(AuthService);
+  private correlationId: string = uuidv4();
 
   constructor(private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<ConstellationsForm>,
@@ -53,13 +57,15 @@ export class ConstellationsForm {
   }
 
   ngAfterViewInit() {
+    const token = this.authService.getToken();
+    this.fetchStars(token!);
     if (this.data != null || this.data != undefined) {
-      this.loadFromData();
+      this.loadFromData(token!);
     }
   }
 
-  loadFromData() {
-    fetch(`${this.apiAction}/${this.data}`, { method: 'GET' })
+  loadFromData(token: string) {
+    fetch(`${this.apiAction}/${this.data}`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
       .then(response => response.json())
       .then(formData => {
         this.constellationForm.patchValue(formData);
@@ -69,13 +75,13 @@ export class ConstellationsForm {
       });
   }
 
-  fetchStars() {
-    fetch(`${GlobalConfig.apiUrl}/Stars`, { method: 'GET' })
+  fetchStars(token: string) {
+    fetch(`${GlobalConfig.apiUrl}/Star`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
       .then(response => response.json())
       .then((data: Star[]) => {
         this.allStars = data;
         this.filteredStars = this.allStars.slice();
-        const starIds = this.constellationForm.get('stars')?.value as string[];
+        const starIds = this.constellationForm.get('starIds')?.value as string[];
         if (starIds && starIds.length > 0) {
           this.selectedStars = this.allStars.filter(r => starIds.includes(r.id));
         }
@@ -97,7 +103,7 @@ export class ConstellationsForm {
       const found = this.allStars.find(star => star.name.toLowerCase() === value.toLowerCase());
       if (found && !this.selectedStars.some(r => r.id === found.id)) {
         this.selectedStars.push(found);
-        this.constellationForm.get('roles')?.setValue(this.selectedStars.map(r => r.id));
+        this.constellationForm.get('starIds')?.setValue(this.selectedStars.map(r => r.id));
       }
     }
     event.chipInput!.clear();
@@ -105,21 +111,21 @@ export class ConstellationsForm {
     this.filterStars('');
   }
 
-  remove(role: Star): void {
-    const index = this.selectedStars.findIndex(r => r.id === role.id);
+  remove(star: Star): void {
+    const index = this.selectedStars.findIndex(r => r.id === star.id);
     if (index >= 0) {
       this.selectedStars.splice(index, 1);
-      this.constellationForm.get('roles')?.setValue(this.selectedStars.map(r => r.id));
-      this.announcer.announce(`Removed ${role.name}`);
+      this.constellationForm.get('starIds')?.setValue(this.selectedStars.map(r => r.id));
+      this.announcer.announce(`Removed ${star.name}`);
       this.filterStars(this.currentStar());
     }
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    const role = this.allStars.find(r => r.id === event.option.value);
-    if (role && !this.selectedStars.some(r => r.id === role.id)) {
-      this.selectedStars.push(role);
-      this.constellationForm.get('roles')?.setValue(this.selectedStars.map(r => r.id));
+    const star = this.allStars.find(r => r.id === event.option.value);
+    if (star && !this.selectedStars.some(r => r.id === star.id)) {
+      this.selectedStars.push(star);
+      this.constellationForm.get('starIds')?.setValue(this.selectedStars.map(r => r.id));
     }
     this.currentStar.set('');
     this.filterStars('');
@@ -130,12 +136,14 @@ export class ConstellationsForm {
     this.filterStars(value);
   }
 
-
   onSubmit() {
     Object.keys(this.constellationForm.controls).forEach(key => {
       const control = this.constellationForm.get(key);
       control?.markAsTouched();
     });
+
+
+    this.constellationForm.get('starIds')?.setValue(this.selectedStars.map(s => s.id));
 
     const httpMethod = this.data ? "PUT" : "POST";
     fetch(`${this.apiAction}`, {
