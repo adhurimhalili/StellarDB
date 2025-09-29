@@ -16,8 +16,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 // Components
-import { Header } from './Shared/header/header';
-import { ThemeToggleSwitchComponent } from './Shared/theme-toggle-switch/theme-toggle-switch';
+import { LayoutComponent } from './Layout/layout';
 import { AuthInterceptor } from './Core/Interceptors/auth.interceptor';
 import { IconService } from './Services/Icon/icon.service';
 import { FooterComponent } from './Shared/footer/footer';
@@ -29,10 +28,9 @@ export function tokenGetter() {
 @NgModule({
   declarations: [
     App,
-    Header,
-    ThemeToggleSwitchComponent,
   ],
   imports: [
+    LayoutComponent,
     BrowserModule,
     AppRoutingModule,
     MatToolbarModule,
@@ -41,7 +39,6 @@ export function tokenGetter() {
     MatMenuModule,
     MatCardModule,
     MatTooltipModule,
-    //HttpClientModule,
     FooterComponent,
     JwtModule.forRoot({
       config: {
