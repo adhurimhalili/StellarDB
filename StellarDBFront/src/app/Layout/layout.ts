@@ -13,7 +13,7 @@ import { FooterComponent } from '../Shared/footer/footer';
   templateUrl: './layout.html',
   styleUrl: './layout.css'
 })
-export class LayoutComponent {
+export class LayoutComponent implements OnInit, OnDestroy {
   layoutConfig: LayoutConfig = {
     showHeader: true,
     showSidebar: false,
