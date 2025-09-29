@@ -14,8 +14,7 @@ export interface LayoutConfig {
 export class LayoutService {
   private layoutConfigSubject = new BehaviorSubject<LayoutConfig>({
     showHeader: true,
-    showSidebar: false,
-    sidebarType: null
+    showSidebar: false
   });
 
   public layoutConfig$: Observable<LayoutConfig> = this.layoutConfigSubject.asObservable();
@@ -55,11 +54,9 @@ export class LayoutService {
 
     const showHeader = !noHeaderRoutes.includes(cleanUrl);
     const showAdminSidebar = adminSidebarRoutes.includes(cleanUrl);
-    const showNavigationSidebar = navigationSidebarRoutes.includes(cleanUrl);
     return {
       showHeader,
-      showSidebar: showAdminSidebar || showNavigationSidebar,
-      sidebarType: showAdminSidebar ? 'admin' : (showNavigationSidebar ? 'navigation' : null)
+      showSidebar: showAdminSidebar
     };
   }
 

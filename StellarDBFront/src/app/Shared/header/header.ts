@@ -26,10 +26,16 @@ import { ThemeToggleSwitchComponent } from '../theme-toggle-switch/theme-toggle-
   styleUrl: './header.css'
 })
 export class HeaderComponent {
+  userRoleClaims: string[] = [];
+  showDashboard: Boolean = false;
+  claims: string[] = ["ReadAccess", "WriteAccess", "IdentityAccess", "AdminAccess"]
   constructor(
     public authService: AuthService,
     private iconService: IconService,
-    private router: Router,) { }
+    private router: Router) {
+    this.userRoleClaims = this.authService.getRoleClaims();
+    this.showDashboard = this.userRoleClaims.some(claim => this.claims.includes(claim));
+  }
 
   shouldShowHeader(): boolean {
     return this.router.url !== '/Login'; // Hide header on login page

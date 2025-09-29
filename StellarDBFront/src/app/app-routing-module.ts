@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './Views/login/login';
 import { RegisterComponent } from './Views/register/register';
 import { Home } from './Views/home/home';
+import { DashboardComponent } from './Views/dashboard/dashboard';
 import { StellarObjectTypesService } from './Views/stellar-object-types/stellar-object-types';
 import { StarSpectralClassesComponent } from './Views/star-spectral-classes/star-spectral-classes';
 import { StarComponent } from './Views/star/star';
@@ -36,6 +37,11 @@ const routes: Routes = [
   {
     path: 'Home',
     component: Home,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'Dashboard',
+    component: DashboardComponent,
     canActivate: [AuthGuard]
   },
   {

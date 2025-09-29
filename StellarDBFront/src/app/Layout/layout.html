@@ -6,10 +6,24 @@
   </div>
   }
 
+  @if (layoutConfig.showSidebar) {
+  <mat-sidenav-container class="h-screen">
+    <mat-sidenav mode="side" opened class="p-4 w-64 h-screen">
+      <app-sidenav></app-sidenav>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <!-- Main Content -->
+      <router-outlet></router-outlet>
+      <!-- Footer -->
+      <app-footer></app-footer>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+  }
+
+  @if (!layoutConfig.showSidebar) {
   <!-- Main Content -->
   <router-outlet></router-outlet>
-
   <!-- Footer -->
   <app-footer></app-footer>
-
+  }
 </div>
