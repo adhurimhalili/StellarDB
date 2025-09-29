@@ -1,5 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatListModule } from '@angular/material/list';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { RouterOutlet } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -9,15 +15,14 @@ import { FooterComponent } from '../Shared/footer/footer';
 
 @Component({
   selector: 'app-layout',
-  imports: [CommonModule, RouterOutlet, HeaderComponent, FooterComponent],
+  imports: [CommonModule, MatSidenavModule, MatMenuModule, MatListModule, MatToolbarModule, MatButtonModule, MatIconModule, RouterOutlet, HeaderComponent, FooterComponent],
   templateUrl: './layout.html',
   styleUrl: './layout.css'
 })
 export class LayoutComponent implements OnInit, OnDestroy {
   layoutConfig: LayoutConfig = {
     showHeader: true,
-    showSidebar: false,
-    sidebarType: null
+    showSidebar: false
   };
 
   private destroy$ = new Subject<void>();

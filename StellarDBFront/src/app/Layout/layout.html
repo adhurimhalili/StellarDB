@@ -6,10 +6,35 @@
   </div>
   }
 
+  @if (layoutConfig.showSidebar) {
+  <mat-sidenav-container class="h-screen">
+    <mat-sidenav mode="side" opened class="p-4 w-64 h-screen">
+      <button mat-button [matMenuTriggerFor]="formsMenu">
+        Explore <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #formsMenu="matMenu">
+        <button mat-menu-item routerLink="/Star">Stars</button>
+        <button mat-menu-item routerLink="/StarSpectralClasses">Spectral Classes</button>
+        <button mat-menu-item routerLink="/StarLuminosityClasses">Luminosity Classes</button>
+        <button mat-menu-item routerLink="/Planet">Planets</button>
+        <button mat-menu-item routerLink="/PlanetTypes">Planet Types</button>
+        <button mat-menu-item routerLink="/ChemicalElements">Chemical Elements</button>
+        <button mat-menu-item routerLink="/AtmosphericGases">Atmospheric Gases</button>
+      </mat-menu>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <!-- Main Content -->
+      <router-outlet></router-outlet>
+      <!-- Footer -->
+      <app-footer></app-footer>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+  }
+
+  @if (!layoutConfig.showSidebar) {
   <!-- Main Content -->
   <router-outlet></router-outlet>
-
   <!-- Footer -->
   <app-footer></app-footer>
-
+  }
 </div>
