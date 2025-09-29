@@ -38,7 +38,7 @@ export const DASHBOARD_MENUS: MenuItem[] = [
       },
       { label: 'Moons', route: '/Moon', icon: 'moon_stars' },
       { label: 'Chemical Elements', route: '/ChemicalElements', icon: 'landslide' },
-      { label: 'Atmospheric Gases', route: '/PlanAtmosphericGaseset', icon: 'air' },
+      { label: 'Atmospheric Gases', route: '/AtmosphericGases', icon: 'air' },
     ]
   },
   {
