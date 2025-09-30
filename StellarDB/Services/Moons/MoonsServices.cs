@@ -2,6 +2,7 @@
 using StellarDB.Data;
 using StellarDB.Models.ChemicalElements;
 using StellarDB.Models.Moon;
+using StellarDB.Models.Planet;
 using System.Text.Json;
 using System.Xml.Serialization;
 
@@ -11,29 +12,38 @@ namespace StellarDB.Services.Moons
     {
         private readonly IMongoCollection<MoonModel>? _moons;
         private readonly IMongoCollection<ChemicalElementsModel>? _chemicalElements;
+        private readonly IMongoCollection<PlanetModel>? _planets;
         private readonly CsvServices _csvServices;
         public MoonsServices(MongoDbService mongoDbService,
             CsvServices csvServices)
         {
             _moons = mongoDbService.Database.GetCollection<MoonModel>("Moons");
+            _planets = mongoDbService.Database.GetCollection<PlanetModel>("Planets");
             _chemicalElements = mongoDbService.Database.GetCollection<ChemicalElementsModel>("ChemicalElements");
             _csvServices = csvServices;
         }
 
-        public async Task<List<MoonModel>> GetAllAsync(MoonQueryParameters parameters)
+        public async Task<IEnumerable<object>> GetAllAsync(MoonQueryParameters parameters)
         {
             var filter = await BuildMoonFilter(parameters);
             List<MoonModel>? moons = await _moons.Find(filter).ToListAsync();
 
+            var planets = await _planets.Find(FilterDefinition<PlanetModel>.Empty).ToListAsync();
             var chemicalElements = await _chemicalElements.Find(FilterDefinition<ChemicalElementsModel>.Empty).ToListAsync();
-            var chemicalDict = chemicalElements.ToDictionary(ce => ce.Id, ce => ce.Name);
-
+            var planetDict = planets
+                .Where(p => p.Id is not null)
+                .ToDictionary(p => p.Id!, p => p.Name);
+            var chemicalDict = chemicalElements
+                .Where(ce => ce.Id is not null)
+                .ToDictionary(ce => ce.Id!, ce => ce.Name);
 
             var result = moons.Select(moon => new
             {
                 moon.Id,
                 moon.Name,
-                moon.PlanetId,
+                Planet = moon.PlanetId != null && planetDict.ContainsKey(moon.PlanetId)
+                    ? planetDict[moon.PlanetId]
+                    : "Unknown",
                 moon.Mass,
                 moon.Diameter,
                 moon.RotationPeriod,
@@ -50,7 +60,7 @@ namespace StellarDB.Services.Moons
                     c.Percentage
                 }),
             });
-            return moons;
+            return result;
         }
 
         public async Task<MoonModel?> GetByIdAsync(string id)

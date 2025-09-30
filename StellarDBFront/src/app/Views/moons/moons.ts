@@ -26,7 +26,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 export interface Moon {
   id: string;
   name: string;
-  planetId: string;
+  planet: string;
   mass: number; // in 10^22 kg
   diameter: number; // in km
   rotationPeriod: number; // in hours
@@ -71,7 +71,7 @@ export class MoonsComponent implements AfterViewInit {
   readonly tableColumns = [
     { columnDef: 'position', header: 'No.', cell: (item: any) => `${item.no}`, cssClass: 'w-1/32' },
     { columnDef: 'name', header: 'Name', cssClass: 'w-1/6' },
-    { columnDef: 'planetName', header: 'Planet', cssClass: 'w-1/6' },
+    { columnDef: 'planet', header: 'Planet', cssClass: 'w-1/6' },
     { columnDef: 'mass', header: 'Mass (10^22 kg)', cssClass: '' },
     { columnDef: 'diameter', header: 'Diameter (km)', cssClass: '' },
     { columnDef: 'rotationPeriod', header: 'Rotation Period (hours)', cssClass: '' },

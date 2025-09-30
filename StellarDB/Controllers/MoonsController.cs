@@ -21,7 +21,7 @@ namespace StellarDB.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] MoonQueryParameters parameters)
         {
-            return await _moonsServices.GetAllAsync(parameters) is List<MoonModel> moons
+            return await _moonsServices.GetAllAsync(parameters) is IEnumerable<object> moons
                 ? Ok(moons)
                 : NotFound();
         }

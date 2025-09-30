@@ -4,7 +4,7 @@ namespace StellarDB.Services.Moons
 {
     public interface IMoonsServices
     {
-        Task<List<MoonModel>> GetAllAsync(MoonQueryParameters parameters);
+        Task<IEnumerable<object>> GetAllAsync(MoonQueryParameters parameters);
         Task<MoonModel?> GetByIdAsync(string id);
         Task<bool> CreateAsync(MoonModel model);
         Task<bool> UpdateAsync(MoonModel model);
