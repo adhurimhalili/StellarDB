@@ -184,7 +184,25 @@ export class UsersComponent implements AfterViewInit {
   // Roles autocomplete
   fetchRoles() {
     fetch(`${GlobalConfig.apiUrl}/Roles`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}`, 'X-Correlation-ID': this.correlationId, } })
-      .then(response => response.json())
+      .then(async response => {
+        if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            return [];
+          }
+          let errorMsg = 'Failed to load roles';
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            try {
+              const errorData = await response.json();
+              if (errorData && errorData.error) errorMsg = errorData.error;
+            } catch { }
+          }
+          return [];
+        }
+        const text = await response.text();
+        if (!text) return [];
+        return JSON.parse(text);
+      })
       .then((data: Role[]) => {
         this.allRoles = data;
         this.filteredRoles = this.allRoles.slice();

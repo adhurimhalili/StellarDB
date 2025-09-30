@@ -121,8 +121,28 @@ export class MoonsComponent implements AfterViewInit {
 
   fetchPlanets() {
     fetch(`${GlobalConfig.apiUrl}/Planet`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}`, 'X-Correlation-ID': this.correlationId, } })
-      .then(response => response.json())
-      .then(data => this.planets = data)
+      .then(async response => {
+        if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            return [];
+          }
+          let errorMsg = 'Failed to load planets';
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            try {
+              const errorData = await response.json();
+              if (errorData && errorData.error) errorMsg = errorData.error;
+            } catch { }
+          }
+          return [];
+        }
+        const text = await response.text();
+        if (!text) return [];
+        return JSON.parse(text);
+      })
+      .then(data => {
+        this.planets = data;
+      })
       .catch(error => console.error('Error fetching stars:', error));
   }
 

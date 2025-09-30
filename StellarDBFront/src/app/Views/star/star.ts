@@ -111,15 +111,67 @@ export class StarComponent implements AfterViewInit {
   }
 
   fetchSpectralClasses() {
-    fetch(`${GlobalConfig.apiUrl}/StarSpectralClasses`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}`, 'X-Correlation-ID': this.correlationId, } })
-      .then(response => response.json())
-      .then(data => this.starSpectralClasses = data);
+    fetch(`${GlobalConfig.apiUrl}/StarSpectralClasses`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${this.token}`,
+        'X-Correlation-ID': this.correlationId,
+      }
+    })
+      .then(async response => {
+        if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            return [];
+          }
+          let errorMsg = 'Failed to load spectral classes';
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            try {
+              const errorData = await response.json();
+              if (errorData && errorData.error) errorMsg = errorData.error;
+            } catch { }
+          }
+          return [];
+        }
+        const text = await response.text();
+        if (!text) return [];
+        return JSON.parse(text);
+      })
+      .then(data => {
+        this.starSpectralClasses = data;
+      });
   }
 
   fetchLuminosityClasses() {
-    fetch(`${GlobalConfig.apiUrl}/StarLuminosityClasses`, { method: 'GET', headers: { 'Authorization': `Bearer ${this.token}`, 'X-Correlation-ID': this.correlationId, } })
-      .then(response => response.json())
-      .then(data => this.starLuminosityClasses = data);
+    fetch(`${GlobalConfig.apiUrl}/StarLuminosityClasses`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${this.token}`,
+        'X-Correlation-ID': this.correlationId,
+      }
+    })
+      .then(async response => {
+        if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            return [];
+          }
+          let errorMsg = 'Failed to load luminosity classes';
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            try {
+              const errorData = await response.json();
+              if (errorData && errorData.error) errorMsg = errorData.error;
+            } catch { }
+          }
+          return [];
+        }
+        const text = await response.text();
+        if (!text) return [];
+        return JSON.parse(text);
+      })
+      .then(data => {
+        this.starLuminosityClasses = data;
+      });
   }
 
   fetchData() {
