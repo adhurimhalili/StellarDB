@@ -5,17 +5,20 @@ using StellarDB.Models.Festivali;
 
 namespace StellarDB.Controllers
 {
-    [AllowAnonymous]
+    [AllowAnonymous] // shto kete
     [Route("api/[controller]")]
     [ApiController]
     public class FestivaliController : ControllerBase
     {
+        // copy paste
         private readonly ApplicationDbContext _context;
         public FestivaliController(ApplicationDbContext context)
         {
             _context = context;
         }
+        // deri ktu
 
+        // copy / paste funksionet edhe modifikoj sipas nevojes
         [HttpGet]
         public IActionResult GetAllFestivali()
         {

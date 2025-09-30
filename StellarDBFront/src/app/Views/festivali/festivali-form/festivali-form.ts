@@ -11,6 +11,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { GlobalConfig } from '../../../global-config';
 // copy paste imports
 
+// PER TE GJENERUAR COMPONENTIN E RI:
+// cd ./StellarDBFront <- VETEM HEREN E PARE TE GJENERIMIT
+// ng generate component Views/festivali/festivali-form --standalone
+
 @Component({
   selector: 'app-festivali-form',
   // copy paste imports

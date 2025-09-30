@@ -12,6 +12,9 @@ import { GlobalConfig } from '../../../global-config';
 import { Festival } from '../../festivali/festivali'; // ndrysho importin per combon
 // copy paste imports
 
+// PER TE GJENERUAR COMPONENTIN E RI:
+// cd ./StellarDBFront <- VETEM HEREN E PARE TE GJENERIMIT
+// ng generate component Views/eventi/eventi-form --standalone
 
 @Component({
   selector: 'app-eventi-form',
@@ -46,18 +49,18 @@ export class EventiForm {
     }
   }
 
-  fetchFestivalet() {
+  fetchFestivalet() { // ndrysho sipas controllerin TJETER
     fetch(`${GlobalConfig.apiUrl}/Festivali`, { method: 'GET' })
       .then(response => response.json())
       .then(data => this.festivalet = data)
       .catch(error => console.error('Error fetching stars:', error));
   }
 
-
   loadFromData() {
     fetch(`${this.apiAction}/${this.data}`, { method: 'GET' })
       .then(response => response.json())
       .then(formData => {
+        // ndrysho variablen e formes
         this.eventiForm.patchValue(formData);
       })
       .catch(error => {
@@ -75,7 +78,7 @@ export class EventiForm {
     fetch(`${this.apiAction}`, {
       method: httpMethod,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(this.eventiForm.value)
+      body: JSON.stringify(this.eventiForm.value) // ndrysho variablen e formes
     })
       .then(async response => {
         if (!response.ok) {

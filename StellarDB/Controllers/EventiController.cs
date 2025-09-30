@@ -1,19 +1,24 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StellarDB.Models.Eventi;
 
 namespace StellarDB.Controllers
 {
+    [AllowAnonymous] // shtoje qeta
     [Route("api/[controller]")]
     [ApiController]
     public class EventiController : ControllerBase
     {
+        // copy paste
         private readonly ApplicationDbContext _context;
         public EventiController(ApplicationDbContext context)
         {
             _context = context;
         }
+        // deri ktu
 
+        // copy / paste funksionet edhe modifikoj sipas nevojes
         [HttpGet]
         public IActionResult GetAllEventi([FromQuery] string? festivaliId)
         {

@@ -17,6 +17,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EventiForm } from './eventi-form/eventi-form' ;
 // copy paste imports
+// PER TE GJENERUAR COMPONENTIN E RI:
+// cd ./StellarDBFront <- VETEM HEREN E PARE TE GJENERIMIT
+// ng generate component Views/eventi/eventi --standalone
 
 export interface Event {
   id: string,
@@ -47,18 +50,18 @@ export interface Event {
   styleUrl: './eventi.css'
 })
 export class Eventi implements AfterViewInit {
-  readonly title = 'Eventet';
+  readonly title = 'Eventet'; // ndrysho titullin
+  // ndrysho kolonat sipas interface
   readonly tableColumns = [
     { columnDef: 'emriEventit', header: 'emriEventit', },
     { columnDef: 'orari', header: 'Orari', },
     { columnDef: 'id_Festivali', header: 'id_Festivali', },
   ];
 
-  eventiQueryForm: FormGroup;
+  eventiQueryForm: FormGroup; // Ndrysho variablen
   dataSource = new MatTableDataSource<Event>();
   objects: Event[] = [];
   isLoading = true;
-  expandedElement: Event | null = null;
 
   private readonly apiAction = `${GlobalConfig.apiUrl}/Eventi`; // Shkruaj emrin e Controller-it
   private readonly dialog = inject(MatDialog);

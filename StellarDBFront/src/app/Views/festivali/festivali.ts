@@ -18,6 +18,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { FestivaliForm } from './festivali-form/festivali-form';
 // copy paste imports
 
+// PER TE GJENERUAR COMPONENTIN E RI:
+// cd ./StellarDBFront <- VETEM HEREN E PARE TE GJENERIMIT
+// ng generate component Views/festivali/festivali --standalone
+
+
 export interface Festival {
   id: string,
   emriFestivalit: string,
@@ -46,7 +51,8 @@ export interface Festival {
   styleUrl: './festivali.css'
 })
 export class Festivali implements AfterViewInit {
-  readonly title = 'Festivalet';
+  readonly title = 'Festivalet'; // ndrysho titullin
+  // ndrysho kolonat sipas interface
   readonly tableColumns = [
     { columnDef: 'emriFestivalit', header: 'emriFestivalit', },
     { columnDef: 'llojiFestivalit', header: 'llojiFestivalit', },
@@ -55,11 +61,9 @@ export class Festivali implements AfterViewInit {
   dataSource = new MatTableDataSource<Festival>();
   objects: Festival[] = [];
   isLoading = true;
-  expandedElement: Festival | null = null;
 
   private readonly apiAction = `${GlobalConfig.apiUrl}/Festivali`; // Shkruaj emrin e Controller-it
   private readonly dialog = inject(MatDialog);
-  private selectedFile: File | null = null;
   userRoleClaims: string[] = ["ReadAccess", "WriteAccess"];
 
   ngAfterViewInit() {
