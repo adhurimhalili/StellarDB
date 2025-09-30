@@ -5,6 +5,7 @@ using StellarDB.Models.Festivali;
 
 namespace StellarDB.Controllers
 {
+    // KRIJO edhe MODELIN dhe SHTO nje DBSET ne Data/ApplicationDbContext
     [AllowAnonymous] // shto kete
     [Route("api/[controller]")]
     [ApiController]

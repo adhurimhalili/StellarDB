@@ -14,5 +14,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<AuditLogModel> AuditLogs { get; set; }
     public DbSet<FestivaliModel> Festivali { get; set; }
     public DbSet<EventiModel> Eventi { get; set; }
+    // Shto DbSet per modelet e reja ketu
     // public DbSet<Model> Items { get; set; }
 }
