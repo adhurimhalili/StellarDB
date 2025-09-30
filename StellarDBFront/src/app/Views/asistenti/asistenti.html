@@ -20,10 +20,12 @@
         <form [formGroup]="asistentiQueryForm" (ngSubmit)="fetchData()">
           <div class="grid grid-cols-4 gap-2">
 
-            <!-- Emri Festivalit -->
-            <mat-form-field class="" appearance="outline">
-              <mat-label>departamentiId</mat-label>
-              <input matInput formControlName="departamentiId" maxlength="50">
+            <!-- Planet -->
+            <mat-form-field appearance="outline">
+              <mat-label>id_Departamenti</mat-label>
+              <mat-select formControlName="id_Departamenti">
+                <mat-option *ngFor="let departament of departamentet" [value]="departament.id">{{departament.emriDepartamentit}}</mat-option>
+              </mat-select>
             </mat-form-field>
 
             <!-- Buttons -->

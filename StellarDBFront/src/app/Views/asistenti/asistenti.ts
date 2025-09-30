@@ -16,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AsistentiForm } from './asistenti-form/asistenti-form'
+import { Departament } from '../departamenti/departamenti';
 
 export interface Asistent {
   id: string,
@@ -54,7 +55,7 @@ export class AsistentiComponent {
     { columnDef: 'pozita', header: 'pozita', },
     { columnDef: 'id_Departamenti', header: 'id_Departamenti', },
   ];
-
+  departamentet: Departament[] = [];
   asistentiQueryForm: FormGroup; // Ndrysho variablen
   dataSource = new MatTableDataSource<Event>();
   objects: Event[] = [];
@@ -73,6 +74,7 @@ export class AsistentiComponent {
 
   ngAfterViewInit() {
     this.fetchData();
+    this.fetchDepartamentet();
   }
 
   fetchData() {
@@ -138,6 +140,13 @@ export class AsistentiComponent {
         });
       }
     });
+  }
+
+  fetchDepartamentet() { // ndrysho sipas controllerin TJETER
+    fetch(`${GlobalConfig.apiUrl}/Departamenti`, { method: 'GET' })
+      .then(response => response.json())
+      .then(data => this.departamentet = data)
+      .catch(error => console.error('Error fetching stars:', error));
   }
 
 }
