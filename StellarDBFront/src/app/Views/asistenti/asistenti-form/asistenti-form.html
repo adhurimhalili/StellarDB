@@ -1,0 +1,42 @@
+<div mat-dialog-title>{{title}}</div>
+<!-- Form -->
+<form [formGroup]="asistentiForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <div class="grid grid-cols-2 gap-4">
+      <!-- emriEventit -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>emri</mat-label>
+        <input matInput formControlName="emri" maxlength="50">
+      </mat-form-field>
+
+      <!-- orari -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>mbiemri</mat-label>
+        <input matInput formControlName="mbiemri" maxlength="50">
+      </mat-form-field>
+
+      <!-- orari -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>pozita</mat-label>
+        <input matInput formControlName="pozita" maxlength="50">
+      </mat-form-field>
+
+      <!-- Planet -->
+      <mat-form-field appearance="outline">
+        <mat-label>id_Departamenti</mat-label>
+        <mat-select formControlName="id_Departamenti">
+          <mat-option *ngFor="let departament of departamentet" [value]="departament.id">{{departament.emriDepartamentit}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="center">
+
+    <!-- Submit Button -->
+    <div class="flex justify-center">
+      <button color="primary" mat-button type="submit">Save</button>
+    </div>
+
+  </mat-dialog-actions>
+</form>

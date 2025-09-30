@@ -1,0 +1,41 @@
+<div class="p-[25px]">
+  <mat-card appearance="outlined">
+    <!-- Header -->
+    <mat-card-header>
+      <mat-card-title class="h3">{{title}}</mat-card-title>
+      <!--<mat-card-subtitle class="">List</mat-card-subtitle>-->
+      <span class="spacer"></span>
+    </mat-card-header>
+
+    <!-- Table Component -->
+    <app-custom-table [columns]="tableColumns"
+                      [userRoleClaims]="userRoleClaims"
+                      [objects]="objects"
+                      [isLoading]="isLoading"
+                      [advancedFilter]="true"
+                      (openForm)="onOpenForm($event)">
+
+      <!-- Advanced Filter Template -->
+      <ng-template #filterForm>
+        <form [formGroup]="asistentiQueryForm" (ngSubmit)="fetchData()">
+          <div class="grid grid-cols-4 gap-2">
+
+            <!-- Emri Festivalit -->
+            <mat-form-field class="" appearance="outline">
+              <mat-label>departamentiId</mat-label>
+              <input matInput formControlName="departamentiId" maxlength="50">
+            </mat-form-field>
+
+            <!-- Buttons -->
+            <div class="flex items-center pb-4">
+              <button mat-button matButton="tonal" color="primary" type="submit">Filter</button>
+              <button mat-button type="button" (click)="asistentiQueryForm.reset(); fetchData();">Reset</button>
+            </div>
+
+          </div>
+        </form>
+      </ng-template>
+
+    </app-custom-table>
+  </mat-card>
+</div>

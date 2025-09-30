@@ -20,9 +20,11 @@ import { AuditLogsComponent } from './Views/audit-logs/audit-logs';
 import { ConstellationsComponent } from './Views/constellations/constellations';
 import { Festivali } from './Views/festivali/festivali';
 import { Eventi } from './Views/eventi/eventi';
+import { DepartamentiComponent } from './Views/departamenti/departamenti';
 
 import { AuthGuard } from './Core/Guards/auth.guard';
 import { NoAuthGuard } from './Core/Guards/noAuth.Guard';
+import { AsistentiComponent } from './Views/asistenti/asistenti';
 
 const routes: Routes = [
   { path: '', redirectTo: '/Home', pathMatch: 'full' },
@@ -40,6 +42,14 @@ const routes: Routes = [
     path: 'Home',
     component: Home,
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'Departamenti',
+    component: DepartamentiComponent
+  },
+  {
+    path: 'Asistenti',
+    component: AsistentiComponent
   },
   {
     path: 'Festivali',
