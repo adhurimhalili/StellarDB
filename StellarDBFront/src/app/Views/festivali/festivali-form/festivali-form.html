@@ -1,0 +1,28 @@
+<div mat-dialog-title>{{title}}</div>
+<!-- Form -->
+<form [formGroup]="festivaliForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <div class="grid grid-cols-2 gap-4">
+      <!-- Name -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>emriFestivalit</mat-label>
+        <input matInput formControlName="emriFestivalit" maxlength="50">
+      </mat-form-field>
+
+      <!-- Name -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>llojiFestivalit</mat-label>
+        <input matInput formControlName="llojiFestivalit" maxlength="50">
+      </mat-form-field>
+
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="center">
+
+    <!-- Submit Button -->
+    <div class="flex justify-center">
+      <button color="primary" mat-button type="submit">Save</button>
+    </div>
+
+  </mat-dialog-actions>
+</form>

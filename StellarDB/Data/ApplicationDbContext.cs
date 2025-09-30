@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using StellarDB.Models.AuditLog;
+using StellarDB.Models.Eventi;
+using StellarDB.Models.Festivali;
 using StellarDB.Models.Identity;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
@@ -10,5 +12,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
         : base(options)
     { }
     public DbSet<AuditLogModel> AuditLogs { get; set; }
+    public DbSet<FestivaliModel> Festivali { get; set; }
+    public DbSet<EventiModel> Eventi { get; set; }
     // public DbSet<Model> Items { get; set; }
 }

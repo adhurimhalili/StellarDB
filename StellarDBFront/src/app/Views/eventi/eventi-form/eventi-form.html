@@ -1,0 +1,36 @@
+<div mat-dialog-title>{{title}}</div>
+<!-- Form -->
+<form [formGroup]="eventiForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <div class="grid grid-cols-2 gap-4">
+      <!-- emriEventit -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>emriEventit</mat-label>
+        <input matInput formControlName="emriEventit" maxlength="50">
+      </mat-form-field>
+
+      <!-- orari -->
+      <mat-form-field class="col-span-2" appearance="outline">
+        <mat-label>orari</mat-label>
+        <input matInput formControlName="orari" maxlength="50">
+      </mat-form-field>
+
+      <!-- Planet -->
+      <mat-form-field appearance="outline">
+        <mat-label>festival</mat-label>
+        <mat-select formControlName="id_Festivali">
+          <mat-option *ngFor="let festival of festivalet" [value]="festival.id">{{festival.emriFestivalit}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="center">
+
+    <!-- Submit Button -->
+    <div class="flex justify-center">
+      <button color="primary" mat-button type="submit">Save</button>
+    </div>
+
+  </mat-dialog-actions>
+</form>

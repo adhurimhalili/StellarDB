@@ -18,6 +18,8 @@ import { RolesComponent } from './Views/Identity/roles/roles';
 import { UsersComponent } from './Views/Identity/users/users';
 import { AuditLogsComponent } from './Views/audit-logs/audit-logs';
 import { ConstellationsComponent } from './Views/constellations/constellations';
+import { Festivali } from './Views/festivali/festivali';
+import { Eventi } from './Views/eventi/eventi';
 
 import { AuthGuard } from './Core/Guards/auth.guard';
 import { NoAuthGuard } from './Core/Guards/noAuth.Guard';
@@ -38,6 +40,14 @@ const routes: Routes = [
     path: 'Home',
     component: Home,
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'Festivali',
+    component: Festivali
+  },
+  {
+    path: 'Eventi',
+    component: Eventi
   },
   {
     path: 'Dashboard',
