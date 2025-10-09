@@ -68,7 +68,7 @@ export class AsistentiComponent {
 
   constructor(private formBuilder: FormBuilder) {
     this.asistentiQueryForm = this.formBuilder.group({
-      departamentiId: ''
+      departamentiId: null
     })
   }
 
